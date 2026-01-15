@@ -1,0 +1,18 @@
+enum TOKEN{
+    VOID,
+    INTEGER,
+    LEFT_ROUND_BRACKET,
+    RIGHT_ROUND_BRACKET,
+    LEFT_CURLY_BRACKET,
+    RIGHT_CURLY_BRACKET,
+    COMMA,
+    SEMICOLON,
+    READ,
+    WRITE,
+    ASSIGN_OP,
+    INT_NUM,
+    PLUS,
+    MULT,
+    DIV,
+    NAME,
+}                           
