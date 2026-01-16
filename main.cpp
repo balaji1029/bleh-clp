@@ -1,6 +1,7 @@
 // #include <iostream>
 #include <stdio.h>
 #include <cstring>
+#include <getopt.h>
 #include "lex.yy.h"
 #include "parser.tab.h"
 
@@ -10,8 +11,9 @@ extern FILE *tok_out;
 
 extern bool show_tokens;
 
-
 extern int yyparse();
+
+#define ERROR "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information.\n"
 
 void process_command_options(int argc, char * argv[])
 {
@@ -21,22 +23,38 @@ void process_command_options(int argc, char * argv[])
     // it has been given, your scanner script should
     // print the information required for the dump.
     // There is no need to implement the -d option.
-    if (argc >= 2) {
-        int offset = 1;
-        if (argc == 3) {
-            if (!strcmp("--show-tokens", argv[offset])) {
+
+    int opt;
+
+    static struct option long_opts[] = {
+        {"show-tokens", no_argument, 0, 't'},
+        {0, 0, 0, 0}
+    };
+
+    while ((opt = getopt_long(argc, argv, "t", long_opts, NULL)) != -1) {
+        switch (opt) {
+            case 't':
                 show_tokens = true;
-            }
-            offset++;
+                break;
+            default:
+                fprintf(stderr, ERROR);
+                exit(1);
         }
-        yyin = fopen(argv[offset], "r");
-        if (show_tokens) tok_out = fopen(strcat(argv[offset], ".toks"), "w");
-        if (!yyin) {
-            perror("fopen");
-            exit(1);
-        }
-    } else {
-        fprintf(stderr, "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information.\n");
+    }
+
+    if (optind >= argc) {
+        fprintf(stderr, ERROR);
+        exit(1);
+    }
+
+    if (optind + 1 < argc) {
+        fprintf(stderr, ERROR);
+        exit(1);
+    }
+    yyin = fopen(argv[optind], "r");
+    if (show_tokens) tok_out = fopen(strcat(argv[optind], ".toks"), "w");
+    if (!yyin) {
+        perror("fopen");
         exit(1);
     }
 }
