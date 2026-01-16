@@ -1,8 +1,11 @@
-
 int global; 
 
-void main()
-{
+int x;
+int idk(int a, int b);
+int c;
+
+int main() 
+{ 
     int local, temp; //local variable
     int test;
     local=2;
@@ -17,5 +20,5 @@ void main()
     read temp;
     test= global * local /temp;
     print test;
- 
+    a = 3.0;
 }
