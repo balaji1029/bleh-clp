@@ -1,5 +1,7 @@
-#include <iostream>
-#include <cstdio>
+// #include <iostream>
+#include <stdio.h>
+#include "lex.yy.h"
+#include "parser.tab.h"
 
 extern FILE *yyin; // This is the file pointer from which the scanner
 // will read the input. It is declared in lex.yy.c.
@@ -22,7 +24,8 @@ void process_command_options(int argc, char * argv[])
         }
     }
     if (argc < 2) {
-        std::cerr << "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information.\n";
+        fprintf(stderr, "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information.\n");
+        exit(1);
     }
 }
 
@@ -35,5 +38,6 @@ int main(int argc, char * argv[])
     // Executing the parser
     status = yyparse();
 
+    fclose(yyin);
     return status;
 }

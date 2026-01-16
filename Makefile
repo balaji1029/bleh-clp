@@ -1,15 +1,16 @@
-all: sclp lexer
+all: sclp
 
-sclp: main.cpp
-	g++ main.cpp -o sclp
+sclp: main.cpp lex.yy.h parser.tab.h
+	g++ main.cpp lex.yy.c parser.tab.c -o sclp
 
-lexer: lex.yy.c
-	gcc lex.yy.c -ll -o lexer
-
-lex.yy.c: lexer.l
+lex.yy.h: lexer.l
 	lex lexer.l
+
+parser.tab.h: parser.y
+	bison -d parser.y
 
 clean:
 	-rm -f sclp
 	-rm -f lexer
-	-rm -f lex.yy.c
+	-rm -f lex.yy.c lex.yy.h
+	-rm -f parser.tab.c parser.tab.h

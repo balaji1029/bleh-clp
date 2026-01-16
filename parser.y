@@ -1,13 +1,14 @@
 %{
-    #include <cstdio>
-    #include <cstdlib>
-    #include <iostream>
+    #include <stdio.h>
+    #include <stdlib.h>
 
     extern int yylex();
     extern int yyparse();
     extern FILE *yyin;
 
-    void yyerror(const char *s);
+    void yyerror(const char *s) {
+        fprintf(stderr, s);
+    }
 
     int seen_func_decl = 0;
 %}
