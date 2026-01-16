@@ -1,19 +1,14 @@
-% {
+%{
 
-	#include <cstdio>
-	#include <cstdlib>
-	#include <cstring>
+	#include <stdio.h>
+	#include <stdbool.h>
+	#include "tokens.hpp"
 
-	#include "parser.tab.h"
-
-	int yylineno = 1;
-
-	extern yylex();
-	extern bool show_tokens;
+	bool show_tokens = true;
 
 	char print_string[] = "Token Name: %s\tLexeme: %s\tLineno: %d";
 
-% }
+%}
 
 %%
 

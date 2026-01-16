@@ -1,4 +1,5 @@
 enum TOKEN{
+    TEST,
     VOID,
     INTEGER,
     LEFT_ROUND_BRACKET,
@@ -15,4 +16,4 @@ enum TOKEN{
     MULT,
     DIV,
     NAME,
-}                           
+};                           
