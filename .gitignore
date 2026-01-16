@@ -1,4 +1,5 @@
 reference-implementations/
 sclp
 lexer
-lex.yy.c
+lex.yy.*
+parser.tab.*
