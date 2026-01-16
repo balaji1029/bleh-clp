@@ -1,7 +1,7 @@
 all: sclp
 
 sclp: main.cpp lex.yy.h parser.tab.h
-	g++ main.cpp lex.yy.c parser.tab.c -o sclp
+	g++ -g main.cpp lex.yy.c parser.tab.c -o sclp
 
 lex.yy.h: lexer.l
 	lex lexer.l

@@ -13,10 +13,12 @@
 	// 	return 0;
 	// }
 
-	bool show_tokens = true;
+	FILE *tok_out;
 
-	char print_string[] = "Token Name: %s\tLexeme: %s\tLineno: %d\n";
-	#define DISPLAY_TOKEN(a) if (show_tokens) printf(print_string, a, yytext, yylineno);
+	bool show_tokens = false;
+
+	char print_string[] = "\tToken Name: %s\tLexeme: %s\tLineno: %d\n";
+	#define DISPLAY_TOKEN(a) if (show_tokens) fprintf(tok_out, print_string, a, yytext, yylineno);
 	// #define DISPLAY_TOKEN(a) if (show_tokens) std::cout << "Token Name: " a << "\tLexeme: " << yytext << "\tLineno: " << yylineno << std::endl;
 
 %}
@@ -50,7 +52,7 @@ bool {
 
 "("       {
 	DISPLAY_TOKEN("LEFT_ROUND_BRACKET");
-	return ')';
+	return LEFT_ROUND_BRACKET;
 }
 
 ")"       {
@@ -65,7 +67,7 @@ bool {
 
 "}"       {
 	DISPLAY_TOKEN("RIGHT_CURLY_BRACKET");
-	return LEFT_CURLY_BRACKET;
+	return RIGHT_CURLY_BRACKET;
 }
 
 ,		{
@@ -103,7 +105,7 @@ print   {
 	return STRING_CONSTANT;
 }
 
-[0-9]*   {
+[0-9]+   {
 	DISPLAY_TOKEN("INT_NUM");
 	return INTEGER_NUMBER;
 }
@@ -123,16 +125,26 @@ print   {
 	return MULT;
 }
 
+"//".* {
+
+}
+
 "/"        {
 	DISPLAY_TOKEN("DIV");
 	return DIV;
 }
 
-[A-Za-z][A-Za-z0-9_]* {
+[A-Za-z_][A-Za-z0-9_]* {
 	DISPLAY_TOKEN("NAME");
 	return NAME;
 }
 
-""
+[ \t]	{
+
+}
+
+\n		{
+	yylineno++;
+}
 
 %%
