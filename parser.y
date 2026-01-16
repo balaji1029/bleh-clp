@@ -14,20 +14,37 @@
 %}
 
 %token NAME
+
 %token INTEGER
 %token FLOAT
 %token BOOL
 %token STRING
 %token VOID
+
 %token ASSIGN
+
 %token WRITE
 %token READ
+
 %token INTEGER_NUMBER
 %token DOUBLE_NUMBER
 %token STRING_CONSTANT
 
-%left '+' '-'
-%left '*' '/'
+%token LEFT_ROUND_BRACKET
+%token RIGHT_ROUND_BRACKET
+%token LEFT_CURLY_BRACKET
+%token RIGHT_CURLY_BRACKET
+
+%token COMMA
+%token SEMICOLON
+
+%token PLUS
+%token MINUS
+%token MULT
+%token DIV
+
+%left PLUS MINUS
+%left MULT DIV
 
 
 
@@ -58,8 +75,8 @@ global_decl_statement_list
         }
 
 func_decl
-    : func_header '(' formal_param_list ')' ';'
-    | func_header '(' ')' ';'
+    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON
+    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON
     ;
 
 func_def_list
@@ -71,12 +88,12 @@ func_header
     ;
 
 func_def
-    : func_header '(' formal_param_list ')' '{' optional_local_var_decl_stmt_list statement_list '}'
-    | func_header '(' ')' '{' optional_local_var_decl_stmt_list statement_list '}'
+    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET
+    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET
     ;
 
 formal_param_list
-    : formal_param_list ',' formal_param
+    : formal_param_list COMMA formal_param
     | formal_param
     ;
 
@@ -109,15 +126,15 @@ optional_local_var_decl_stmt_list
 
 var_decl_stmt_list
     : var_decl_stmt
-    | var_decl_stmt_list ';' var_decl_stmt
+    | var_decl_stmt_list SEMICOLON var_decl_stmt
     ;
 
 var_decl_stmt
-    : named_type var_decl_item_list ';'
+    : named_type var_decl_item_list SEMICOLON
     ;
     
 var_decl_item_list
-    : var_decl_item_list ',' var_decl_item
+    : var_decl_item_list COMMA var_decl_item
     | var_decl_item
     ;
 
@@ -134,23 +151,23 @@ named_type
     ;
 
 assignment_statement
-    : variable_as_operand ASSIGN expression ';'
+    : variable_as_operand ASSIGN expression SEMICOLON
     ;
 
 print_statement
-    : WRITE expression ';'
+    : WRITE expression SEMICOLON
     ;
 
 read_statement
-    : READ variable_name ';'
+    : READ variable_name SEMICOLON
     ;
 
 expression
-    : expression '+' expression
-    | expression '-' expression
-    | expression '*' expression
-    | '-' expression
-    | '(' expression ')'
+    : expression PLUS expression
+    | expression MINUS expression
+    | expression MULT expression
+    | MINUS expression
+    | LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET
     | variable_as_operand
     | constant_as_operand
     ;
