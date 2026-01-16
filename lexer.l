@@ -16,11 +16,22 @@
 	FILE *tok_out;
 
 	bool show_tokens = false;
+	extern char* tok_out_filename;
 
-	char print_string[] = "\tToken Name: %s\tLexeme: %s\tLineno: %d\n";
+	char print_string[] = "\tToken Name: %s \tLexeme: %s \tLineno: %d\n";
 	#define DISPLAY_TOKEN(a) if (show_tokens) fprintf(tok_out, print_string, a, yytext, yylineno);
 	// #define DISPLAY_TOKEN(a) if (show_tokens) std::cout << "Token Name: " a << "\tLexeme: " << yytext << "\tLineno: " << yylineno << std::endl;
 
+	void yyerror() {
+		if (show_tokens) {
+			tok_out = freopen(NULL, "w", tok_out);
+			if (!tok_out)
+				perror("freopen");
+			else
+				fclose(tok_out);
+		}
+		exit(1);
+	}
 %}
 
 %%
@@ -145,6 +156,10 @@ print   {
 
 \n		{
 	yylineno++;
+}
+
+.       {
+	yyerror();
 }
 
 %%

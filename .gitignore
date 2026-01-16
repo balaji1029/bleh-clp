@@ -3,3 +3,4 @@ sclp
 lexer
 lex.yy.*
 parser.tab.*
+**/*.toks

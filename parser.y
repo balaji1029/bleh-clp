@@ -1,3 +1,5 @@
+%define parse.error verbose
+
 %{
     #include <stdio.h>
     #include <stdlib.h>
@@ -5,9 +7,19 @@
     extern int yylex();
     extern int yyparse();
     extern FILE *yyin;
+    extern FILE *tok_out;
+    extern bool show_tokens;
 
     void yyerror(const char *s) {
         fprintf(stderr, s);
+        if (show_tokens) {
+            tok_out = freopen(NULL, "w", tok_out);
+            if (!tok_out)
+                perror("freopen");
+            else
+                fclose(tok_out);
+        }
+        exit(EXIT_FAILURE);
     }
 
     int seen_func_decl = 0;
