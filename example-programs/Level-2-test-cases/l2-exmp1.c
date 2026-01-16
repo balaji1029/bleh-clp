@@ -4,7 +4,7 @@ int x;
 int idk(int a, int b);
 int c;
 
-int main() 
+void main() 
 { 
     int local, temp; //local variable
     int test;
