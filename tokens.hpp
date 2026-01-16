@@ -12,7 +12,7 @@ enum TOKEN{
     SEMICOLON,
     READ,
     WRITE,
-    ASSIGN_OP,
+    ASSIGN,
     INT_NUM,
     FLOAT_NUM,
     STR_CONST,

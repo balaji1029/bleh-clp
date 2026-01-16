@@ -5,7 +5,7 @@
 	// #include <iostream>
 	#include <stdio.h>
 	#include <stdbool.h>
-	#include "tokens.hpp"
+	#include "parser.tab.h"
 
 	// int yylex() {
 	// 	yyFlexLexer l;
@@ -15,7 +15,7 @@
 
 	bool show_tokens = true;
 
-	char print_string[] = "Token Name: %s\tLexeme: %s\tLineno: %d";
+	char print_string[] = "Token Name: %s\tLexeme: %s\tLineno: %d\n";
 	#define DISPLAY_TOKEN(a) if (show_tokens) printf(print_string, a, yytext, yylineno);
 	// #define DISPLAY_TOKEN(a) if (show_tokens) std::cout << "Token Name: " a << "\tLexeme: " << yytext << "\tLineno: " << yylineno << std::endl;
 
@@ -50,7 +50,7 @@ bool {
 
 "("       {
 	DISPLAY_TOKEN("LEFT_ROUND_BRACKET");
-	return LEFT_ROUND_BRACKET;
+	return ')';
 }
 
 ")"       {
@@ -90,17 +90,17 @@ print   {
 
 =       {
 	DISPLAY_TOKEN("ASSIGN_OP");
-	return ASSIGN_OP;
+	return ASSIGN;
 }
 
 [0-9]+"."[0.9]+ {
 	DISPLAY_TOKEN("FLOAT_NUM");
-	return FLOAT_NUM;
+	return DOUBLE_NUMBER;
 }
 
 [0-9]*   {
 	DISPLAY_TOKEN("INT_NUM");
-	return INT_NUM;
+	return INTEGER_NUMBER;
 }
 
 "+"        {
