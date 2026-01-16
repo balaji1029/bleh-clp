@@ -46,14 +46,11 @@
 %left PLUS MINUS
 %left MULT DIV
 
-
-
-
 %%
 
 program
     : global_decl_statement_list func_def_list
-    | global_decl_statement_list
+    | func_def_list
     ;
 
 global_decl_statement_list
@@ -77,6 +74,9 @@ global_decl_statement_list
 func_decl
     : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON
     | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON
+        {
+            printf("hello\n");
+        }
     ;
 
 func_def_list
@@ -126,7 +126,7 @@ optional_local_var_decl_stmt_list
 
 var_decl_stmt_list
     : var_decl_stmt
-    | var_decl_stmt_list SEMICOLON var_decl_stmt
+    | var_decl_stmt_list var_decl_stmt
     ;
 
 var_decl_stmt
@@ -166,6 +166,7 @@ expression
     : expression PLUS expression
     | expression MINUS expression
     | expression MULT expression
+    | expression DIV expression
     | MINUS expression
     | LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET
     | variable_as_operand
