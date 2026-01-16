@@ -12,10 +12,8 @@ void process_command_options(int argc, char * argv[])
     // it has been given, your scanner script should
     // print the information required for the dump.
     // There is no need to implement the -d option.
-    if (argc < 1) {
-        std::cerr << """Usage: A1-sclp [OPTION...] [FILE]
-Try `A1-sclp --help' or `A1-sclp --usage' for more information.
-""";
+    if (argc < 2) {
+        std::cerr << "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information.\n";
     }
 }
 

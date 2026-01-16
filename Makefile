@@ -1,8 +1,7 @@
 all: sclp
 
-sclp:
+sclp: main.cpp
 	g++ main.cpp -o sclp
 
 clean:
-	rm -rf sclp
-	
+	-rm -f sclp
