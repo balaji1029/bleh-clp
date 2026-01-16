@@ -93,9 +93,14 @@ print   {
 	return ASSIGN;
 }
 
-[0-9]+"."[0.9]+ {
+[0-9]+"."[0-9]* {
 	DISPLAY_TOKEN("FLOAT_NUM");
 	return DOUBLE_NUMBER;
+}
+
+\"[^\"]*\" {
+	DISPLAY_TOKEN("STR_CONST");
+	return STRING_CONSTANT;
 }
 
 [0-9]*   {
