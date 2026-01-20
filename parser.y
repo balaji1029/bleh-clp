@@ -12,6 +12,7 @@
 
     void yyerror(const char *s) {
         fprintf(stderr, s);
+        fprintf(stderr, "\n");
         if (show_tokens) {
             tok_out = freopen(NULL, "w", tok_out);
             if (!tok_out)
