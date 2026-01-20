@@ -20,5 +20,5 @@ void main()
     read temp;
     test= global * local /temp;
     print test;
-    a = 3.0;
+    a = 3;
 }
