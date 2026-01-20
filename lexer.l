@@ -18,7 +18,7 @@
 	bool show_tokens = false;
 	extern char* tok_out_filename;
 
-	char print_string[] = "\tToken Name: %s \tLexeme: %s \tLineno: %d\n";
+	char print_string[] = "\tToken Name: %s \tLexeme: %s \t Lineno: %d\n";
 	#define DISPLAY_TOKEN(a) if (show_tokens) fprintf(tok_out, print_string, a, yytext, yylineno);
 	// #define DISPLAY_TOKEN(a) if (show_tokens) std::cout << "Token Name: " a << "\tLexeme: " << yytext << "\tLineno: " << yylineno << std::endl;
 
@@ -106,7 +106,7 @@ print   {
 	return ASSIGN;
 }
 
-[0-9]+"."[0-9]* {
+("."[0-9]+)|([0-9]+"."[0-9]) {
 	DISPLAY_TOKEN("FLOAT_NUM");
 	return DOUBLE_NUMBER;
 }
@@ -159,6 +159,7 @@ print   {
 }
 
 .       {
+	fprintf(stderr, "Illegal character: '%s'\n", yytext);
 	yyerror();
 }
 
