@@ -106,7 +106,7 @@ print   {
 	return ASSIGN;
 }
 
-("."[0-9]+)|([0-9]+"."[0-9]) {
+("."[0-9]+)|([0-9]+"."[0-9]*) {
 	DISPLAY_TOKEN("FLOAT_NUM");
 	return DOUBLE_NUMBER;
 }
