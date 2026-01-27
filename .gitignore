@@ -4,3 +4,4 @@ lexer
 lex.yy.*
 parser.tab.*
 **/*.toks
+.gdb_history

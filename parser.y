@@ -1,18 +1,26 @@
 %define parse.error verbose
-
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include <string>
+    #include <iostream>
 
-    extern int yylex();
+    // extern int yylex();
     extern int yyparse();
     extern FILE *yyin;
     extern FILE *tok_out;
     extern bool show_tokens;
 
-    void yyerror(const char *s) {
-        fprintf(stderr, s);
-        fprintf(stderr, "\n");
+
+    int seen_func_decl = 0;
+%}
+
+%code {
+    extern int yylex(yy::parser::semantic_type* yylval);
+    void yy::parser::error(const std::string& s) {
+        // fprintf(stderr, s);
+        // fprintf(stderr, "\n");
+        std::cerr << s << std::endl;
         if (show_tokens) {
             tok_out = freopen(NULL, "w", tok_out);
             if (!tok_out)
@@ -22,10 +30,7 @@
         }
         exit(EXIT_FAILURE);
     }
-
-    int seen_func_decl = 0;
-%}
-
+}
 %token NAME
 
 %token INTEGER
@@ -71,7 +76,7 @@ global_decl_statement_list
     | global_decl_statement_list func_decl
         {
             if (seen_func_decl) {
-                yyerror("only one func_decl allowed\n");
+                error("only one func_decl allowed\n");
             }
             seen_func_decl = 1;
         }
@@ -79,7 +84,7 @@ global_decl_statement_list
     | func_decl
         {
             if (seen_func_decl) {
-                yyerror("only one func_decl allowed\n");
+                error("only one func_decl allowed\n");
             }
             seen_func_decl = 1;
         }
