@@ -14,13 +14,13 @@ extern FILE *yyin; // This is the file pointer from which the scanner
 
 extern std::string token_output;
 
-extern bool show_tokens;
+// extern bool show_tokens;
 
-extern int yyparse();
+// extern int yyparse();
 
 #define ERROR "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information.\n"
 
-void process_command_options(int argc, char * argv[])
+void process_command_options(int argc, char * argv[], bool& show_tokens, std::string& token_output_filename)
 {
     // If a file name is contained in argv, open it using
     // fopen and assign the file pointer to yyin.
@@ -57,28 +57,30 @@ void process_command_options(int argc, char * argv[])
         exit(1);
     }
     yyin = fopen(argv[optind], "r");
-    if (show_tokens) tok_out = fopen(strcat(argv[optind], ".toks"), "w");
-    if (!yyin) {
-        perror("fopen");
-        exit(1);
-    }
+    token_output_filename += std::string(argv[optind]) + ".toks";
 }
 
 int main(int argc, char * argv[])
 {
     int status;
+    bool show_tokens;
+    std::string token_output_filename;
     // Process the comm
     // and line options
-    process_command_options(argc, argv);
+    process_command_options(argc, argv, show_tokens, token_output_filename);
 
     yy::parser parser;
     int result = parser.parse();
     // Executing the parser
     // status = yyparse();
+    if (show_tokens) {
+        std::ofstream token_file(token_output_filename);
+        token_file << token_output << std::flush;
+    }
 
-    std::cout << token_output << std::flush;
+    // std::cout << token_output << std::flush;
 
     fclose(yyin);
-    if (show_tokens) fclose(tok_out);
+    // if (show_tokens) fclose(tok_out);
     return status;
 }
