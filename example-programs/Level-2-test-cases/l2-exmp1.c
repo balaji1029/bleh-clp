@@ -1,24 +1,14 @@
 int global; 
 
-int x;
-int idk(int a, int b);
+int x;                                                                                                                                          
 int c;
 
 void main() 
 { 
     int local, temp; //local variable
     int test;
-    local=2;
-    global=1;
-    test=1;
+    test=2147483643830;
     temp=1;
+    local=test+temp;                                                
     print local;
-    print global;
-    read temp;
-    test= global + local * temp;
-    print test;
-    read temp;
-    test= global * local /temp;
-    print test;
-    a = 3;
 }

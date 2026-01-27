@@ -1,13 +1,18 @@
 // #include <iostream>
 #include <stdio.h>
 #include <cstring>
+#include <string>
+#include <iostream>
+#include <fstream>
 #include <getopt.h>
 #include "lex.yy.h"
-#include "parser.tab.h"
+#include "parser.tab.hh"
 
 extern FILE *yyin; // This is the file pointer from which the scanner
 // will read the input. It is declared in lex.yy.c.
-extern FILE *tok_out;
+// extern FILE *tok_out;
+
+extern std::string token_output;
 
 extern bool show_tokens;
 
@@ -65,8 +70,13 @@ int main(int argc, char * argv[])
     // Process the comm
     // and line options
     process_command_options(argc, argv);
+
+    yy::parser parser;
+    int result = parser.parse();
     // Executing the parser
-    status = yyparse();
+    // status = yyparse();
+
+    std::cout << token_output << std::flush;
 
     fclose(yyin);
     if (show_tokens) fclose(tok_out);
