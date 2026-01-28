@@ -3,8 +3,8 @@
 %parse-param {Lexer& lexer}
 %{
     #include "lexer.hh"
-    #include <stdio.h>
-    #include <stdlib.h>
+    // #include <stdio.h>
+    // #include <stdlib.h>
     #include <string>
     #include <iostream>
 
@@ -13,10 +13,10 @@
     #define yylex(x) lexer.yylex(x)
 
     // extern int yylex();
-    extern int yyparse();
-    extern FILE *yyin;
-    extern FILE *tok_out;
-    extern bool show_tokens;
+    // extern int yyparse();
+    // extern FILE *yyin;
+    // extern FILE *tok_out;
+    // extern bool show_tokens;
 
 
     int seen_func_decl = 0;
@@ -32,13 +32,13 @@
         // fprintf(stderr, s);
         // fprintf(stderr, "\n");
         std::cerr << s << std::endl;
-        if (show_tokens) {
-            tok_out = freopen(NULL, "w", tok_out);
-            if (!tok_out)
-                perror("freopen");
-            else
-                fclose(tok_out);
-        }
+        // if (show_tokens) {
+        //     tok_out = freopen(NULL, "w", tok_out);
+        //     if (!tok_out)
+        //         perror("freopen");
+        //     else
+        //         fclose(tok_out);
+        // }
         exit(EXIT_FAILURE);
     }
 }
