@@ -76,7 +76,7 @@ int main(int argc, char * argv[])
     Lexer lexer(&input_file);
 
     yy::parser parser(lexer);
-    int result = parser.parse();
+    status = parser.parse();
     // Executing the parser
     // status = yyparse();
     if (show_tokens) {
