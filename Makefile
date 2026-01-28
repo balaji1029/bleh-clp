@@ -23,6 +23,6 @@ parser.tab.hh parser.tab.cc: parser.y
 clean:
 	-rm -f sclp
 	-rm -rf *.o
-	-rm -f lex.yy.hh
+	-rm -f lex.yy.*
 	-rm -f parser.tab.*
 	

@@ -1,38 +1,14 @@
 %option c++
-/* %option header-file="lex.yy.hh" */
 %option noyywrap
 %option nodefault
 %option yyclass="Lexer"
 %{
-
-	// // #include <iostream>
-	// #include <stdio.h>
-	// #include <stdbool.h>
 	#include <string>
-	// #include <format>
 	#include "parser.tab.hh"
 	#include "lexer.hh"
 
 	#undef YY_DECL
 	#define YY_DECL int Lexer::yylex(yy::parser::semantic_type* yylval)
-
-	// int yylex() {
-	// 	yyFlexLexer l;
-	// 	while (l.yylex());
-	// 	return 0;
-	// }
-
-	// std::string token_output;
-
-	// FILE *tok_out;
-
-	// bool show_tokens = false;
-	// extern char* tok_out_filename;
-
-	// char print_string[] = "\tToken Name: %s \tLexeme: %s \t Lineno: %d\n";
-	// #define DISPLAY_TOKEN(a) if (show_tokens) fprintf(tok_out, print_string, a, yytext, yylineno);
-	// #define DISPLAY_TOKEN(a) if (show_tokens) token_putput += std::format("\tToken Name: {} \tLexeme: {} \t Lineno: {}\n", a, yytext, yylineno);
-	// #define DISPLAY_TOKEN(a) if (show_tokens) token_putput += std::string("\tToken Name: ") + a + " \tLexeme: " + yytext + " \t Lineno: " + std::to_string(line) + "\n"
 
 	inline void Lexer::display_token_info(const char* a, const char* yytext, const int& lineno) {
 		token_output += std::string("\tToken Name: ") + a + " \tLexeme: " + yytext + " \t Lineno: " + std::to_string(lineno) + "\n";
@@ -40,17 +16,7 @@
 
 	int yylineno = 1;
 
-
-	// #define DISPLAY_TOKEN(a) if (show_tokens) std::cout << "Token Name: " a << "\tLexeme: " << yytext << "\tLineno: " << yylineno << std::endl;
-
 	void yyerror() {
-		// if (show_tokens) {
-		// 	tok_out = freopen(NULL, "w", tok_out);
-		// 	if (!tok_out)
-		// 		perror("freopen");
-		// 	else
-		// 		fclose(tok_out);
-		// }
 		exit(1);
 	}
 %}

@@ -3,22 +3,12 @@
 %parse-param {Lexer& lexer}
 %{
     #include "lexer.hh"
-    // #include <stdio.h>
-    // #include <stdlib.h>
     #include <string>
     #include <iostream>
 
     Lexer lexer;
-
     #define yylex(x) lexer.yylex(x)
-
-    // extern int yylex();
-    // extern int yyparse();
-    // extern FILE *yyin;
-    // extern FILE *tok_out;
-    // extern bool show_tokens;
-
-
+    
     int seen_func_decl = 0;
 %}
 

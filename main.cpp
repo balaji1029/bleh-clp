@@ -1,24 +1,9 @@
-// #include <iostream>
-// #include <stdio.h>
-// #include <cstring>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <getopt.h>
-// #include <FlexLexer.h>
-// #include "lex.yy.hh"
 #include "lexer.hh"
 #include "parser.tab.hh"
-
-// extern FILE *yyin; // This is the file pointer from which the scanner
-// will read the input. It is declared in lex.yy.c.
-// extern FILE *tok_out;
-
-extern std::string token_output;
-
-// extern bool show_tokens;
-
-// extern int yyparse();
 
 #define ERROR "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information."
 
