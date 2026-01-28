@@ -1,14 +1,16 @@
 // #include <iostream>
-#include <stdio.h>
-#include <cstring>
+// #include <stdio.h>
+// #include <cstring>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <getopt.h>
-#include "lex.yy.h"
+// #include <FlexLexer.h>
+// #include "lex.yy.hh"
+#include "lexer.hh"
 #include "parser.tab.hh"
 
-extern FILE *yyin; // This is the file pointer from which the scanner
+// extern FILE *yyin; // This is the file pointer from which the scanner
 // will read the input. It is declared in lex.yy.c.
 // extern FILE *tok_out;
 
@@ -18,9 +20,9 @@ extern std::string token_output;
 
 // extern int yyparse();
 
-#define ERROR "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information.\n"
+#define ERROR "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information."
 
-void process_command_options(int argc, char * argv[], bool& show_tokens, std::string& token_output_filename)
+void process_command_options(int argc, char * argv[], bool& show_tokens,std::string& input_filename, std::string& token_output_filename)
 {
     // If a file name is contained in argv, open it using
     // fopen and assign the file pointer to yyin.
@@ -42,21 +44,21 @@ void process_command_options(int argc, char * argv[], bool& show_tokens, std::st
                 show_tokens = true;
                 break;
             default:
-                fprintf(stderr, ERROR);
+                std::cerr << ERROR << std::endl;
                 exit(1);
         }
     }
 
     if (optind >= argc) {
-        fprintf(stderr, ERROR);
+        std::cerr << ERROR << std::endl;
         exit(1);
     }
 
     if (optind + 1 < argc) {
-        fprintf(stderr, ERROR);
+        std::cerr << ERROR << std::endl;
         exit(1);
     }
-    yyin = fopen(argv[optind], "r");
+    input_filename = std::string(argv[optind]);
     token_output_filename += std::string(argv[optind]) + ".toks";
 }
 
@@ -64,23 +66,27 @@ int main(int argc, char * argv[])
 {
     int status;
     bool show_tokens;
+    std::string input_filename;
     std::string token_output_filename;
     // Process the comm
     // and line options
-    process_command_options(argc, argv, show_tokens, token_output_filename);
+    process_command_options(argc, argv, show_tokens, input_filename, token_output_filename);
 
-    yy::parser parser;
+    std::ifstream input_file(input_filename);
+    Lexer lexer(&input_file);
+
+    yy::parser parser(lexer);
     int result = parser.parse();
     // Executing the parser
     // status = yyparse();
     if (show_tokens) {
         std::ofstream token_file(token_output_filename);
-        token_file << token_output << std::flush;
+        token_file << lexer.token_output << std::flush;
     }
 
     // std::cout << token_output << std::flush;
 
-    fclose(yyin);
+    // fclose(yyin);
     // if (show_tokens) fclose(tok_out);
     return status;
 }

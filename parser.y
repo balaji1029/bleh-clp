@@ -1,9 +1,16 @@
 %define parse.error verbose
+%language "c++"
+%parse-param {Lexer& lexer}
 %{
+    #include "lexer.hh"
     #include <stdio.h>
     #include <stdlib.h>
     #include <string>
     #include <iostream>
+
+    Lexer lexer;
+
+    #define yylex(x) lexer.yylex(x)
 
     // extern int yylex();
     extern int yyparse();
@@ -15,8 +22,12 @@
     int seen_func_decl = 0;
 %}
 
+%code requires {
+    class Lexer;
+}
+
 %code {
-    extern int yylex(yy::parser::semantic_type* yylval);
+    // extern int yylex(yy::parser::semantic_type* yylval);
     void yy::parser::error(const std::string& s) {
         // fprintf(stderr, s);
         // fprintf(stderr, "\n");
