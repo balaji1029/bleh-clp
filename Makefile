@@ -1,21 +1,28 @@
-all: sclp
+CXX = g++
+CXXFLAGS = -std=c++20 -Wall -O3
+TARGET = sclp
 
-sclp: main.cpp lex.yy.h parser.tab.h
-	g++ -std=c++20 -c lex.yy.cc -o lex.o
-	g++ -std=c++20 -c parser.tab.cc -o parser.o
-	g++ -std=c++20 -c main.cpp -o main.o
-	g++ -std=c++20 main.o lex.o parser.o -o sclp
+sclp: main.o parser.tab.o lex.yy.o
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
+main.o: main.cpp lexer.hh parser.tab.hh
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
-lex.yy.h: lexer.l
+parser.tab.o: parser.tab.cc lexer.hh parser.tab.hh
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+lex.yy.o: lex.yy.cc parser.tab.hh lexer.hh
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+lex.yy.hh: lexer.l
 	flex lexer.l
 
-parser.tab.h: parser.y
+parser.tab.hh parser.tab.cc: parser.y
 	bison --language=c++ -d parser.y
 
 clean:
 	-rm -f sclp
-	-rm -f lexer
-	-rm -f lex.yy.*
+	-rm -rf *.o
+	-rm -f lex.yy.hh
 	-rm -f parser.tab.*
 	
