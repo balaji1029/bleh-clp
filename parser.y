@@ -64,6 +64,7 @@
 
 %left PLUS MINUS
 %left MULT DIV
+%right UMINUS
 
 %%
 
@@ -186,7 +187,7 @@ expression
     | expression MINUS expression
     | expression MULT expression
     | expression DIV expression
-    | MINUS expression
+    | MINUS expression      %prec UMINUS
     | LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET
     | variable_as_operand
     | constant_as_operand
