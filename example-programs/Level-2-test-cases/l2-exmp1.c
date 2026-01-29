@@ -7,7 +7,7 @@ void main()
 { 
     int local, temp; //local variable
     int test;
-    test=2147483643830;
+    test="0213904,./<>?;':[]{}=-_+*&^%$#@!)~`\";
     temp=1;
     local=test+temp;                                                
     print local;
