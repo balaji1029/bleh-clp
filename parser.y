@@ -17,18 +17,8 @@
 }
 
 %code {
-    // extern int yylex(yy::parser::semantic_type* yylval);
     void yy::parser::error(const std::string& s) {
-        // fprintf(stderr, s);
-        // fprintf(stderr, "\n");
         std::cerr << s << std::endl;
-        // if (show_tokens) {
-        //     tok_out = freopen(NULL, "w", tok_out);
-        //     if (!tok_out)
-        //         perror("freopen");
-        //     else
-        //         fclose(tok_out);
-        // }
         exit(EXIT_FAILURE);
     }
 }

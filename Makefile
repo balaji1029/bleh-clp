@@ -34,4 +34,3 @@ clean:
 	-rm -rf *.o
 	-rm -f lex.yy.*
 	-rm -f parser.tab.*
-	

@@ -15,18 +15,13 @@ Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
                 break;
             default:
                 std::cerr << ERROR << std::endl;
-                exit(1);
+                exit(EXIT_FAILURE);
         }
     }
 
-    if (optind >= argc) {
+    if (optind >= argc || optind + 1 < argc) {
         std::cerr << ERROR << std::endl;
-        exit(1);
-    }
-
-    if (optind + 1 < argc) {
-        std::cerr << ERROR << std::endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     input_filename = std::string(argv[optind]);
