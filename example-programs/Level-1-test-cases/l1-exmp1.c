@@ -1,8 +1,7 @@
 int global; 
 
 void main()
-{   
-    string a;
+{   string a;
     int local, temp; //local variable 
     local=2; 
     global=1; 
