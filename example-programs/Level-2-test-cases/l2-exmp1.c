@@ -1,14 +1,21 @@
+
 int global; 
 
-int x;                                                                                                                                          
-int c;
-
-void main() 
-{ 
+void main()
+{
     int local, temp; //local variable
     int test;
-    test="0213904,./<>?;':[]{}=-_+*&^%$#@!)~`\";
+    local=2;
+    global=1;
+    test=1;
     temp=1;
-    local=test+temp;                                                
     print local;
+    print global;
+    read temp;
+    test= global + local * temp;
+    print test;
+    read temp;
+    test= global * local /temp;
+    print test;
+ 
 }
