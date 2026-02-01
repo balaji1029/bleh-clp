@@ -31,4 +31,5 @@ public:
     int run();
     int scan();
     int parse();
+    void output(std::string);
 };

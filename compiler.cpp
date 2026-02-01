@@ -16,11 +16,12 @@ Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
         switch (opt) {
             case 'd':
                 flags.demo = true;
+                break;
             case 0:
                 if (std::string(long_opts[opt_idx].name) == "show-tokens")
                     flags.show_tokens = true;
                 else if (std::string(long_opts[opt_idx].name) == "sa-scan")
-                    flags.show_tokens = true;
+                    flags.sa_scan = true;
                 break;
             default:
                 std::cerr << ERROR << std::endl;
@@ -42,8 +43,8 @@ Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
     output_token_filename = input_filename + ".toks";
 
     input_file.open(input_filename);
-
-    if (flags.show_tokens) output_token_file.open(output_token_filename);
+    if (flags.show_tokens)
+        output_token_file.open(output_token_filename);
 }
 
 int Compiler::run() {
@@ -53,13 +54,21 @@ int Compiler::run() {
         std::cerr << "File not open!! :(" << std::endl;
     }
 
-    if (flags.sa_scan) return scan();
+    scan();
 
-    status = parse();
+    if (!flags.sa_scan)
+        status = parse();
     
-    if (flags.show_tokens) output_token_file << lexer.token_output << std::flush;
+    output(lexer.token_output);
 
     return status;
+}
+
+void Compiler::output(std::string s) {
+    if (flags.demo)
+        std::cout << s << std::flush;
+    else
+        output_token_file << lexer.token_output << std::flush;
 }
 
 int Compiler::scan() {
