@@ -11,6 +11,7 @@
 
 struct flags_t {
     bool show_tokens = false;
+    bool sa_scan = false;
 };
 
 class Compiler {
@@ -26,5 +27,7 @@ class Compiler {
 
 public:
     Compiler(int, char*[]);
+    int run();
+    int scan();
     int parse();
 };
