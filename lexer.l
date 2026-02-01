@@ -98,7 +98,7 @@ print   {
 	return yy::parser::token::token_kind_type::DOUBLE_NUMBER;
 }
 
-\"[^\"^\n]*\" {
+\"[^\"\n]*\" {
 	display_token_info("STR_CONST", YYText(), yylineno);
 	return yy::parser::token::token_kind_type::STRING_CONSTANT;
 }
