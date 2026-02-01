@@ -4,18 +4,23 @@ Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
     int opt;
 
     static struct option long_opts[] = {
-        {"show-tokens", no_argument, 0, 't'},
-        {"sa-scan", no_argument, 0, 's'},
+        {"show-tokens", no_argument, 0, 0},
+        {"sa-scan", no_argument, 0, 0},
+        {"demo", no_argument, 0, 'd'},
         {0, 0, 0, 0}
     };
 
-    while ((opt = getopt_long(argc, argv, "ts", long_opts, NULL)) != -1) {
+    int opt_idx = 0;
+
+    while ((opt = getopt_long(argc, argv, "d", long_opts, &opt_idx)) != -1) {
         switch (opt) {
-            case 't':
-                flags.show_tokens = true;
-                break;
-            case 's':
-                flags.sa_scan = true;
+            case 'd':
+                flags.demo = true;
+            case 0:
+                if (long_opts[opt_idx].name == "show-tokens")
+                    flags.show_tokens = true;
+                else if (long_opts[opt_idx].name == "sa-scan")
+                    flags.show_tokens = true;
                 break;
             default:
                 std::cerr << ERROR << std::endl;
