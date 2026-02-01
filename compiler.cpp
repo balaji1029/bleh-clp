@@ -17,9 +17,9 @@ Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
             case 'd':
                 flags.demo = true;
             case 0:
-                if (long_opts[opt_idx].name == "show-tokens")
+                if (std::string(long_opts[opt_idx].name) == "show-tokens")
                     flags.show_tokens = true;
-                else if (long_opts[opt_idx].name == "sa-scan")
+                else if (std::string(long_opts[opt_idx].name) == "sa-scan")
                     flags.show_tokens = true;
                 break;
             default:
