@@ -84,9 +84,6 @@ global_decl_statement_list
 func_decl
     : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON
     | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON
-        {
-            printf("hello\n");
-        }
     ;
 
 func_def_list
