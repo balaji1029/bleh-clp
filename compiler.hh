@@ -12,6 +12,7 @@
 struct flags_t {
     bool show_tokens = false;
     bool sa_scan = false;
+    bool demo = false;
 };
 
 class Compiler {
