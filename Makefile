@@ -35,4 +35,5 @@ clean:
 	-rm -f lex.yy.*
 	-rm -f parser.tab.*
 	-rm -f *.log
+	-find . -type f -name "*.toks" -delete
 	
