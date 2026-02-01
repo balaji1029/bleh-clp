@@ -54,12 +54,13 @@ int Compiler::run() {
         std::cerr << "File not open!! :(" << std::endl;
     }
 
-    scan();
-
-    if (!flags.sa_scan)
+    if (flags.sa_scan)
+        scan();
+    else
         status = parse();
     
-    output(lexer.token_output);
+    if (flags.show_tokens)
+        output(lexer.token_output);
 
     return status;
 }
