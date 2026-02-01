@@ -43,7 +43,7 @@ Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
     output_token_filename = input_filename + ".toks";
 
     input_file.open(input_filename);
-    if (flags.show_tokens)
+    if (flags.show_tokens && !flags.demo)
         output_token_file.open(output_token_filename);
 }
 
