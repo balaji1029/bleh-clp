@@ -16,9 +16,12 @@
 
 	int yylineno = 1;
 
-	void yyerror() {
+	void yyerror(const std::string& s) {
+		std::cerr << s << std::endl; 
 		exit(1);
 	}
+
+	static std::string NOT_IMPLEMENTED = "Not Implemented yet!!!";
 %}
 
 %%
@@ -46,6 +49,66 @@ string {
 bool {
 	display_token_info("BOOL", YYText(), yylineno);
 	return yy::parser::token::token_kind_type::BOOL;
+}
+
+return	{
+	display_token_info("RETURN", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::RETURN;
+}
+
+if		{
+	display_token_info("IF", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::IF;
+}
+
+else 	{
+	display_token_info("ELSE", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::ELSE;
+}
+
+do		{
+	display_token_info("DO", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::DO;
+}
+
+while	{
+	display_token_info("WHILE", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::WHILE;
+}
+
+"?"		{
+	display_token_info("QUESTION_MARK", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::QUESTION_MARK;
+}
+
+":"		{
+	display_token_info("COLON", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::COLON;
+}
+
+"&"		{
+	display_token_info("ADDRESSOF", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::COLON;
+}
+
+"["		{
+	display_token_info("LEFT_SQUARE_BRACKET", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::LEFT_SQUARE_BRACKET;
+}
+
+"]"		{
+	display_token_info("RIGHT_SQUARE_BRACKET", YYText(), yylineno);
+	yyerror(NOT_IMPLEMENTED);
+	return yy::parser::token::token_kind_type::RIGHT_SQUARE_BRACKET;
 }
 
 "("       {
@@ -146,10 +209,7 @@ print   {
 }
 
 .       {
-	// fprintf(stderr, "Illegal character: '%s'\n", YYText());
-	// std::cerr << "Illegal character: " << YYText() << std::endl;
-	std::cerr << "Illegal character: " << YYText() << std::endl;
-	yyerror();
+	yyerror(std::string("Illegal character: ") + YYText());
 }
 
 %%

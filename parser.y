@@ -22,7 +22,11 @@
         exit(EXIT_FAILURE);
     }
 }
-%token NAME
+
+%token DO
+%token WHILE
+%token IF
+%token ELSE
 
 %token INTEGER
 %token FLOAT
@@ -30,31 +34,47 @@
 %token STRING
 %token VOID
 
-%token ASSIGN
-
 %token WRITE
 %token READ
 
-%token INTEGER_NUMBER
-%token DOUBLE_NUMBER
-%token STRING_CONSTANT
+%token NAME
 
-%token LEFT_ROUND_BRACKET
-%token RIGHT_ROUND_BRACKET
-%token LEFT_CURLY_BRACKET
-%token RIGHT_CURLY_BRACKET
+%token RETURN
+%token ASSIGN
 
-%token COMMA
-%token SEMICOLON
+%token GREATER_THAN
+%token LESS_THAN
+%token GREATER_THAN_EQUAL
+%token LESS_THAN_EQUAL
+%token NOT_EQUAL
+%token EQUAL
 
 %token PLUS
 %token MINUS
 %token MULT
 %token DIV
+%token ADDRESSOF
+
+%token LEFT_CURLY_BRACKET
+%token RIGHT_CURLY_BRACKET
+%token LEFT_ROUND_BRACKET
+%token RIGHT_ROUND_BRACKET
+%token LEFT_SQUARE_BRACKET
+%token RIGHT_SQUARE_BRACKET
+
+%token SEMICOLON
+%token COMMA
+%token QUESTION_MARK
+%token COLON
+
+%token DOUBLE_NUMBER
+%token INTEGER_NUMBER
+%token STRING_CONSTANT                                                                
 
 %left PLUS MINUS
 %left MULT DIV
 %right UMINUS
+
 
 %%
 
