@@ -42,12 +42,16 @@
 %token RETURN
 %token ASSIGN
 
-%token GREATER_THAN
-%token LESS_THAN
-%token GREATER_THAN_EQUAL
-%token LESS_THAN_EQUAL
-%token NOT_EQUAL
-%token EQUAL
+%token AND
+%token OR
+%token NOT
+
+%token GT
+%token LT
+%token GE
+%token LE
+%token NE
+%token EQ
 
 %token PLUS
 %token MINUS
