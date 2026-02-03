@@ -1,5 +1,6 @@
 %define parse.error verbose
 %language "c++"
+%require "3.2"
 %parse-param {Lexer& lexer}
 %{
     #include "lexer.hh"
