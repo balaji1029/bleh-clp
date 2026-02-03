@@ -1,10 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <string>
+#include "lexer.hh"
 #include <fstream>
 #include <getopt.h>
-#include "lexer.hh"
+#include <iostream>
+#include <string>
 
 #include "y.tab.h"
 
@@ -16,7 +16,7 @@ struct flags_t {
 
     bool sa_scan = false;
     bool sa_parse = false;
-    
+
     bool demo = false;
 };
 
@@ -31,8 +31,8 @@ class Compiler {
 
     Lexer lexer;
 
-public:
-    Compiler(int, char*[]);
+  public:
+    Compiler(int, char *[]);
     int run();
     int scan();
     int parse();

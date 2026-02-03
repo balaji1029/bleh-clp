@@ -11,10 +11,10 @@ debug: sclp
 sclp: main.o compiler.o y.tab.o lex.yy.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-main.o: main.cpp lexer.hh y.tab.h
+main.o: main.cc lexer.hh y.tab.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-compiler.o: compiler.cpp compiler.hh lexer.hh y.tab.h
+compiler.o: compiler.cc compiler.hh lexer.hh y.tab.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 y.tab.o: y.tab.cc lexer.hh y.tab.h
