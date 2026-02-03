@@ -76,6 +76,11 @@
 %token INTEGER_NUMBER
 %token STRING_CONSTANT                                                                
 
+%right QUESTION_MARK COLON
+%left OR
+%left AND
+%right NOT
+%nonassoc GT LT GE LE NE EQ
 %left PLUS MINUS
 %left MULT DIV
 %right UMINUS
