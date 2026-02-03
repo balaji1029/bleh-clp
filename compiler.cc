@@ -1,31 +1,29 @@
 #include "compiler.hh"
 
-Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
+Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     int opt;
 
-    static struct option long_opts[] = {
-        {"show-tokens", no_argument, 0, 0},
-        {"sa-scan", no_argument, 0, 0},
-        {"demo", no_argument, 0, 'd'},
-        {0, 0, 0, 0}
-    };
+    static struct option long_opts[] = {{"show-tokens", no_argument, 0, 0},
+                                        {"sa-scan", no_argument, 0, 0},
+                                        {"demo", no_argument, 0, 'd'},
+                                        {0, 0, 0, 0}};
 
     int opt_idx = 0;
 
     while ((opt = getopt_long(argc, argv, "d", long_opts, &opt_idx)) != -1) {
         switch (opt) {
-            case 'd':
-                flags.demo = true;
-                break;
-            case 0:
-                if (std::string(long_opts[opt_idx].name) == "show-tokens")
-                    flags.show_tokens = true;
-                else if (std::string(long_opts[opt_idx].name) == "sa-scan")
-                    flags.sa_scan = true;
-                break;
-            default:
-                std::cerr << ERROR << std::endl;
-                exit(EXIT_FAILURE);
+        case 'd':
+            flags.demo = true;
+            break;
+        case 0:
+            if (std::string(long_opts[opt_idx].name) == "show-tokens")
+                flags.show_tokens = true;
+            else if (std::string(long_opts[opt_idx].name) == "sa-scan")
+                flags.sa_scan = true;
+            break;
+        default:
+            std::cerr << ERROR << std::endl;
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -44,7 +42,7 @@ Compiler::Compiler (int argc, char* argv[]) : lexer(&input_file) {
 
 int Compiler::run() {
     int status = 0;
-    
+
     if (!input_file.is_open()) {
         std::cerr << "File not open!! :(" << std::endl;
     }
@@ -53,7 +51,7 @@ int Compiler::run() {
         scan();
     else
         status = parse();
-    
+
     if (flags.show_tokens)
         output(lexer.token_output);
 
@@ -69,7 +67,8 @@ void Compiler::output(std::string s) {
 
 int Compiler::scan() {
     yy::parser::semantic_type yylval;
-    while (lexer.yylex(&yylval));
+    while (lexer.yylex(&yylval))
+        ;
     return 0;
 }
 
