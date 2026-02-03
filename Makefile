@@ -34,6 +34,7 @@ clean:
 	-rm -rf *.o
 	-rm -f lex.yy.*
 	-rm -f y.tab.*
+	-rm -f *.output
 	-rm -f *.log
 	-find . -type f -name "*.toks" -delete
 	
