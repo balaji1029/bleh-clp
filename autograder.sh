@@ -2,12 +2,12 @@
 DIR="example-programs"
 
 find "$DIR" -type f -name "*.c" | while read -r file; do
-    # echo "Processing $file"
+    echo "Processing $file"
 
     toks_file="${file}.toks"
     a1_toks_file="${file}.A1.toks"
 
-    reference-implementations/A1-sclp "$file" --show-tokens 2>/dev/null
+    reference-implementations/A2-sclp "$file" --show-tokens --sa-parse 2>/dev/null
     a1_rc=$?
 
     if [[ ! -f "$toks_file" ]]; then
