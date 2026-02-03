@@ -2,7 +2,8 @@ reference-implementations/
 sclp
 lexer
 lex.yy.*
-parser.tab.*
+y.tab.*
+*.output
 **/*.toks
 *.o
 .gdb_history

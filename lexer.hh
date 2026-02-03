@@ -4,7 +4,7 @@
 #include <FlexLexer.h>
 #endif
 
-#include "parser.tab.hh"
+#include "y.tab.h"
 #include <fstream>
 
 class Lexer : public yyFlexLexer {
