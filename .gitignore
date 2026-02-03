@@ -4,6 +4,7 @@ lexer
 lex.yy.*
 y.tab.*
 *.output
-**/*.toks
 *.o
+**/*.ast
+**/*.toks
 .gdb_history
