@@ -4,7 +4,7 @@
 %option yyclass="Lexer"
 %{
 	#include <string>
-	#include "parser.tab.hh"
+	#include "y.tab.h"
 	#include "lexer.hh"
 
 	#undef YY_DECL
