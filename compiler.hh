@@ -12,7 +12,11 @@
 
 struct flags_t {
     bool show_tokens = false;
+    bool show_ast = false;
+
     bool sa_scan = false;
+    bool sa_parse = false;
+    
     bool demo = false;
 };
 

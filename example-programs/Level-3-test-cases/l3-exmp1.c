@@ -1,4 +1,6 @@
-int main()
+int global;
+
+void main()
 {
     int num1,num2,greater;
     read num1;

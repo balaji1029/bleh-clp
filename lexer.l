@@ -83,13 +83,11 @@ while	{
 
 "?"		{
 	display_token_info("QUESTION_MARK", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::QUESTION_MARK;
 }
 
 ":"		{
 	display_token_info("COLON", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::COLON;
 }
 
@@ -101,55 +99,46 @@ while	{
 
 ">"	{
 	display_token_info("GREATER_THAN", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::GT;
 }
 
 "<"	{
 	display_token_info("LESS_THAN", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::LT;
 }
 
 ">="	{
 	display_token_info("GREATER_THAN_EQUAL", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::GE;
 }
 
 "<="	{
 	display_token_info("LESS_THAN_EQUAL", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::LE;
 }
 
 "!="	{
 	display_token_info("NOT_EQUAL", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::NE;
 }
 
 "=="	{
 	display_token_info("EQUAL", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::EQ;
 }
 
 "&&"	{
 	display_token_info("AND", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::AND;
 }
 
 "||"	{
 	display_token_info("OR", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::OR;
 }
 
 "!"	{
 	display_token_info("NOT", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::NOT;
 }
 
