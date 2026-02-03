@@ -200,8 +200,22 @@ expression
     | expression DIV expression
     | MINUS expression      %prec UMINUS
     | LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET
+    | expression QUESTION_MARK expression COLON expression
+    | expression AND expression
+    | expression OR expression
+    | NOT expression
+    | rel_expression
     | variable_as_operand
     | constant_as_operand
+    ;
+
+rel_expression
+    : expression GT expression
+    | expression LT expression
+    | expression GE expression
+    | expression LE expression
+    | expression NE expression
+    | expression EQ expression
     ;
 
 variable_as_operand
