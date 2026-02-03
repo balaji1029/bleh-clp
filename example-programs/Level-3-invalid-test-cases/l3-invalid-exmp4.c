@@ -1,4 +1,6 @@
-void main()
+int main(int x);
+
+int main(int x)
 {
 	int a,b,c,d,e;
     a = 10;
