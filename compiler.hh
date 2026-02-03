@@ -5,6 +5,7 @@
 #include <fstream>
 #include <getopt.h>
 #include "lexer.hh"
+
 #include "parser.tab.hh"
 
 #define ERROR "Usage: A1-sclp [OPTION...] [FILE]\nTry `A1-sclp --help' or `A1-sclp --usage' for more information."
