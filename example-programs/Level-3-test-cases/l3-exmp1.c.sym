@@ -1,0 +1,21 @@
+
+Global Declarations:
+   Name: global_<int> Entity Type: VAR (No offset assigned yet)
+
+**PROCEDURE: main, Return Type:<void>
+   Formal Parameters
+   Local Declarartions
+   Name: num1_<int> Entity Type: VAR (No offset assigned yet)
+   Name: num2_<int> Entity Type: VAR (No offset assigned yet)
+   Name: greater_<int> Entity Type: VAR (No offset assigned yet)
+
+Global Declarations:
+   Name: global_<int> Entity Type: VAR Start Offset: -4 End Offset: 0
+
+**PROCEDURE: main, Return Type:<void>
+   Formal Parameters
+   Local Declarartions
+   Name: num1_<int> Entity Type: VAR Start Offset: -4 End Offset: 0
+   Name: num2_<int> Entity Type: VAR Start Offset: -8 End Offset: -4
+   Name: greater_<int> Entity Type: VAR Start Offset: -12 End Offset: -8
+   Name: stemp0<int> Entity Type: VAR Start Offset: -16 End Offset: -12

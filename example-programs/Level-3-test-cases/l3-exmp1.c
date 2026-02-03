@@ -1,4 +1,5 @@
 int global;
+void main();
 
 void main()
 {
