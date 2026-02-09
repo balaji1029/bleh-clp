@@ -4,11 +4,15 @@
 #include <string>
 #include <vector>
 
-enum class Type { INT, BOOL, FLOAT, STRING, VOID };
+enum class Type { 
+    INT, BOOL, FLOAT, STRING, VOID, ASIAN,
+};
+
+std::string get_type_str(Type);
 
 enum class EntityType { VAR, FUNC, TEMP };
 
-class SymTabParam {
+class SymTabEntry {
     Type a;
     std::string name;
     bool offset_set;
@@ -17,12 +21,16 @@ class SymTabParam {
     EntityType entity_type;
 
   public:
-    SymTabParam(Type a, std::string name)
-        : a{a}, name{name}, offset_set{false}, offset{}, size{}, entity_type{EntityType::VAR} {}
+
+    SymTabEntry(Type a, std::string name);
+
+    std::string get_name();
+    Type get_type();
+    
 };
 
 class ProcSymbolTable {
-    std::vector<SymTabParam> params;
+    std::vector<SymTabEntry> params;
 };
 
 class GlobalSymbolTable {
