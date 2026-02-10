@@ -81,6 +81,9 @@ int Compiler::parse() {
     yy::parser parser(lexer, sym_tab, root_ast);
 
     status = parser.parse();
-    std::cout << root_ast << std::endl;
+    std::string level = "";
+    // std::cout << root_ast << std::endl;
+    root_ast->print(std::cout, level);
+
     return status;
 }

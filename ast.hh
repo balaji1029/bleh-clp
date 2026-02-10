@@ -13,7 +13,7 @@ enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
 
 class Ast {
   public:
-    void print(std::ostream &, std::string &);
+    virtual ~Ast() = default;
 };
 
 class Expression_Ast : public Ast {
@@ -21,10 +21,16 @@ class Expression_Ast : public Ast {
     Type type;
 
   public:
-    void print(std::ostream &, std::string &);
+    virtual void print(std::ostream &, std::string &) const = 0;
+    Type get_type() {
+      return type;
+    }
 };
 
-class Base_Expr_Ast : public Expression_Ast {};
+class Base_Expr_Ast : public Expression_Ast {
+  public:
+    virtual void print(std::ostream &, std::string &) const = 0;
+};
 
 class Name_Expr_Ast : public Base_Expr_Ast {
     std::shared_ptr<SymTabEntry> name;
@@ -41,9 +47,7 @@ template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
 
   public:
     Number_Expr_Ast(Type type, T value) : type(type), value(value) {}
-    void print(std::ostream &os, std::string &level) {
-        // os << "Name : " << name->get_name() << "<" << get_type_str(name->get_type()) << ">";
-    }
+    void print(std::ostream &os, std::string &level) const { os << "Num : " << value << "<" << get_type_str(type) << ">"; }
 };
 
 class String_Expr_Ast : public Base_Expr_Ast {
@@ -52,7 +56,7 @@ class String_Expr_Ast : public Base_Expr_Ast {
 
   public:
     String_Expr_Ast(const std::string &);
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &) const;
 };
 
 // ------------------------------ BINARY ------------------------------
@@ -105,7 +109,10 @@ class Relational_Expr_Ast : public Binary_Expr_Ast {
 
 // ------------------------------ TERNARY ------------------------------
 
-class Ternary_Expr_Ast : public Expression_Ast {};
+class Ternary_Expr_Ast : public Expression_Ast {
+  public:
+    virtual void print(std::ostream &, std::string &) const = 0;
+};
 
 class Conditional_Expr_Ast : public Ternary_Expr_Ast {
     std::shared_ptr<Expression_Ast> condition;
@@ -115,27 +122,32 @@ class Conditional_Expr_Ast : public Ternary_Expr_Ast {
   public:
     Conditional_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>,
                          std::shared_ptr<Expression_Ast>);
+    void print(std::ostream &, std::string &) const;
 };
 
 // ------------------------------ UNARY ------------------------------
 
-class Unary_Expr_Ast : public Expression_Ast {};
+// class Unary_Expr_Ast : public Expression_Ast {};
 
-class UMinus_Ast : public Unary_Expr_Ast {};
+// class UMinus_Ast : public Unary_Expr_Ast {};
 
-class UMinus_Expr_Ast : public Unary_Expr_Ast {};
+// class UMinus_Expr_Ast : public Unary_Expr_Ast {};
 
 // ------------------------------ STATEMENT ------------------------------
 
-class Statement_Ast : public Ast {};
+class Statement_Ast : public Ast {
+  public:
+    virtual void print(std::ostream &os, std::string &level) const = 0;
+};
 
 class Assignment_Stmt_Ast : public Statement_Ast {
     const std::shared_ptr<Name_Expr_Ast> lhs;
     const std::shared_ptr<Expression_Ast> rhs;
 
+
   public:
     Assignment_Stmt_Ast(std::shared_ptr<Name_Expr_Ast>, std::shared_ptr<Expression_Ast>);
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &) const;
 };
 
 class Read_Stmt_Ast : public Statement_Ast {
@@ -143,7 +155,7 @@ class Read_Stmt_Ast : public Statement_Ast {
 
   public:
     Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast>);
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &) const;
 };
 
 class Sequence_Stmt_Ast : public Statement_Ast {
@@ -152,7 +164,7 @@ class Sequence_Stmt_Ast : public Statement_Ast {
   public:
     Sequence_Stmt_Ast();
     void add_child(std::shared_ptr<Statement_Ast>);
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &) const;
 };
 
 class Write_Stmt_Ast : public Statement_Ast {
@@ -160,7 +172,7 @@ class Write_Stmt_Ast : public Statement_Ast {
 
   public:
     Write_Stmt_Ast(std::shared_ptr<Expression_Ast>);
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &) const;
 };
 
 class Func_Ast : public Ast {
@@ -169,13 +181,14 @@ class Func_Ast : public Ast {
 
   public:
     Func_Ast(std::shared_ptr<ProcSymbolTable>, std::shared_ptr<Sequence_Stmt_Ast>);
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &) const;
 };
 
 class Root_Ast : public Ast {
     std::vector<std::shared_ptr<Func_Ast>> funcs;
 
   public:
-    const std::vector<std::shared_ptr<Func_Ast>>& get_funcs();
+    const std::vector<std::shared_ptr<Func_Ast>> &get_funcs() const;
     void add_func(std::shared_ptr<Func_Ast>);
+    void print(std::ostream &os, std::string &level) const;
 };

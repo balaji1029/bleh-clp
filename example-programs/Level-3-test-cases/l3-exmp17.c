@@ -12,7 +12,7 @@ void main()
 
     a = -b;
 
-    d = a+a > b-b;
+    c = a+a + b-b;
     e = b*b > a/a;
 
     d = !(a > b);

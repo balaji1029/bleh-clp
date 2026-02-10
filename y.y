@@ -159,7 +159,8 @@ func_def_list
 func_header
     : named_type NAME {
         assert($1 == Type::VOID);
-        assert($2 == "main");
+        assert($2 == "main_");
+        if ($2 == "main_") $2.pop_back();
         $$ = std::make_pair($1, $2);
     }
     ;
@@ -265,7 +266,7 @@ named_type
 
 assignment_statement
     : variable_as_operand ASSIGN expression SEMICOLON {
-        $$ = std::make_shared<Assignment_Stmt_Ast>($1, $3);
+        $$ = std::make_shared<Assignment_Stmt_Ast>(std::move($1), std::move($3));
     }
     ;
 
