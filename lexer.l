@@ -215,7 +215,9 @@ print   {
 
 [0-9]+   {
 	display_token_info("INT_NUM", YYText(), yylineno);
-	yylval->emplace<std::string>(YYText(), YYLeng());
+	int val = atoi(YYText());
+	std::string val_str = std::to_string(val);
+	yylval->emplace<std::string>(val_str.c_str(), YYLeng());
 	return yy::parser::token::token_kind_type::INTEGER_NUMBER;
 }
 
