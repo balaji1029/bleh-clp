@@ -395,16 +395,12 @@ rel_expression
 constant_as_operand
     : INTEGER_NUMBER {
         if (!root_ast->get_sa_parse())
-            $$ = std::make_shared<Number_Expr_Ast<int>>(Type::INT, std::stoull($1));
+            $$ = std::make_shared<Number_Expr_Ast<int>>(Type::INT, std::atoi($1.c_str()));
     }
     | DOUBLE_NUMBER {
         if (!root_ast->get_sa_parse()) {
             double num;
-            try {
-                num = std::stod($1);
-            } catch (const std::out_of_range&) {
-                num = std::numeric_limits<double>::infinity();
-            }
+            num = strtod($1.c_str(), nullptr);
             $$ = std::make_shared<Number_Expr_Ast<double>>(Type::FLOAT, num);
         }
     }

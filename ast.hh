@@ -55,11 +55,6 @@ template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
     Number_Expr_Ast(Type type, T value) : value(value) { this->type = type; }
     void print(std::ostream &os, std::string &level) const {
         os << std::fixed << std::setprecision(2);
-        if (std::is_same_v<T, double>)
-            if (std::isinf(value)) {
-                os << "Num : " << "inf" << "<" << get_type_str(type) << ">";
-                return;
-            }
         os << "Num : " << value << "<" << get_type_str(type) << ">";
     }
 };
