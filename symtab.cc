@@ -24,14 +24,18 @@ std::string get_type_str(Type type) {
     return binary_expr_type;
 }
 
-void ProcSymbolTable::add_param(Type type, const std::string &name) { params.emplace_back(type, name); }
+void ProcSymbolTable::add_param(Type type, const std::string &name) {
+    params.push_back(std::make_shared<SymTabEntry>(type, name));
+}
 
-void ProcSymbolTable::add_local(Type type, const std::string &name) { locals.emplace_back(type, name); }
+void ProcSymbolTable::add_local(Type type, const std::string &name) {
+    locals.push_back(std::make_shared<SymTabEntry>(type, name));
+}
 
 ProcSymbolTable::ProcSymbolTable(Type return_type, const std::string &name) : name(name), return_type(return_type) {}
 
 void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &name) {
-    procs.emplace_back(return_type, name);
+    procs.push_back(std::make_shared<ProcSymbolTable>(return_type, name));
     curr_symtab = procs.back();
 }
 
@@ -50,7 +54,7 @@ void GlobalSymbolTable::add_var(Type type, const std::string &name) {
     if (this->curr_symtab) {
         this->curr_symtab->add_local(type, name);
     } else {
-        globals.emplace_back(type, name);
+        globals.push_back(std::make_shared<SymTabEntry>(type, name));
     }
 }
 
@@ -62,7 +66,7 @@ std::optional<std::shared_ptr<SymTabEntry>> ProcSymbolTable::find_var(const std:
     if (it != params.end())
         return *it;
     auto it2 = std::find_if(locals.begin(), locals.end(),
-                           [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
+                            [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
     if (it2 != locals.end())
         return *it2;
     return std::nullopt;
