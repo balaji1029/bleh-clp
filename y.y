@@ -4,6 +4,8 @@
 %parse-param {Lexer& lexer}
 %{
     #include "lexer.hh"
+    #include "symtab.hh"
+    #include "ast.hh"
     #include <string>
     #include <iostream>
 
@@ -24,16 +26,24 @@
     }
 }
 
+%union {
+    Type type;
+    Boolean_Expr_Type bool_type;
+    Arith_Expr_Type arith_type;
+    Relational_Expr_Type rel_type;
+    std::shared_ptr<Ast>;
+}
+
 %token DO
 %token WHILE
 %token IF
 %token ELSE
 
-%token INTEGER
-%token FLOAT
-%token BOOL
-%token STRING
-%token VOID
+%token <type> INTEGER
+%token <type> FLOAT
+%token <type> BOOL
+%token <type> STRING
+%token <type> VOID
 
 %token WRITE
 %token READ
@@ -43,21 +53,21 @@
 %token RETURN
 %token ASSIGN
 
-%token AND
-%token OR
-%token NOT
+%token <bool_type> AND
+%token <bool_type> OR
+%token <bool_type> NOT
 
-%token GT
-%token LT
-%token GE
-%token LE
-%token NE
-%token EQ
+%token <rel_type> GT
+%token <rel_type> LT
+%token <rel_type> GE
+%token <rel_type> LE
+%token <rel_type> NE
+%token <rel_type> EQ
 
-%token PLUS
-%token MINUS
-%token MULT
-%token DIV
+%token <arith_type> PLUS
+%token <arith_type> MINUS
+%token <arith_type> MULT
+%token <arith_type> DIV
 %token ADDRESSOF
 
 %token LEFT_CURLY_BRACKET
@@ -84,6 +94,8 @@
 %left PLUS MINUS
 %left MULT DIV
 %right UMINUS
+
+%type <Ast> 
 
 %%
 
@@ -195,7 +207,7 @@ print_statement
     ;
 
 read_statement
-    : READ variable_name SEMICOLON
+    : READ NAME SEMICOLON
     ;
 
 expression
@@ -210,7 +222,7 @@ expression
     | expression OR expression
     | NOT expression
     | rel_expression
-    | variable_as_operand
+    | NAME
     | constant_as_operand
     ;
 
@@ -221,14 +233,6 @@ rel_expression
     | expression LE expression
     | expression NE expression
     | expression EQ expression
-    ;
-
-variable_as_operand
-    : variable_name
-    ;
-
-variable_name
-    : NAME
     ;
 
 constant_as_operand

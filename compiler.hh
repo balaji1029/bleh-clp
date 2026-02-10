@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include <iostream>
 #include <string>
+#include "symtab.hh"
 
 #include "y.tab.h"
 
@@ -28,6 +29,7 @@ class Compiler {
 
     std::ifstream input_file;
     std::ofstream output_token_file;
+    GlobalSymbolTable sym_tab;
 
     Lexer lexer;
 
