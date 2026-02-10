@@ -7,8 +7,4 @@ void main(){
 	
 	b = 20.0;
 	print b;
-
-
-
-
 }

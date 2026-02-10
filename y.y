@@ -144,10 +144,9 @@ global_decl_statement_list
         }
 
 func_decl
-    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON {
+    : func_header SEMICOLON {
         error("main does not take arguments");
     }
-    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON
     ;
 
 func_def_list
@@ -157,19 +156,21 @@ func_def_list
     ;
 
 func_header
-    : named_type NAME {
+    : named_type NAME LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET {
         assert($1 == Type::VOID);
         assert($2 == "main_");
         if ($2 == "main_") $2.pop_back();
         $$ = std::make_pair($1, $2);
+        symtab->new_proc_symtab($1, $2);
+        auto proc_symtab = symtab->get_curr_proc_symtab();
+    }
+    | named_type NAME LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET {
+        
     }
     ;
 
 func_def
-    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
-        error("main does not take arguments");
-    }
-    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
+    : func_header LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
         symtab->new_proc_symtab($1.first, $1.second);
         auto proc_symtab = symtab->get_curr_proc_symtab();
         $$ = std::make_shared<Func_Ast>(proc_symtab, $6);
@@ -227,7 +228,11 @@ var_decl_stmt_list
 var_decl_stmt
     : named_type var_decl_item_list SEMICOLON {
         for (auto item : $2) {
-            symtab->add_var($1, item);
+            auto var_ptr = symtab->find_local(item);
+            if (var_ptr)
+                error(std::string("Var ") + item + " already declared");
+            else
+                symtab->add_var($1, item);
         }
     }
     ;

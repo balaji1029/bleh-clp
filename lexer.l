@@ -11,7 +11,9 @@
 	#define YY_DECL int Lexer::yylex(yy::parser::semantic_type* yylval)
 
 	inline void Lexer::display_token_info(const char* a, const char* yytext, const int& lineno) {
+		// std::cout << yytext;
 		token_output += std::string("\tToken Name: ") + a + " \tLexeme: " + yytext + " \t Lineno: " + std::to_string(lineno) + "\n";
+		// std::cout << lineno << std::endl;
 	}
 
 	int yylineno = 1;

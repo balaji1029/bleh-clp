@@ -27,9 +27,11 @@ class Compiler {
 
     std::string input_filename;
     std::string output_token_filename;
+    std::string output_ast_filename;
 
     std::ifstream input_file;
     std::ofstream output_token_file;
+    std::ofstream output_ast_file;
     std::shared_ptr<GlobalSymbolTable> sym_tab;
     std::shared_ptr<Root_Ast> root_ast;
 

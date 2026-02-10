@@ -256,9 +256,13 @@ Conditional_Expr_Ast::Conditional_Expr_Ast(std::shared_ptr<Expression_Ast> condi
 }
 
 Assignment_Stmt_Ast::Assignment_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> lhs, std::shared_ptr<Expression_Ast> rhs)
-    : lhs(lhs), rhs(rhs) {}
+    : lhs(lhs), rhs(rhs) {
+        assert(lhs->get_type() == rhs->get_type());
+    }
 
-Read_Stmt_Ast::Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> name_expr_ast) : child(name_expr_ast) {}
+Read_Stmt_Ast::Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> name_expr_ast) : child(name_expr_ast) {
+    assert(name_expr_ast->get_type() == Type::INT || name_expr_ast->get_type() == Type::FLOAT);
+}
 
 void Sequence_Stmt_Ast::add_child(std::shared_ptr<Statement_Ast> stmt) { children.push_back(stmt); }
 
