@@ -32,6 +32,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
         exit(EXIT_FAILURE);
     }
 
+    sym_tab = GlobalSymbolTable()
+
     input_filename = std::string(argv[optind]);
     output_token_filename = input_filename + ".toks";
 
@@ -78,5 +80,6 @@ int Compiler::parse() {
     yy::parser parser(lexer, sym_tab, root_ast);
 
     status = parser.parse();
+    std::cout << root_ast << std::endl;
     return status;
 }

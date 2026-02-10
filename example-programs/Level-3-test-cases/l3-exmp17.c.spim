@@ -1,0 +1,115 @@
+
+	.data
+a:	.word 0
+b:	.word 0
+c:	.word 0
+_str_0:	.asciiz "Enter value of a: "
+_str_1:	.asciiz "Enter value of b: "
+_str_2:	.asciiz "input"
+_str_3:	.asciiz "a"
+_str_4:	.asciiz "b"
+_str_5:	.asciiz "none"
+	.text 			# The .text assembler directive indicates
+	.globl main		# The following is the code (as opposed to data)
+main:                    # .globl makes main know to the outside of the program.
+# Prologue begins
+	sw $ra, 0($sp)          # Save the return address
+	sw $fp, -4($sp)         # Save the frame pointer
+	sub $fp, $sp, 4         # Update the frame pointer
+	sub $sp, $sp, 32        # Make space for the locals
+# Prologue ends
+
+	li $v0, 4               # Loading 4 in v0 to indicate syscall to print string value
+	la $a0, _str_0          # String = "Enter value of a: "
+	syscall
+	li $v0, 5               # Loading 5 in v0 to indicate syscall to read integer value
+	syscall
+	sw $v0, a              # Moving the read value from register v0
+	li $v0, 4               # Loading 4 in v0 to indicate syscall to print string value
+	la $a0, _str_1          # String = "Enter value of b: "
+	syscall
+	li $v0, 5               # Loading 5 in v0 to indicate syscall to read integer value
+	syscall
+	sw $v0, b              # Moving the read value from register v0
+	lw $v0, b              # Source:b
+	neg $t0, $v0            # Result: $t0, Opd1: $v0
+	sw $t0, a              # Dest: $t0
+	lw $v0, a              # Source:a
+	lw $t1, a              # Source:a
+	add $t0, $v0, $t1       # Result: $t0, Opd1: $v0, Opd2:$t1
+	lw $v0, b              # Source:b
+	lw $t2, b              # Source:b
+	sub $t1, $v0, $t2       # Result: $t1, Opd1: $v0, Opd2:$t2
+	sgt $v0, $t0, $t1       # Comparing $t0 and $t1, Result in $v0
+	sw $v0, -4($fp)         # Dest: $v0
+	lw $v0, b              # Source:b
+	lw $t1, b              # Source:b
+	mul $t0, $v0, $t1       # Result: $t0, Opd1: $v0, Opd2:$t1
+	lw $v0, a              # Source:a
+	lw $t2, a              # Source:a
+	div $t1, $v0, $t2       # Result: $t1, Opd1: $v0, Opd2:$t2
+	sgt $v0, $t0, $t1       # Comparing $t0 and $t1, Result in $v0
+	sw $v0, -8($fp)         # Dest: $v0
+	lw $v0, a              # Source:a
+	lw $t1, b              # Source:b
+	sgt $t0, $v0, $t1       # Comparing $v0 and $t1, Result in $t0
+	xori $v0, $t0, 1        # Result: $v0, Opd1: $t0
+	sw $v0, -4($fp)         # Dest: $v0
+	lw $v0, a              # Source:a
+	lw $t1, b              # Source:b
+	add $t0, $v0, $t1       # Result: $t0, Opd1: $v0, Opd2:$t1
+	lw $t1, c              # Source:c
+	add $v0, $t0, $t1       # Result: $v0, Opd1: $t0, Opd2:$t1
+	sw $v0, c              # Dest: $v0
+	lw $v0, a              # Source:a
+	lw $t1, b              # Source:b
+	sge $t0, $v0, $t1       # Comparing $v0 and $t1, Result in $t0
+	sw $t0, -4($fp)         # Dest: $t0
+	la $v0, _str_2          # String = "input"
+	sw $v0, -12($fp)        # Dest: $v0
+	lw $v0, -4($fp)         # Source:d_
+	xori $t0, $v0, 1        # Result: $t0, Opd1: $v0
+	bgtz $t0, Label0
+	li $v0, 3               # Source:3
+	sw $v0, -16($fp)        # Dest: $v0
+	j Label1
+Label0:
+	li $v0, 2               # Source:2
+	sw $v0, -16($fp)        # Dest: $v0
+Label1:
+	lw $v0, -16($fp)        # Source:stemp0
+	sw $v0, a              # Dest: $v0
+	lw $v0, -4($fp)         # Source:d_
+	lw $t1, -8($fp)         # Source:e_
+	and $t0, $v0, $t1       # Result: $t0, Opd1: $v0, Opd2:$t1
+	xori $v0, $t0, 1        # Result: $v0, Opd1: $t0
+	bgtz $v0, Label2
+	la $v0, _str_3          # String = "a"
+	sw $v0, -20($fp)        # Dest: $v0
+	j Label3
+Label2:
+	lw $v0, -8($fp)         # Source:e_
+	xori $t0, $v0, 1        # Result: $t0, Opd1: $v0
+	bgtz $t0, Label4
+	la $v0, _str_4          # String = "b"
+	sw $v0, -24($fp)        # Dest: $v0
+	j Label5
+Label4:
+	la $v0, _str_5          # String = "none"
+	sw $v0, -24($fp)        # Dest: $v0
+Label5:
+	lw $v0, -24($fp)        # Source:stemp2
+	sw $v0, -20($fp)        # Dest: $v0
+Label3:
+	lw $v0, -20($fp)        # Source:stemp1
+	sw $v0, -12($fp)        # Dest: $v0
+	li $v0, 4               # Loading 4 in v0 to indicate syscall to print string value
+	lw $a0, -12($fp)        # Moving the value to be printed into register a0
+	syscall
+epilogue_main:
+	add $sp, $sp, 32        # Increment stack pointer for local variables
+	lw $fp, -4($sp)         # Set $fp to $sp-4
+	lw $ra, 0($sp)          # Save ra
+	jr $ra                  # Jump back to the called procedure
+# Epilogue Ends
+

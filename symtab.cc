@@ -24,6 +24,12 @@ std::string get_type_str(Type type) {
     return binary_expr_type;
 }
 
+SymTabEntry::SymTabEntry(Type type, const std::string &name) : type(type), name(name) {}
+
+std::string SymTabEntry::get_name() { return name; }
+
+Type SymTabEntry::get_type() { return type; }
+
 void ProcSymbolTable::add_param(Type type, const std::string &name) {
     params.push_back(std::make_shared<SymTabEntry>(type, name));
 }
