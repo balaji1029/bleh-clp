@@ -243,7 +243,9 @@ print   {
 
 [A-Za-z_][A-Za-z0-9_]* {
 	display_token_info("NAME", YYText(), yylineno);
-	yylval->emplace<std::string>(YYText(), YYLeng());
+	std::string val = std::string(YYText(), YYLeng());
+	val += "_";
+	yylval->emplace<std::string>(val);
 	return yy::parser::token::token_kind_type::NAME;
 }
 

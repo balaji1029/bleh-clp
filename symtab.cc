@@ -38,6 +38,14 @@ void ProcSymbolTable::add_local(Type type, const std::string &name) {
     locals.push_back(std::make_shared<SymTabEntry>(type, name));
 }
 
+const std::string& ProcSymbolTable::get_name() {
+    return name;
+}
+
+Type ProcSymbolTable::get_return_type() {
+    return return_type;
+}
+
 ProcSymbolTable::ProcSymbolTable(Type return_type, const std::string &name) : name(name), return_type(return_type) {}
 
 void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &name) {

@@ -5,7 +5,7 @@ TARGET = sclp
 all: sclp
 
 .PHONY: debug
-debug: CXXFLAGS = -std=c++20 -g
+debug: CXXFLAGS = -std=c++20 -g -fsanitize=address
 debug: sclp
 
 sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o
@@ -29,7 +29,7 @@ lex.yy.cc: lexer.l
 y.tab.h y.tab.cc: y.y
 	bison --language=c++ --header=y.tab.h -dv y.y
 
-ast.o: ast.cc ast.hh
+ast.o: ast.cc ast.hh symtab.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 symtab.o: symtab.cc symtab.hh
