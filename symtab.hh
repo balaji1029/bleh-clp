@@ -41,7 +41,7 @@ class ProcSymbolTable {
     ProcSymbolTable(Type, const std::string &);
     void add_param(Type type, const std::string &);
     void add_local(Type type, const std::string &);
-    const std::string& get_name();
+    const std::string &get_name();
     Type get_return_type();
     std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string &);
 };
@@ -58,4 +58,6 @@ class GlobalSymbolTable {
 
     std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();
     std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string &);
+    std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
+    std::optional<std::shared_ptr<ProcSymbolTable>> find_proc(const std::string &);
 };

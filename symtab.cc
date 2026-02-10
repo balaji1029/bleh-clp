@@ -1,4 +1,5 @@
 #include "symtab.hh"
+#include <iostream>
 
 std::string get_type_str(Type type) {
     std::string binary_expr_type;
@@ -38,13 +39,9 @@ void ProcSymbolTable::add_local(Type type, const std::string &name) {
     locals.push_back(std::make_shared<SymTabEntry>(type, name));
 }
 
-const std::string& ProcSymbolTable::get_name() {
-    return name;
-}
+const std::string &ProcSymbolTable::get_name() { return name; }
 
-Type ProcSymbolTable::get_return_type() {
-    return return_type;
-}
+Type ProcSymbolTable::get_return_type() { return return_type; }
 
 ProcSymbolTable::ProcSymbolTable(Type return_type, const std::string &name) : name(name), return_type(return_type) {}
 
@@ -97,4 +94,25 @@ std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_var(const st
     if (it != globals.end())
         return *it;
     return std::nullopt;
+}
+
+std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_local(const std::string &name) {
+    std::cout << curr_symtab << std::endl;
+    if (curr_symtab) {
+        auto curr_var_ptr = curr_symtab->find_var(name);
+        if (curr_var_ptr)
+            return curr_var_ptr;
+    } else {
+        std::cout << "I'm here" << std::endl;
+        auto it = std::find_if(globals.begin(), globals.end(),
+                               [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
+        if (it != globals.end())
+            return *it;
+    }
+    return std::nullopt;
+}
+
+std::optional<std::shared_ptr<ProcSymbolTable>> GlobalSymbolTable::find_proc(const std::string &proc_name) {
+    auto it = std::find_if(procs.begin(), procs.end(),
+                           [&](std::shared_ptr<ProcSymbolTable> proc) { return proc->get_name() == proc_name; });
 }

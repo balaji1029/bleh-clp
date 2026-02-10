@@ -5,6 +5,7 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
 
     static struct option long_opts[] = {{"show-tokens", no_argument, 0, 0},
                                         {"sa-scan", no_argument, 0, 0},
+                                        {"show-ast", no_argument, 0, 0},
                                         {"demo", no_argument, 0, 'd'},
                                         {0, 0, 0, 0}};
 
@@ -20,6 +21,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                 flags.show_tokens = true;
             else if (std::string(long_opts[opt_idx].name) == "sa-scan")
                 flags.sa_scan = true;
+            else if (std::string(long_opts[opt_idx].name) == "show-ast")
+                flags.show_ast = true;
             break;
         default:
             std::cerr << ERROR << std::endl;
@@ -37,10 +40,14 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
 
     input_filename = std::string(argv[optind]);
     output_token_filename = input_filename + ".toks";
+    output_ast_filename = input_filename + ".ast";
 
     input_file.open(input_filename);
     if (flags.show_tokens && !flags.demo)
         output_token_file.open(output_token_filename);
+    
+    if (flags.show_ast && !flags.demo)
+        output_ast_file.open(output_ast_filename);
 }
 
 int Compiler::run() {
@@ -83,7 +90,14 @@ int Compiler::parse() {
     status = parser.parse();
     std::string level = "";
     // std::cout << root_ast << std::endl;
-    root_ast->print(std::cout, level);
+    if (flags.show_ast) {
+        if (flags.demo) {
+            root_ast->print(std::cout, level);
+        } else {
+            root_ast->print(output_ast_file, level);
+        }
+    }
+        // root_ast->print(std::cout, level);
 
     return status;
 }

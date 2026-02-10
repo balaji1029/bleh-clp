@@ -22,9 +22,7 @@ class Expression_Ast : public Ast {
 
   public:
     virtual void print(std::ostream &, std::string &) const = 0;
-    Type get_type() {
-      return type;
-    }
+    Type get_type() { return type; }
 };
 
 class Base_Expr_Ast : public Expression_Ast {
@@ -42,12 +40,15 @@ class Name_Expr_Ast : public Base_Expr_Ast {
 };
 
 template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
-    Type type;
-    T value;
-
+  
   public:
-    Number_Expr_Ast(Type type, T value) : type(type), value(value) {}
-    void print(std::ostream &os, std::string &level) const { os << "Num : " << value << "<" << get_type_str(type) << ">"; }
+    T value;
+    Number_Expr_Ast(Type type, T value) : value(value) {
+      this->type = type;
+    }
+    void print(std::ostream &os, std::string &level) const {
+        os << "Num : " << value << "<" << get_type_str(type) << ">";
+    }
 };
 
 class String_Expr_Ast : public Base_Expr_Ast {
@@ -125,14 +126,6 @@ class Conditional_Expr_Ast : public Ternary_Expr_Ast {
     void print(std::ostream &, std::string &) const;
 };
 
-// ------------------------------ UNARY ------------------------------
-
-// class Unary_Expr_Ast : public Expression_Ast {};
-
-// class UMinus_Ast : public Unary_Expr_Ast {};
-
-// class UMinus_Expr_Ast : public Unary_Expr_Ast {};
-
 // ------------------------------ STATEMENT ------------------------------
 
 class Statement_Ast : public Ast {
@@ -143,7 +136,6 @@ class Statement_Ast : public Ast {
 class Assignment_Stmt_Ast : public Statement_Ast {
     const std::shared_ptr<Name_Expr_Ast> lhs;
     const std::shared_ptr<Expression_Ast> rhs;
-
 
   public:
     Assignment_Stmt_Ast(std::shared_ptr<Name_Expr_Ast>, std::shared_ptr<Expression_Ast>);
