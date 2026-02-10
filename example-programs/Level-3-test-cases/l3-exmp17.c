@@ -10,6 +10,8 @@ void main()
     print "Enter value of b: ";
     read b;
 
+    a = -b;
+
     d = a+a > b-b;
     e = b*b > a/a;
 

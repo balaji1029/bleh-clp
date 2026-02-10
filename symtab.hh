@@ -3,10 +3,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <optional>
+#include <algorithm>
 
 #define SPACE '\t'
 
-enum class Type { INT, BOOL, FLOAT, STRING, VOID };
+enum class Type { INT, BOOL, FLOAT, STRING, VOID, ASIAN };
 
 const std::string& get_type_str(Type);
 
@@ -15,7 +17,7 @@ const Type get_type_enum(std::string);
 enum class EntityType { VAR, FUNC, TEMP };
 
 class SymTabEntry {
-    Type a;
+    Type type;
     std::string name;
     bool offset_set;
     int offset;
@@ -30,14 +32,27 @@ class SymTabEntry {
 };
 
 class ProcSymbolTable {
+    std::string name;
+    Type return_type;
     std::vector<std::shared_ptr<SymTabEntry>> params;
     std::vector<std::shared_ptr<SymTabEntry>> locals;
 
 public:
-    void add_param(std::string, std::string);
-    void add_local(std::string, std::string);
+    ProcSymbolTable(Type, const std::string&);
+    void add_param(Type type, const std::string&);
+    void add_local(Type type, const std::string&);
+    std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string&);
 };
 
 class GlobalSymbolTable {
+    std::shared_ptr<ProcSymbolTable> curr_symtab;
+    std::vector<std::shared_ptr<SymTabEntry>> globals;
     std::vector<std::shared_ptr<ProcSymbolTable>> procs;
+public:
+    void new_proc_symtab(Type, const std::string&);
+    void add_param(Type, const std::string&);
+    void add_var(Type, const std::string&);
+
+    std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();
+    std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string&);
 };
