@@ -10,7 +10,7 @@
 
 enum class Type { INT, BOOL, FLOAT, STRING, VOID, ASIAN };
 
-const std::string& get_type_str(Type);
+std::string get_type_str(Type);
 
 const Type get_type_enum(std::string);
 

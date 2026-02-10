@@ -75,7 +75,7 @@ int Compiler::scan() {
 int Compiler::parse() {
     int status = 0;
 
-    yy::parser parser(lexer);
+    yy::parser parser(lexer, sym_tab, root_ast);
 
     status = parser.parse();
     return status;

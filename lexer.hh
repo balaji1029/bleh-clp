@@ -1,10 +1,10 @@
 #pragma once
 
+#include "y.tab.h"
 #ifndef yyFlexLexer
 #include <FlexLexer.h>
 #endif
 
-#include "y.tab.h"
 #include <fstream>
 
 class Lexer : public yyFlexLexer {

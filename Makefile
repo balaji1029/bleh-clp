@@ -8,7 +8,7 @@ all: sclp
 debug: CXXFLAGS = -std=c++20 -g
 debug: sclp
 
-sclp: main.o compiler.o y.tab.o lex.yy.o
+sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 main.o: main.cc lexer.hh y.tab.h
@@ -28,6 +28,12 @@ lex.yy.cc: lexer.l
 
 y.tab.h y.tab.cc: y.y
 	bison --language=c++ --header=y.tab.h -dv y.y
+
+ast.o: ast.cc ast.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+symtab.o: symtab.cc symtab.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	-rm -f sclp
