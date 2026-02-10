@@ -10,7 +10,6 @@
     #include "symtab.hh"
     #include "ast.hh"
     #include <string>
-    #include <cassert>
     #include <iostream>
     #include <utility>
     #include <memory>
@@ -25,7 +24,6 @@
     #include "symtab.hh"
     #include "ast.hh"
     #include <string>
-    #include <cassert>
     #include <iostream>
     #include <utility>
     #include <memory>
@@ -144,9 +142,10 @@ global_decl_statement_list
         }
 
 func_decl
-    : func_header SEMICOLON {
-        error("main does not take arguments");
+    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON {
+        root_ast->semantic_check("main does not take arguments");
     }
+    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON
     ;
 
 func_def_list
@@ -156,24 +155,23 @@ func_def_list
     ;
 
 func_header
-    : named_type NAME LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET {
-        assert($1 == Type::VOID);
-        assert($2 == "main_");
+    : named_type NAME {
+        root_ast->semantic_check($2 == "main_", "func is not main");
+        root_ast->semantic_check($1 == Type::VOID, "main is not void");
         if ($2 == "main_") $2.pop_back();
         $$ = std::make_pair($1, $2);
-        symtab->new_proc_symtab($1, $2);
-        auto proc_symtab = symtab->get_curr_proc_symtab();
-    }
-    | named_type NAME LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET {
-        
     }
     ;
 
 func_def
-    : func_header LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
+    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
+        root_ast->semantic_check("main does not take arguments");
+    }
+    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET {
         symtab->new_proc_symtab($1.first, $1.second);
+    } optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
         auto proc_symtab = symtab->get_curr_proc_symtab();
-        $$ = std::make_shared<Func_Ast>(proc_symtab, $6);
+        $$ = std::make_shared<Func_Ast>(proc_symtab, $7);
     }
     ;
 
@@ -227,10 +225,11 @@ var_decl_stmt_list
 
 var_decl_stmt
     : named_type var_decl_item_list SEMICOLON {
+        root_ast->semantic_check($1 != Type::VOID, "Variale should not be type void");
         for (auto item : $2) {
             auto var_ptr = symtab->find_local(item);
             if (var_ptr)
-                error(std::string("Var ") + item + " already declared");
+                root_ast->semantic_check(std::string("Var ") + item + " already declared");
             else
                 symtab->add_var($1, item);
         }
@@ -368,6 +367,6 @@ variable_as_operand
         if (var_ptr)
             $$ = std::make_shared<Name_Expr_Ast>(var_ptr.value());
         else
-            error(std::string("Var ") + $1 + " doesn't exist");
+            root_ast->semantic_check(std::string("Var ") + $1 + " doesn't exist");
     }
     ;

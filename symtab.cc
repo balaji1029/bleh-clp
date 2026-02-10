@@ -97,22 +97,17 @@ std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_var(const st
 }
 
 std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_local(const std::string &name) {
-    std::cout << curr_symtab << std::endl;
+    // std::cout << curr_symtab << std::endl;
     if (curr_symtab) {
         auto curr_var_ptr = curr_symtab->find_var(name);
         if (curr_var_ptr)
             return curr_var_ptr;
     } else {
-        std::cout << "I'm here" << std::endl;
+        // std::cout << "I'm here" << std::endl;
         auto it = std::find_if(globals.begin(), globals.end(),
                                [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
         if (it != globals.end())
             return *it;
     }
     return std::nullopt;
-}
-
-std::optional<std::shared_ptr<ProcSymbolTable>> GlobalSymbolTable::find_proc(const std::string &proc_name) {
-    auto it = std::find_if(procs.begin(), procs.end(),
-                           [&](std::shared_ptr<ProcSymbolTable> proc) { return proc->get_name() == proc_name; });
 }
