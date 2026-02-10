@@ -12,8 +12,13 @@ enum class Arith_Expr_Type { PLUS, MINUS, MULT, DIV, UMINUS };
 enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
 
 class Ast {
+  protected:
+    static bool sa_parse;
+
   public:
     virtual ~Ast() = default;
+    void semantic_check(bool err, const std::string &err_msg);
+    void semantic_check(const std::string &err_msg);
 };
 
 class Expression_Ast : public Ast {
@@ -40,12 +45,10 @@ class Name_Expr_Ast : public Base_Expr_Ast {
 };
 
 template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
-  
+
   public:
     T value;
-    Number_Expr_Ast(Type type, T value) : value(value) {
-      this->type = type;
-    }
+    Number_Expr_Ast(Type type, T value) : value(value) { this->type = type; }
     void print(std::ostream &os, std::string &level) const {
         os << "Num : " << value << "<" << get_type_str(type) << ">";
     }
@@ -53,7 +56,6 @@ template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
 
 class String_Expr_Ast : public Base_Expr_Ast {
     std::string s;
-    Type type = Type::STRING;
 
   public:
     String_Expr_Ast(const std::string &);
@@ -180,6 +182,7 @@ class Root_Ast : public Ast {
     std::vector<std::shared_ptr<Func_Ast>> funcs;
 
   public:
+    Root_Ast(bool);
     const std::vector<std::shared_ptr<Func_Ast>> &get_funcs() const;
     void add_func(std::shared_ptr<Func_Ast>);
     void print(std::ostream &os, std::string &level) const;
