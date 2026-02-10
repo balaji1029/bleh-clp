@@ -12,7 +12,7 @@
 
 	inline void Lexer::display_token_info(const char* a, const char* yytext, const int& lineno) {
 		token_output += std::string("\tToken Name: ") + a + " \tLexeme: " + yytext + " \t Lineno: " + std::to_string(lineno) + "\n";
-	}
+	}aa
 
 	int yylineno = 1;
 
@@ -201,16 +201,19 @@ print   {
 
 ("."[0-9]+)|([0-9]+"."[0-9]*) {
 	display_token_info("FLOAT_NUM", YYText(), yylineno);
+	yylval.value = std::string(YYText(), YYLeng());
 	return yy::parser::token::token_kind_type::DOUBLE_NUMBER;
 }
 
 \"[^\"\n]*\" {
 	display_token_info("STR_CONST", YYText(), yylineno);
+	yylval.value = std::string(YYText(), YYLeng());
 	return yy::parser::token::token_kind_type::STRING_CONSTANT;
 }
 
 [0-9]+   {
 	display_token_info("INT_NUM", YYText(), yylineno);
+	yylval.value = std::string(YYText(), YYLeng());
 	return yy::parser::token::token_kind_type::INTEGER_NUMBER;
 }
 
@@ -240,6 +243,7 @@ print   {
 
 [A-Za-z_][A-Za-z0-9_]* {
 	display_token_info("NAME", YYText(), yylineno);
+	
 	return yy::parser::token::token_kind_type::NAME;
 }
 

@@ -1,12 +1,14 @@
 %define parse.error verbose
 %language "c++"
 %require "3.2"
-%parse-param {Lexer& lexer}
+%define api.value.type variant
+%parse-param {Lexer& lexer, std::shared_ptr<GlobalSymbolTable> symtab}
 %{
     #include "lexer.hh"
     #include "symtab.hh"
     #include "ast.hh"
     #include <string>
+    #include <cassert>
     #include <iostream>
 
     Lexer lexer;
@@ -26,48 +28,41 @@
     }
 }
 
-%union {
-    Type type;
-    Boolean_Expr_Type bool_type;
-    Arith_Expr_Type arith_type;
-    Relational_Expr_Type rel_type;
-    std::shared_ptr<Ast>;
-}
-
 %token DO
 %token WHILE
 %token IF
 %token ELSE
 
-%token <type> INTEGER
-%token <type> FLOAT
-%token <type> BOOL
-%token <type> STRING
-%token <type> VOID
+%token INTEGER
+%token FLOAT
+%token BOOL
+%token STRING
+%token VOID
 
 %token WRITE
 %token READ
 
-%token NAME
+%token <std::string> NAME
 
 %token RETURN
 %token ASSIGN
 
-%token <bool_type> AND
-%token <bool_type> OR
-%token <bool_type> NOT
+%token AND
+%token OR
+%token NOT
 
-%token <rel_type> GT
-%token <rel_type> LT
-%token <rel_type> GE
-%token <rel_type> LE
-%token <rel_type> NE
-%token <rel_type> EQ
+%token GT
+%token LT
+%token GE
+%token LE
+%token NE
+%token EQ
 
-%token <arith_type> PLUS
-%token <arith_type> MINUS
-%token <arith_type> MULT
-%token <arith_type> DIV
+%token PLUS
+%token MINUS
+%token MULT
+
+%token DIV
 %token ADDRESSOF
 
 %token LEFT_CURLY_BRACKET
@@ -82,9 +77,22 @@
 %token QUESTION_MARK
 %token COLON
 
-%token DOUBLE_NUMBER
-%token INTEGER_NUMBER
-%token STRING_CONSTANT                                                                
+%token <std::string> DOUBLE_NUMBER
+%token <std::string> INTEGER_NUMBER
+%token <std::string> STRING_CONSTANT 
+
+
+%type <std::shared_ptr<Ast>> program
+%type <std::shared_ptr<Sequence_Stmt_Ast>> statement_list
+
+%type <std::shared_ptr<Statement_Ast>> statement assignment_statement print_statement read_statement
+
+%type <Type> named_type
+
+%type <std::shared_ptr<Expression_Ast>> expression
+%type <std::shared_ptr<Relational_Expr_Type>> rel_expression
+%type <std::shared_ptr<Base_Expr_Ast>> constant_as_operand
+%type <std::shared_ptr<Name_Expr_Ast>> variable_as_operand
 
 %right QUESTION_MARK COLON
 %left OR
@@ -95,13 +103,11 @@
 %left MULT DIV
 %right UMINUS
 
-%type <Ast> 
-
 %%
 
 program
-    : global_decl_statement_list func_def_list
-    | func_def_list
+    : global_decl_statement_list func_def_list {}
+    | func_def_list {}
     ;
 
 global_decl_statement_list
@@ -123,7 +129,9 @@ global_decl_statement_list
         }
 
 func_decl
-    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON
+    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON {
+        error("main does not take arguments");
+    }
     | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON
     ;
 
@@ -132,7 +140,10 @@ func_def_list
     ;
 
 func_header
-    : named_type NAME
+    : named_type NAME {
+        assert($1 == Type::VOID);
+        symtab->new_proc_symtab($2, $1);
+    }
     ;
 
 func_def
@@ -157,14 +168,25 @@ param_type
     ;
 
 statement_list
-    : statement_list statement
-    | %empty
+    : statement_list statement {
+        $1->add_child($2);
+        $$ = $1;
+    }
+    | %empty {
+        $$ = make_shared<Sequence_Stmt_Ast>();
+    }
     ;
 
 statement
-    : assignment_statement
-    | print_statement
-    | read_statement
+    : assignment_statement {
+        $$ = $1;
+    }
+    | print_statement {
+        $$ = $1;
+    }
+    | read_statement {
+        $$ = $1;
+    }
     ;
 
 optional_local_var_decl_stmt_list
@@ -191,52 +213,122 @@ var_decl_item
     ;
 
 named_type
-    : INTEGER
-    | FLOAT
-    | VOID
-    | STRING
-    | BOOL
+    : INTEGER {
+        $$ = Type::INT;
+    }
+    | FLOAT {
+        $$ = Type::FLOAT;
+    }
+    | VOID {
+        $$ = Type::VOID;
+    }
+    | STRING {
+        $$ = Type::STRING;
+    }
+    | BOOL {
+        $$ = Type::BOOL;
+    }
     ;
 
 assignment_statement
-    : variable_as_operand ASSIGN expression SEMICOLON
+    : variable_as_operand ASSIGN expression SEMICOLON {
+        $$ = make_shared<Assignment_Stmt_Ast>($1, $3);
+    }
     ;
 
 print_statement
-    : WRITE expression SEMICOLON
+    : WRITE expression SEMICOLON {
+        $$ = make_shared<Write_Stmt_Ast>($2);
+    }
     ;
 
 read_statement
-    : READ NAME SEMICOLON
+    : READ variable_as_operand SEMICOLON {
+        $$ = make_shared<Read_Stmt_Ast>($2);
+    }
     ;
 
 expression
-    : expression PLUS expression
-    | expression MINUS expression
-    | expression MULT expression
-    | expression DIV expression
-    | MINUS expression      %prec UMINUS
-    | LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET
-    | expression QUESTION_MARK expression COLON expression
-    | expression AND expression
-    | expression OR expression
-    | NOT expression
-    | rel_expression
-    | NAME
-    | constant_as_operand
+    : expression PLUS expression {
+        $$ = make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::PLUS);
+    }
+    | expression MINUS expression {
+        $$ = make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::MINUS);
+    }
+    | expression MULT expression {
+        $$ = make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::MULT);
+    }
+    | expression DIV expression {
+        $$ = make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::DIV);
+    }
+    | MINUS expression      %prec UMINUS {
+        $$ = make_shared<Arith_Expr_Ast>($2, nullptr, Arith_Expr_Type::UMINUS);
+    }
+    | LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET {
+        $$ = $2;
+    }
+    | expression QUESTION_MARK expression COLON expression {
+        $$ = make_shared<Conditional_Expr_Ast>($1, $3, $5);
+    }
+    | expression AND expression {
+        $$ = make_shared<Boolean_Expr_Ast>($1, $3, Boolean_Expr_Type::AND);
+    }
+    | expression OR expression {
+        $$ = make_shared<Boolean_Expr_Ast>($1, $3, Boolean_Expr_Type::OR);
+    }
+    | NOT expression {
+        $$ = make_shared<Boolean_Expr_Ast>($2, nullptr, Boolean_Expr_Type::NOT);
+    }
+    | rel_expression {
+        $$ = $1;
+    }
+    | variable_as_operand {
+        $$ = $1;
+    }
+    | constant_as_operand {
+        $$ = $1;
+    }
     ;
 
 rel_expression
-    : expression GT expression
-    | expression LT expression
-    | expression GE expression
-    | expression LE expression
-    | expression NE expression
-    | expression EQ expression
+    : expression GT expression {
+        $$ = make_shared<Relational_Expr_Type>($1, $3, Relational_Expr_Type::GT);
+    }
+    | expression LT expression {
+        $$ = make_shared<Relational_Expr_Type>($1, $3, Relational_Expr_Type::LT);
+    }
+    | expression GE expression {
+        $$ = make_shared<Relational_Expr_Type>($1, $3, Relational_Expr_Type::GE);
+    }
+    | expression LE expression {
+        $$ = make_shared<Relational_Expr_Type>($1, $3, Relational_Expr_Type::LE);
+    }
+    | expression NE expression {
+        $$ = make_shared<Relational_Expr_Type>($1, $3, Relational_Expr_Type::NE);
+    }
+    | expression EQ expression {
+        $$ = make_shared<Relational_Expr_Type>($1, $3, Relational_Expr_Type::EQ);
+    }
     ;
 
 constant_as_operand
-    : INTEGER_NUMBER
-    | DOUBLE_NUMBER
-    | STRING_CONSTANT
+    : INTEGER_NUMBER {
+        $$ = make_shared<Number_Expr_Ast<int>>(Type::INT, atoi($1));
+    }
+    | DOUBLE_NUMBER {
+        $$ = make_shared<Number_Expr_Ast<double>>(Type::FLOAT, atof($1));
+    }
+    | STRING_CONSTANT {
+        $$ = make_shared<String_Expr_Ast>($1);
+    }
+    ;
+
+variable_as_operand
+    : NAME {
+        auto var_ptr = symtab->find_var($1);
+        if (var_ptr)
+            $$ = std::make_shared<Name_Expr_Ast>(auto_var_ptr);
+        else
+            error(std::string("Var ") + $1 + " doesn't exist");
+    }
     ;
