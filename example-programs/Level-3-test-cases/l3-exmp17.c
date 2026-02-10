@@ -13,7 +13,8 @@ void main()
     d = a+a > b-b;
     e = b*b > a/a;
 
-    d = (a > b);
+    d = !(a > b);
+    c = a + b + c;
     d = (a >= b);
 
     z = "input";
