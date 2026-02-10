@@ -1,7 +1,10 @@
 #pragma once
 
 #include "symtab.hh"
+#include <cmath>
+#include <iomanip>
 #include <iostream>
+#include <type_traits>
 
 enum class Binary_Expr_Type { BOOLEAN, ARITHMETIC, RELATIONAL };
 
@@ -19,6 +22,7 @@ class Ast {
     virtual ~Ast() = default;
     void semantic_check(bool err, const std::string &err_msg);
     void semantic_check(const std::string &err_msg);
+    bool get_sa_parse();
 };
 
 class Expression_Ast : public Ast {
@@ -50,6 +54,12 @@ template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
     T value;
     Number_Expr_Ast(Type type, T value) : value(value) { this->type = type; }
     void print(std::ostream &os, std::string &level) const {
+        os << std::fixed << std::setprecision(2);
+        if (std::is_same_v<T, double>)
+            if (std::isinf(value)) {
+                os << "Num : " << "inf" << "<" << get_type_str(type) << ">";
+                return;
+            }
         os << "Num : " << value << "<" << get_type_str(type) << ">";
     }
 };

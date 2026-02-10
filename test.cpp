@@ -1,2 +1,0 @@
-#include <ranges>
-int main() {}

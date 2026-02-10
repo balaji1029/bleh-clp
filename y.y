@@ -13,6 +13,7 @@
     #include <iostream>
     #include <utility>
     #include <memory>
+    #include <limits>
 
     Lexer lexer;
     #define yylex(x) lexer.yylex(x)
@@ -150,7 +151,8 @@ func_decl
 
 func_def_list
     : func_def {
-        root_ast->add_func($1);
+        if (!root_ast->get_sa_parse())
+            root_ast->add_func($1);
     }
     ;
 
@@ -168,10 +170,13 @@ func_def
         root_ast->semantic_check("main does not take arguments");
     }
     | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET {
-        symtab->new_proc_symtab($1.first, $1.second);
+        if (!root_ast->get_sa_parse())
+            symtab->new_proc_symtab($1.first, $1.second);
     } optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
-        auto proc_symtab = symtab->get_curr_proc_symtab();
-        $$ = std::make_shared<Func_Ast>(proc_symtab, $7);
+        if (!root_ast->get_sa_parse()) {
+            auto proc_symtab = symtab->get_curr_proc_symtab();
+            $$ = std::make_shared<Func_Ast>(proc_symtab, $7);
+        }
     }
     ;
 
@@ -193,23 +198,29 @@ param_type
 
 statement_list
     : statement_list statement {
-        $1->add_child($2);
-        $$ = $1;
+        if (!root_ast->get_sa_parse()) {
+            $1->add_child($2);
+            $$ = $1;
+        }
     }
     | %empty {
-        $$ = std::make_shared<Sequence_Stmt_Ast>();
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Sequence_Stmt_Ast>();
     }
     ;
 
 statement
     : assignment_statement {
-        $$ = $1;
+        if (!root_ast->get_sa_parse())
+            $$ = $1;
     }
     | print_statement {
-        $$ = $1;
+        if (!root_ast->get_sa_parse())
+            $$ = $1;
     }
     | read_statement {
-        $$ = $1;
+        if (!root_ast->get_sa_parse())
+            $$ = $1;
     }
     ;
 
@@ -225,24 +236,29 @@ var_decl_stmt_list
 
 var_decl_stmt
     : named_type var_decl_item_list SEMICOLON {
-        root_ast->semantic_check($1 != Type::VOID, "Variale should not be type void");
-        for (auto item : $2) {
-            auto var_ptr = symtab->find_local(item);
-            if (var_ptr)
-                root_ast->semantic_check(std::string("Var ") + item + " already declared");
-            else
-                symtab->add_var($1, item);
+        if (!root_ast->get_sa_parse()) {
+            root_ast->semantic_check($1 != Type::VOID, "Variale should not be type void");
+            for (auto item : $2) {
+                auto var_ptr = symtab->find_local(item);
+                if (var_ptr)
+                    root_ast->semantic_check(std::string("Var ") + item + " already declared");
+                else
+                    symtab->add_var($1, item);
+            }
         }
     }
     ;
     
 var_decl_item_list
     : var_decl_item_list COMMA var_decl_item {
-        $$ = $1;
-        $$.push_back($3);
+        if (!root_ast->get_sa_parse()) {
+            $$ = $1;
+            $$.push_back($3);
+        }
     }
     | var_decl_item {
-        $$.push_back($1);
+        if (!root_ast->get_sa_parse())
+            $$.push_back($1);
     }
     ;
 
@@ -252,121 +268,160 @@ var_decl_item
 
 named_type
     : INTEGER {
-        $$ = Type::INT;
+        if (!root_ast->get_sa_parse())
+            $$ = Type::INT;
     }
     | FLOAT {
-        $$ = Type::FLOAT;
+        if (!root_ast->get_sa_parse())
+            $$ = Type::FLOAT;
     }
     | VOID {
-        $$ = Type::VOID;
+        if (!root_ast->get_sa_parse())
+            $$ = Type::VOID;
     }
     | STRING {
-        $$ = Type::STRING;
+        if (!root_ast->get_sa_parse())
+            $$ = Type::STRING;
     }
     | BOOL {
-        $$ = Type::BOOL;
+        if (!root_ast->get_sa_parse())
+            $$ = Type::BOOL;
     }
     ;
 
 assignment_statement
     : variable_as_operand ASSIGN expression SEMICOLON {
-        $$ = std::make_shared<Assignment_Stmt_Ast>(std::move($1), std::move($3));
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Assignment_Stmt_Ast>(std::move($1), std::move($3));
     }
     ;
 
 print_statement
     : WRITE expression SEMICOLON {
-        $$ = std::make_shared<Write_Stmt_Ast>($2);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Write_Stmt_Ast>($2);
     }
     ;
 
 read_statement
     : READ variable_as_operand SEMICOLON {
-        $$ = std::make_shared<Read_Stmt_Ast>($2);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Read_Stmt_Ast>($2);
     }
     ;
 
 expression
     : expression PLUS expression {
-        $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::PLUS);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::PLUS);
     }
     | expression MINUS expression {
-        $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::MINUS);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::MINUS);
     }
     | expression MULT expression {
-        $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::MULT);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::MULT);
     }
     | expression DIV expression {
-        $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::DIV);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Arith_Expr_Ast>($1, $3, Arith_Expr_Type::DIV);
     }
     | MINUS expression      %prec UMINUS {
-        $$ = std::make_shared<Arith_Expr_Ast>($2, nullptr, Arith_Expr_Type::UMINUS);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Arith_Expr_Ast>($2, nullptr, Arith_Expr_Type::UMINUS);
     }
     | LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET {
-        $$ = $2;
+        if (!root_ast->get_sa_parse())
+            $$ = $2;
     }
     | expression QUESTION_MARK expression COLON expression {
-        $$ = std::make_shared<Conditional_Expr_Ast>($1, $3, $5);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Conditional_Expr_Ast>($1, $3, $5);
     }
     | expression AND expression {
-        $$ = std::make_shared<Boolean_Expr_Ast>($1, $3, Boolean_Expr_Type::AND);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Boolean_Expr_Ast>($1, $3, Boolean_Expr_Type::AND);
     }
     | expression OR expression {
-        $$ = std::make_shared<Boolean_Expr_Ast>($1, $3, Boolean_Expr_Type::OR);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Boolean_Expr_Ast>($1, $3, Boolean_Expr_Type::OR);
     }
     | NOT expression {
-        $$ = std::make_shared<Boolean_Expr_Ast>($2, nullptr, Boolean_Expr_Type::NOT);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Boolean_Expr_Ast>($2, nullptr, Boolean_Expr_Type::NOT);
     }
     | rel_expression {
-        $$ = $1;
+        if (!root_ast->get_sa_parse())
+            $$ = $1;
     }
     | variable_as_operand {
-        $$ = $1;
+        if (!root_ast->get_sa_parse())
+            $$ = $1;
     }
     | constant_as_operand {
-        $$ = $1;
+        if (!root_ast->get_sa_parse())
+            $$ = $1;
     }
     ;
 
 rel_expression
     : expression GT expression {
-        $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::GT);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::GT);
     }
     | expression LT expression {
-        $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::LT);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::LT);
     }
     | expression GE expression {
-        $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::GE);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::GE);
     }
     | expression LE expression {
-        $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::LE);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::LE);
     }
     | expression NE expression {
-        $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::NE);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::NE);
     }
     | expression EQ expression {
-        $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::EQ);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Relational_Expr_Ast>($1, $3, Relational_Expr_Type::EQ);
     }
     ;
 
 constant_as_operand
     : INTEGER_NUMBER {
-        $$ = std::make_shared<Number_Expr_Ast<int>>(Type::INT, std::stoi($1));
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<Number_Expr_Ast<int>>(Type::INT, std::stoull($1));
     }
     | DOUBLE_NUMBER {
-        $$ = std::make_shared<Number_Expr_Ast<double>>(Type::FLOAT, std::stof($1));
+        if (!root_ast->get_sa_parse()) {
+            double num;
+            try {
+                num = std::stod($1);
+            } catch (const std::out_of_range&) {
+                num = std::numeric_limits<double>::infinity();
+            }
+            $$ = std::make_shared<Number_Expr_Ast<double>>(Type::FLOAT, num);
+        }
     }
     | STRING_CONSTANT {
-        $$ = std::make_shared<String_Expr_Ast>($1);
+        if (!root_ast->get_sa_parse())
+            $$ = std::make_shared<String_Expr_Ast>($1);
     }
     ;
 
 variable_as_operand
     : NAME {
-        auto var_ptr = symtab->find_var($1);
-        if (var_ptr)
-            $$ = std::make_shared<Name_Expr_Ast>(var_ptr.value());
-        else
-            root_ast->semantic_check(std::string("Var ") + $1 + " doesn't exist");
+        if (!root_ast->get_sa_parse()) {
+            auto var_ptr = symtab->find_var($1);
+            if (var_ptr)
+                $$ = std::make_shared<Name_Expr_Ast>(var_ptr.value());
+            else
+                root_ast->semantic_check(std::string("Var ") + $1 + " doesn't exist");
+        }
     }
     ;

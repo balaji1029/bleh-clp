@@ -293,3 +293,5 @@ void Ast::semantic_check(const std::string &err_msg) {
 }
 
 Root_Ast::Root_Ast(bool saparse) { sa_parse = saparse; }
+
+bool Ast::get_sa_parse() { return sa_parse; }
