@@ -32,7 +32,7 @@ class Name_Expr_Ast : public Base_Expr_Ast {
   public:
     Name_Expr_Ast(std::shared_ptr<SymTabEntry>);
     std::shared_ptr<SymTabEntry> get_name();
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &) const;
 };
 
 template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
@@ -40,8 +40,10 @@ template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
     T value;
 
   public:
-    Number_Expr_Ast(Type, T);
-    void print(std::ostream &, std::string &);
+    Number_Expr_Ast(Type type, T value) : type(type), value(value) {}
+    void print(std::ostream &os, std::string &level) {
+        // os << "Name : " << name->get_name() << "<" << get_type_str(name->get_type()) << ">";
+    }
 };
 
 class String_Expr_Ast : public Base_Expr_Ast {
@@ -174,5 +176,6 @@ class Root_Ast : public Ast {
     std::vector<std::shared_ptr<Func_Ast>> funcs;
 
   public:
+    const std::vector<std::shared_ptr<Func_Ast>>& get_funcs();
     void add_func(std::shared_ptr<Func_Ast>);
 };

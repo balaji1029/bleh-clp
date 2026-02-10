@@ -1,11 +1,16 @@
 #include "ast.hh"
 #include "symtab.hh"
 
-std::ostream &operator<<(std::ostream &os, std::shared_ptr<Ast> ast) {
+std::ostream &operator<<(std::ostream &os, std::shared_ptr<Root_Ast> root) {
     std::string level = "";
-    ast->print(os, level);
+    std::vector<std::shared_ptr<Func_Ast>> funcs = root->get_funcs(); 
+    for (auto child : funcs) {
+        child->print(os, level);    
+    }
     return os;
 }
+
+const std::vector<std::shared_ptr<Func_Ast>> &Root_Ast::get_funcs() { return funcs; }
 
 void Root_Ast::add_func(std::shared_ptr<Func_Ast> func) { funcs.push_back(func); }
 
@@ -32,6 +37,12 @@ void Assignment_Stmt_Ast::print(std::ostream &os, std::string &level) {
     os << ")";
     level.pop_back();
     level.pop_back();
+}
+
+void Expression_Ast::print(std::ostream &os, std::string &level) { os << "bleh"; }
+
+void Name_Expr_Ast::print(std::ostream &os, std::string &level) const {
+    os << "Name: " << name->get_name() << "<" << get_type_str(name->get_type()) << ">";
 }
 
 void Binary_Expr_Ast::print(std::ostream &os, std::string &level) const {
@@ -75,11 +86,7 @@ void Binary_Expr_Ast::print(std::ostream &os, std::string &level) const {
 
 Name_Expr_Ast::Name_Expr_Ast(std::shared_ptr<SymTabEntry> name) : name(name) {}
 
-void Name_Expr_Ast::print(std::ostream &os, std::string &level) {
-    os << "Name : " << name->get_name() << "<" << get_type_str(name->get_type()) << ">";
-}
-
-template <typename T> Number_Expr_Ast<T>::Number_Expr_Ast(Type type, T value) : type(type), value(value) {}
+// template <typename T> Number_Expr_Ast<T>::Number_Expr_Ast(Type type, T value) : type(type), value(value) {}
 
 String_Expr_Ast::String_Expr_Ast(const std::string &s) : s(s) {}
 
