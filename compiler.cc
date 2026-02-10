@@ -32,7 +32,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
         exit(EXIT_FAILURE);
     }
 
-    sym_tab = GlobalSymbolTable()
+    sym_tab = std::make_shared<GlobalSymbolTable>();
+    root_ast = std::make_shared<Root_Ast>();
 
     input_filename = std::string(argv[optind]);
     output_token_filename = input_filename + ".toks";

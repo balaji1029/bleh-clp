@@ -3,6 +3,7 @@
 
 std::ostream &operator<<(std::ostream &os, std::shared_ptr<Root_Ast> root) {
     std::string level = "";
+    os << "meow";
     std::vector<std::shared_ptr<Func_Ast>> funcs = root->get_funcs(); 
     for (auto child : funcs) {
         child->print(os, level);    
