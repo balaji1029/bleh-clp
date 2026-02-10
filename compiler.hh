@@ -1,11 +1,12 @@
 #pragma once
 
+#include "ast.hh"
 #include "lexer.hh"
+#include "symtab.hh"
 #include <fstream>
 #include <getopt.h>
 #include <iostream>
 #include <string>
-#include "symtab.hh"
 
 #include "y.tab.h"
 
@@ -29,7 +30,8 @@ class Compiler {
 
     std::ifstream input_file;
     std::ofstream output_token_file;
-    GlobalSymbolTable sym_tab;
+    std::shared_ptr<GlobalSymbolTable> sym_tab;
+    std::shared_ptr<Root_Ast> root_ast;
 
     Lexer lexer;
 

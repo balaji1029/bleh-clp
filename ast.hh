@@ -1,3 +1,5 @@
+#pragma once
+
 #include "symtab.hh"
 #include <iostream>
 
@@ -11,7 +13,7 @@ enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
 
 class Ast {
   public:
-    virtual void print(std::ostream &, std::string &) = 0;
+    void print(std::ostream &, std::string &);
 };
 
 class Expression_Ast : public Ast {
@@ -19,7 +21,7 @@ class Expression_Ast : public Ast {
     Type type;
 
   public:
-    virtual void print(std::ostream &, std::string &) = 0;
+    void print(std::ostream &, std::string &);
 };
 
 class Base_Expr_Ast : public Expression_Ast {};
@@ -47,7 +49,7 @@ class String_Expr_Ast : public Base_Expr_Ast {
     Type type = Type::STRING;
 
   public:
-  String_Expr_Ast(const std::string&);
+    String_Expr_Ast(const std::string &);
     void print(std::ostream &, std::string &);
 };
 
@@ -63,7 +65,7 @@ class Binary_Expr_Ast : public Base_Expr_Ast {
   public:
     Binary_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>);
     void print(std::ostream &, std::string &) const;
-    virtual const std::string &get_binary_op_str() const = 0;
+    virtual std::string get_binary_op_str() const = 0;
 };
 
 class Boolean_Expr_Ast : public Binary_Expr_Ast {
@@ -71,7 +73,7 @@ class Boolean_Expr_Ast : public Binary_Expr_Ast {
     const Boolean_Expr_Type boolean_expr_type;
     const Binary_Expr_Type &get_binary_expr_type() const;
     const Boolean_Expr_Type &get_boolean_expr_type() const;
-    const std::string &get_binary_op_str() const;
+    std::string get_binary_op_str() const;
 
   public:
     Boolean_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Boolean_Expr_Type);
@@ -82,7 +84,7 @@ class Arith_Expr_Ast : public Binary_Expr_Ast {
     const Arith_Expr_Type arith_expr_type;
     const Binary_Expr_Type &get_binary_expr_type() const;
     const Arith_Expr_Type &get_arith_expr_type() const;
-    const std::string &get_binary_op_str() const;
+    std::string get_binary_op_str() const;
 
   public:
     Arith_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Arith_Expr_Type);
@@ -93,7 +95,7 @@ class Relational_Expr_Ast : public Binary_Expr_Ast {
     const Relational_Expr_Type relational_expr_type;
     const Binary_Expr_Type &get_binary_expr_type() const;
     const Relational_Expr_Type &get_relational_expr_type() const;
-    const std::string &get_binary_op_str() const;
+    std::string get_binary_op_str() const;
 
   public:
     Relational_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Relational_Expr_Type);
@@ -109,8 +111,8 @@ class Conditional_Expr_Ast : public Ternary_Expr_Ast {
     std::shared_ptr<Expression_Ast> false_part;
 
   public:
-    Conditional_Expr_Ast::Conditional_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>,
-                                               std::shared_ptr<Expression_Ast>);
+    Conditional_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>,
+                         std::shared_ptr<Expression_Ast>);
 };
 
 // ------------------------------ UNARY ------------------------------
@@ -157,4 +159,20 @@ class Write_Stmt_Ast : public Statement_Ast {
   public:
     Write_Stmt_Ast(std::shared_ptr<Expression_Ast>);
     void print(std::ostream &, std::string &);
+};
+
+class Func_Ast : public Ast {
+    std::shared_ptr<ProcSymbolTable> proc_table;
+    std::shared_ptr<Sequence_Stmt_Ast> seq_ast;
+
+  public:
+    Func_Ast(std::shared_ptr<ProcSymbolTable>, std::shared_ptr<Sequence_Stmt_Ast>);
+    void print(std::ostream &, std::string &);
+};
+
+class Root_Ast : public Ast {
+    std::vector<std::shared_ptr<Func_Ast>> funcs;
+
+  public:
+    void add_func(std::shared_ptr<Func_Ast>);
 };

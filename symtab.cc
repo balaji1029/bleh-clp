@@ -1,6 +1,6 @@
 #include "symtab.hh"
 
-const std::string &get_type_str(Type type) {
+std::string get_type_str(Type type) {
     std::string binary_expr_type;
     switch (type) {
     case Type::INT:
@@ -19,6 +19,7 @@ const std::string &get_type_str(Type type) {
         binary_expr_type = "void";
         break;
     default:
+        break;
     };
     return binary_expr_type;
 }
@@ -60,10 +61,10 @@ std::optional<std::shared_ptr<SymTabEntry>> ProcSymbolTable::find_var(const std:
                            [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
     if (it != params.end())
         return *it;
-    auto it = std::find_if(locals.begin(), locals.end(),
+    auto it2 = std::find_if(locals.begin(), locals.end(),
                            [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
-    if (it != locals.end())
-        return *it;
+    if (it2 != locals.end())
+        return *it2;
     return std::nullopt;
 }
 

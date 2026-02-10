@@ -7,6 +7,13 @@ std::ostream &operator<<(std::ostream &os, std::shared_ptr<Ast> ast) {
     return os;
 }
 
+void Root_Ast::add_func(std::shared_ptr<Func_Ast> func) { funcs.push_back(func); }
+
+Func_Ast::Func_Ast(std::shared_ptr<ProcSymbolTable> proc_table, std::shared_ptr<Sequence_Stmt_Ast> seq_ast)
+    : proc_table(proc_table), seq_ast(seq_ast) {}
+
+void Func_Ast::print(std::ostream &os, std::string &level) {}
+
 void Assignment_Stmt_Ast::print(std::ostream &os, std::string &level) {
     os << level << "Asgn:\n";
     level.push_back(SPACE);
@@ -41,6 +48,7 @@ void Binary_Expr_Ast::print(std::ostream &os, std::string &level) const {
         binary_expr_type_str = "Condition";
         break;
     default:
+        break;
     }
 
     os << binary_expr_type_str << ": ";
@@ -93,7 +101,7 @@ const Binary_Expr_Type &Boolean_Expr_Ast::get_binary_expr_type() const { return 
 
 const Boolean_Expr_Type &Boolean_Expr_Ast::get_boolean_expr_type() const { return boolean_expr_type; }
 
-const std::string &Boolean_Expr_Ast::get_binary_op_str() const {
+std::string Boolean_Expr_Ast::get_binary_op_str() const {
     std::string boolean_expr_type_str;
     switch (get_boolean_expr_type()) {
     case Boolean_Expr_Type::AND:
@@ -122,7 +130,7 @@ const Binary_Expr_Type &Arith_Expr_Ast::get_binary_expr_type() const { return bi
 
 const Arith_Expr_Type &Arith_Expr_Ast::get_arith_expr_type() const { return arith_expr_type; }
 
-const std::string &Arith_Expr_Ast::get_binary_op_str() const {
+std::string Arith_Expr_Ast::get_binary_op_str() const {
     std::string arith_expr_type_str;
     switch (get_arith_expr_type()) {
     case Arith_Expr_Type::PLUS:
@@ -141,6 +149,7 @@ const std::string &Arith_Expr_Ast::get_binary_op_str() const {
         arith_expr_type_str = "Uminus";
         break;
     default:
+        break;
     };
     return arith_expr_type_str;
 }
@@ -153,7 +162,7 @@ const Relational_Expr_Type &Relational_Expr_Ast::get_relational_expr_type() cons
 
 const Binary_Expr_Type &Relational_Expr_Ast::get_binary_expr_type() const { return binary_expr_type; }
 
-const std::string &Relational_Expr_Ast::get_binary_op_str() const {
+std::string Relational_Expr_Ast::get_binary_op_str() const {
     std::string relational_expr_type_str;
     switch (get_relational_expr_type()) {
     case Relational_Expr_Type::GT:
@@ -175,6 +184,7 @@ const std::string &Relational_Expr_Ast::get_binary_op_str() const {
         relational_expr_type_str = "NE";
         break;
     default:
+        break;
     };
     return relational_expr_type_str;
 }
