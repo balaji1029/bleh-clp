@@ -1,11 +1,11 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++23 -O3
+CXXFLAGS = -std=c++23 -O3
 TARGET = sclp
 
 all: sclp
 
 .PHONY: debug
-debug: CXXFLAGS = -std=c++20 -g -fsanitize=address
+debug: CXXFLAGS = -Wall -std=c++20 -g -fsanitize=address
 debug: sclp
 
 sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o
