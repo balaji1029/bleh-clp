@@ -4,6 +4,7 @@
 %option yyclass="Lexer"
 %{
 	#include <string>
+	#include "utils.hh"
 	#include "y.tab.h"
 	#include "lexer.hh"
 
@@ -18,10 +19,10 @@
 
 	int yylineno = 1;
 
-	void yyerror(const std::string& s) {
-		std::cerr << s << std::endl; 
-		exit(1);
-	}
+	// void Error::syntactic_error(const std::string& s) {
+	// 	std::cerr << s << std::endl; 
+	// 	exit(1);
+	// }
 
 	static std::string NOT_IMPLEMENTED = "Not Implemented yet!!!";
 %}
@@ -55,31 +56,31 @@ bool {
 
 return	{
 	display_token_info("RETURN", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::RETURN;
 }
 
 if		{
 	display_token_info("IF", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::IF;
 }
 
 else 	{
 	display_token_info("ELSE", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::ELSE;
 }
 
 do		{
 	display_token_info("DO", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::DO;
 }
 
 while	{
 	display_token_info("WHILE", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::WHILE;
 }
 
@@ -95,7 +96,7 @@ while	{
 
 "&"		{
 	display_token_info("ADDRESSOF", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::COLON;
 }
 
@@ -146,13 +147,13 @@ while	{
 
 "["		{
 	display_token_info("LEFT_SQUARE_BRACKET", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::LEFT_SQUARE_BRACKET;
 }
 
 "]"		{
 	display_token_info("RIGHT_SQUARE_BRACKET", YYText(), yylineno);
-	yyerror(NOT_IMPLEMENTED);
+	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::RIGHT_SQUARE_BRACKET;
 }
 
@@ -260,7 +261,7 @@ print   {
 }
 
 .       {
-	yyerror(std::string("Illegal character: ") + YYText());
+	Error::syntactic_error(std::string("Illegal character: ") + YYText());
 }
 
 %%

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++20 -O2
+CXXFLAGS = -Wall -std=c++23 -O3
 TARGET = sclp
 
 all: sclp
@@ -8,10 +8,13 @@ all: sclp
 debug: CXXFLAGS = -std=c++20 -g -fsanitize=address
 debug: sclp
 
-sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o
+sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 main.o: main.cc compiler.hh lexer.hh y.tab.h ast.hh symtab.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+utils.o: utils.cc utils.hh compiler.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 compiler.o: compiler.cc compiler.hh lexer.hh y.tab.h ast.hh symtab.hh
@@ -34,7 +37,6 @@ lex.yy.cc: lexer.l y.tab.h lexer.hh
 
 y.tab.h y.tab.cc: y.y lexer.hh symtab.hh ast.hh
 	bison --language=c++ --header=y.tab.h -dv y.y
-
 
 clean:
 	-rm -f sclp

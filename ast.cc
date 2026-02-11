@@ -1,5 +1,12 @@
 #include "ast.hh"
 #include "symtab.hh"
+#include "utils.hh"
+
+// ------------------------------ Root_Ast ------------------------------
+
+const std::vector<std::shared_ptr<Func_Ast>> &Root_Ast::get_funcs() const { return funcs; }
+
+void Root_Ast::add_func(std::shared_ptr<Func_Ast> func) { funcs.push_back(func); }
 
 void Root_Ast::print(std::ostream &os, std::string &level) const {
     std::vector<std::shared_ptr<Func_Ast>> funcs = this->get_funcs();
@@ -8,9 +15,7 @@ void Root_Ast::print(std::ostream &os, std::string &level) const {
     }
 }
 
-const std::vector<std::shared_ptr<Func_Ast>> &Root_Ast::get_funcs() const { return funcs; }
-
-void Root_Ast::add_func(std::shared_ptr<Func_Ast> func) { funcs.push_back(func); }
+// ------------------------------ Func_Ast ------------------------------
 
 Func_Ast::Func_Ast(std::shared_ptr<ProcSymbolTable> proc_table, std::shared_ptr<Sequence_Stmt_Ast> seq_ast)
     : proc_table(proc_table), seq_ast(seq_ast) {}
@@ -28,49 +33,24 @@ void Func_Ast::print(std::ostream &os, std::string &level) const {
     os << "\n**END: Abstract Syntax Tree\n";
 }
 
-void Assignment_Stmt_Ast::print(std::ostream &os, std::string &level) const {
-    os << "\n" << level << "Asgn:\n";
-    level.push_back(SPACE);
+// ------------------------------ Name_Expr_Ast ------------------------------
 
-    os << level << "LHS (";
-    level.push_back(SPACE);
-    lhs->print(os, level);
-    level.pop_back();
-    os << ")";
-    // level.pop_back();
-
-    os << "\n" << level << "RHS (";
-    level.push_back(SPACE);
-    rhs->print(os, level);
-    level.pop_back();
-    os << ")";
-    level.pop_back();
-    // ();
-}
-
-// void Expression_Ast::print(std::ostream& os, std::string& level) const {
-//     os << "bleh";
-// }
-
-void Conditional_Expr_Ast::print(std::ostream &os, std::string &level) const {
-    condition->print(os, level);
-    os << "\n" << level << "True_Part (";
-    level.push_back(SPACE);
-    true_part->print(os, level);
-    level.pop_back();
-    os << ")";
-    os << "\n" << level << "False_Part(";
-    level.push_back(SPACE);
-    false_part->print(os, level);
-    level.pop_back();
-    os << ")";
-}
+Name_Expr_Ast::Name_Expr_Ast(std::shared_ptr<SymTabEntry> name) : name(name) { type = name->get_type(); }
 
 void Name_Expr_Ast::print(std::ostream &os, std::string &level) const {
     os << "Name: " << name->get_name() << "<" << get_type_str(name->get_type()) << ">";
 }
 
+// ------------------------------ String_Expr_Ast ------------------------------
+
+String_Expr_Ast::String_Expr_Ast(const std::string &s) : s(s) { this->type = Type::STRING; }
+
 void String_Expr_Ast::print(std::ostream &os, std::string &level) const { os << "String : " << s << "<string>"; }
+
+// ------------------------------ Binary_Expr_Ast ------------------------------
+
+Binary_Expr_Ast::Binary_Expr_Ast(std::shared_ptr<Expression_Ast> l_opd, std::shared_ptr<Expression_Ast> r_opd)
+    : l_opd(l_opd), r_opd(r_opd) {}
 
 void Binary_Expr_Ast::print(std::ostream &os, std::string &level) const {
     std::string binary_expr_type_str;
@@ -114,28 +94,14 @@ void Binary_Expr_Ast::print(std::ostream &os, std::string &level) const {
     level.pop_back();
 }
 
-Name_Expr_Ast::Name_Expr_Ast(std::shared_ptr<SymTabEntry> name) : name(name) { type = name->get_type(); }
-
-// template <typename T> Number_Expr_Ast<T>::Number_Expr_Ast(Type type, T value) : type(type), value(value) {}
-
-String_Expr_Ast::String_Expr_Ast(const std::string &s) : s(s) { this->type = Type::STRING; }
-
-void Read_Stmt_Ast::print(std::ostream &os, std::string &level) const {
-    os << "\n" << level << "Read: ";
-    child->print(os, level);
-}
-
-void Write_Stmt_Ast::print(std::ostream &os, std::string &level) const {
-    os << "\n" << level << "Write: ";
-    child->print(os, level);
-}
+// ------------------------------ Boolean_Expr_Ast ------------------------------
 
 Boolean_Expr_Ast::Boolean_Expr_Ast(std::shared_ptr<Expression_Ast> l_opd, std::shared_ptr<Expression_Ast> r_opd,
                                    Boolean_Expr_Type boolean_expr_type)
     : Binary_Expr_Ast(l_opd, r_opd), boolean_expr_type(boolean_expr_type) {
-    semantic_check(l_opd->get_type() == Type::BOOL, "Boolean: l_opd not bool");
+    Error::semantic_check(l_opd->get_type() == Type::BOOL, "Boolean: l_opd not bool");
     if (r_opd)
-        semantic_check(r_opd->get_type() == Type::BOOL, "Boolean: r_opd not bool");
+        Error::semantic_check(r_opd->get_type() == Type::BOOL, "Boolean: r_opd not bool");
     type = Type::BOOL;
 }
 
@@ -161,17 +127,17 @@ std::string Boolean_Expr_Ast::get_binary_op_str() const {
     return boolean_expr_type_str;
 }
 
-Binary_Expr_Ast::Binary_Expr_Ast(std::shared_ptr<Expression_Ast> l_opd, std::shared_ptr<Expression_Ast> r_opd)
-    : l_opd(l_opd), r_opd(r_opd) {}
+// ------------------------------ Arith_Expr_Ast ------------------------------
 
 Arith_Expr_Ast::Arith_Expr_Ast(std::shared_ptr<Expression_Ast> l_opd, std::shared_ptr<Expression_Ast> r_opd,
                                Arith_Expr_Type arith_expr_type)
     : Binary_Expr_Ast(l_opd, r_opd), arith_expr_type(arith_expr_type) {
-    semantic_check(l_opd->get_type() == Type::INT || l_opd->get_type() == Type::FLOAT, "Arith: l_opd not numeric");
+    Error::semantic_check(l_opd->get_type() == Type::INT || l_opd->get_type() == Type::FLOAT,
+                          "Arith: l_opd not numeric");
     if (r_opd) {
-        semantic_check(r_opd->get_type() == Type::INT || r_opd->get_type() == Type::FLOAT,
-                       "Relational: r_opd not numeric");
-        semantic_check(l_opd->get_type() == r_opd->get_type(), "Relational: l_opd type != r_opd type");
+        Error::semantic_check(r_opd->get_type() == Type::INT || r_opd->get_type() == Type::FLOAT,
+                              "Relational: r_opd not numeric");
+        Error::semantic_check(l_opd->get_type() == r_opd->get_type(), "Relational: l_opd type != r_opd type");
     }
 
     type = l_opd->get_type();
@@ -205,12 +171,16 @@ std::string Arith_Expr_Ast::get_binary_op_str() const {
     return arith_expr_type_str;
 }
 
+// ------------------------------ Relational_Expr_Ast ------------------------------
+
 Relational_Expr_Ast::Relational_Expr_Ast(std::shared_ptr<Expression_Ast> l_opd, std::shared_ptr<Expression_Ast> r_opd,
                                          Relational_Expr_Type relational_expr_type)
     : Binary_Expr_Ast(l_opd, r_opd), relational_expr_type(relational_expr_type) {
-    semantic_check(l_opd->get_type() == Type::INT || l_opd->get_type() == Type::FLOAT, "Relational: l_opd not numeric");
-    semantic_check(r_opd->get_type() == Type::INT || r_opd->get_type() == Type::FLOAT, "Relational: r_opd not numeric");
-    semantic_check(l_opd->get_type() == r_opd->get_type(), "Relational: l_opd type != r_opd type");
+    Error::semantic_check(l_opd->get_type() == Type::INT || l_opd->get_type() == Type::FLOAT,
+                          "Relational: l_opd not numeric");
+    Error::semantic_check(r_opd->get_type() == Type::INT || r_opd->get_type() == Type::FLOAT,
+                          "Relational: r_opd not numeric");
+    Error::semantic_check(l_opd->get_type() == r_opd->get_type(), "Relational: l_opd type != r_opd type");
     type = Type::BOOL;
 }
 
@@ -245,25 +215,88 @@ std::string Relational_Expr_Ast::get_binary_op_str() const {
     return relational_expr_type_str;
 }
 
+// ------------------------------ Conditional_Expr_Ast ------------------------------
+
 Conditional_Expr_Ast::Conditional_Expr_Ast(std::shared_ptr<Expression_Ast> condition,
                                            std::shared_ptr<Expression_Ast> true_part,
                                            std::shared_ptr<Expression_Ast> false_part)
     : condition(condition), true_part(true_part), false_part(false_part) {
-    semantic_check(condition->get_type() == Type::BOOL, "condition type != bool");
-    semantic_check(true_part->get_type() == false_part->get_type(), "Condition: true part type != false part type");
+    Error::semantic_check(condition->get_type() == Type::BOOL, "condition type != bool");
+    Error::semantic_check(true_part->get_type() == false_part->get_type(),
+                          "Condition: true part type != false part type");
 
     type = true_part->get_type();
 }
 
-Assignment_Stmt_Ast::Assignment_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> lhs, std::shared_ptr<Expression_Ast> rhs)
-    : lhs(lhs), rhs(rhs) {
-    semantic_check(lhs->get_type() == rhs->get_type(), "Assignment: lhs type != rhs type");
+void Conditional_Expr_Ast::print(std::ostream &os, std::string &level) const {
+    condition->print(os, level);
+    os << "\n" << level << "True_Part (";
+    level.push_back(SPACE);
+    true_part->print(os, level);
+    level.pop_back();
+    os << ")";
+    os << "\n" << level << "False_Part(";
+    level.push_back(SPACE);
+    false_part->print(os, level);
+    level.pop_back();
+    os << ")";
 }
 
-Read_Stmt_Ast::Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> name_expr_ast) : child(name_expr_ast) {
-    semantic_check(name_expr_ast->get_type() == Type::INT || name_expr_ast->get_type() == Type::FLOAT,
-                   "Read: var not numeric");
+// ------------------------------ Assignment_Stmt_Ast ------------------------------
+
+Assignment_Stmt_Ast::Assignment_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> lhs, std::shared_ptr<Expression_Ast> rhs)
+    : lhs(lhs), rhs(rhs) {
+    Error::semantic_check(lhs->get_type() == rhs->get_type(), "Assignment: lhs type != rhs type");
 }
+
+void Assignment_Stmt_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "Asgn:\n";
+    level.push_back(SPACE);
+
+    os << level << "LHS (";
+    level.push_back(SPACE);
+    lhs->print(os, level);
+    level.pop_back();
+    os << ")";
+    // level.pop_back();
+
+    os << "\n" << level << "RHS (";
+    level.push_back(SPACE);
+    rhs->print(os, level);
+    level.pop_back();
+    os << ")";
+    level.pop_back();
+    // ();
+}
+
+// void Expression_Ast::print(std::ostream& os, std::string& level) const {
+//     os << "bleh";
+// }
+
+// ------------------------------ Read_Stmt_Ast ------------------------------
+
+Read_Stmt_Ast::Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> name_expr_ast) : child(name_expr_ast) {
+    Error::semantic_check(name_expr_ast->get_type() == Type::INT || name_expr_ast->get_type() == Type::FLOAT,
+                          "Read: var not numeric");
+}
+
+void Read_Stmt_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "Read: ";
+    child->print(os, level);
+}
+
+// ------------------------------ Write_Stmt_Ast ------------------------------
+
+Write_Stmt_Ast::Write_Stmt_Ast(std::shared_ptr<Expression_Ast> expr_ast) : child(expr_ast) {}
+
+void Write_Stmt_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "Write: ";
+    child->print(os, level);
+}
+
+// ------------------------------ Sequence_Stmt_Ast ------------------------------
+
+Sequence_Stmt_Ast::Sequence_Stmt_Ast() {}
 
 void Sequence_Stmt_Ast::add_child(std::shared_ptr<Statement_Ast> stmt) { children.push_back(stmt); }
 
@@ -274,24 +307,22 @@ void Sequence_Stmt_Ast::print(std::ostream &os, std::string &level) const {
     }
 }
 
-Sequence_Stmt_Ast::Sequence_Stmt_Ast() {}
 
-Write_Stmt_Ast::Write_Stmt_Ast(std::shared_ptr<Expression_Ast> expr_ast) : child(expr_ast) {}
 
-void Ast::semantic_check(bool check, const std::string &err_msg) {
-    if (!sa_parse && !check) {
-        std::cerr << err_msg << std::endl;
-        exit(1);
-    }
-}
+// void Ast::Error::semantic_check(bool check, const std::string &err_msg) {
+//     if (!sa_parse && !check) {
+//         std::cerr << err_msg << std::endl;
+//         exit(1);
+//     }
+// }
 
-void Ast::semantic_check(const std::string &err_msg) {
-    if (!sa_parse) {
-        std::cerr << err_msg << std::endl;
-        exit(1);
-    }
-}
+// void Ast::Error::semantic_check(const std::string &err_msg) {
+//     if (!sa_parse) {
+//         std::cerr << err_msg << std::endl;
+//         exit(1);
+//     }
+// }
 
-Root_Ast::Root_Ast(bool saparse) { sa_parse = saparse; }
+// Root_Ast::Root_Ast(bool saparse) { sa_parse = saparse; }
 
-bool Ast::get_sa_parse() { return sa_parse; }
+// bool Ast::get_sa_parse() { return sa_parse; }

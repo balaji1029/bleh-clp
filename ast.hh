@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <type_traits>
 
 enum class Binary_Expr_Type { BOOLEAN, ARITHMETIC, RELATIONAL };
@@ -17,14 +18,14 @@ enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
 // ------------------------------ Main AST Class ------------------------------
 
 class Ast {
-  protected:
-    static bool sa_parse;
+    // protected:
+    // static bool sa_parse;
 
-  public:
-    virtual ~Ast() = default;
-    void semantic_check(bool err, const std::string &err_msg);
-    void semantic_check(const std::string &err_msg);
-    bool get_sa_parse();
+    // public:
+    // virtual ~Ast() = default;
+    // void semantic_check(bool err, const std::string &err_msg);
+    // void semantic_check(const std::string &err_msg);
+    // bool get_sa_parse();
 };
 
 class Expression_Ast : public Ast {
@@ -159,20 +160,20 @@ class Read_Stmt_Ast : public Statement_Ast {
     void print(std::ostream &, std::string &) const;
 };
 
+class Write_Stmt_Ast : public Statement_Ast {
+    const std::shared_ptr<Expression_Ast> child;
+
+  public:
+    Write_Stmt_Ast(std::shared_ptr<Expression_Ast>);
+    void print(std::ostream &, std::string &) const;
+};
+
 class Sequence_Stmt_Ast : public Statement_Ast {
     std::vector<std::shared_ptr<Statement_Ast>> children;
 
   public:
     Sequence_Stmt_Ast();
     void add_child(std::shared_ptr<Statement_Ast>);
-    void print(std::ostream &, std::string &) const;
-};
-
-class Write_Stmt_Ast : public Statement_Ast {
-    const std::shared_ptr<Expression_Ast> child;
-
-  public:
-    Write_Stmt_Ast(std::shared_ptr<Expression_Ast>);
     void print(std::ostream &, std::string &) const;
 };
 
@@ -189,8 +190,8 @@ class Root_Ast : public Ast {
     std::vector<std::shared_ptr<Func_Ast>> funcs;
 
   public:
-    Root_Ast(bool);
     const std::vector<std::shared_ptr<Func_Ast>> &get_funcs() const;
     void add_func(std::shared_ptr<Func_Ast>);
     void print(std::ostream &os, std::string &level) const;
 };
+
