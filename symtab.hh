@@ -55,6 +55,8 @@ class GlobalSymbolTable {
     void new_proc_symtab(Type, const std::string &);
     void add_param(Type, const std::string &);
     void add_var(Type, const std::string &);
+    void add_func(Type, const std::string &, const std::vector<std::pair<Type, std::string>> &);
+    void go_global();
 
     std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();
     std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string &);

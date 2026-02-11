@@ -1,6 +1,6 @@
 #include "compiler.hh"
 
-bool Ast::sa_parse = false;
+// bool Ast::sa_parse = false;
 
 int main(int argc, char *argv[]) {
     int status;

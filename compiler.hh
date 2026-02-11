@@ -3,6 +3,7 @@
 #include "ast.hh"
 #include "lexer.hh"
 #include "symtab.hh"
+#include "utils.hh"
 #include <fstream>
 #include <getopt.h>
 #include <iostream>
