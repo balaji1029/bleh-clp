@@ -23,10 +23,14 @@ Func_Ast::Func_Ast(std::shared_ptr<ProcSymbolTable> proc_table, std::shared_ptr<
 void Func_Ast::print(std::ostream &os, std::string &level) const {
     os << "**PROCEDURE: " << this->proc_table->get_name() << "\n";
     level.push_back(SPACE);
-    os << level << "Return Type: <" << get_type_str(this->proc_table->get_return_type()) << ">\n";
-    os << level << "Formal Parameters: \n";
+    os << level << "Return Type: <" << this->proc_table->get_return_type() << ">\n";
+    os << level << "Formal Parameters: ";
+    level.push_back(SPACE);
+    for (const auto &param : this->proc_table->get_params()) {
+        os << "\n" << level << param->get_name() << "\tType:<" << param->get_type() << ">";
+    }
     level.pop_back();
-    os << "**BEGIN: Abstract Syntax Tree";
+    os << "\n**BEGIN: Abstract Syntax Tree";
     level.push_back(SPACE);
     seq_ast->print(os, level);
     level.pop_back();
@@ -38,7 +42,7 @@ void Func_Ast::print(std::ostream &os, std::string &level) const {
 Name_Expr_Ast::Name_Expr_Ast(std::shared_ptr<SymTabEntry> name) : name(name) { type = name->get_type(); }
 
 void Name_Expr_Ast::print(std::ostream &os, std::string &level) const {
-    os << "Name: " << name->get_name() << "<" << get_type_str(name->get_type()) << ">";
+    os << "Name: " << name->get_name() << "<" << name->get_type() << ">";
 }
 
 // ------------------------------ String_Expr_Ast ------------------------------
@@ -73,7 +77,7 @@ void Binary_Expr_Ast::print(std::ostream &os, std::string &level) const {
 
     os << binary_expr_type_str << ": ";
     os << get_binary_op_str();
-    os << "<" << get_type_str(type) << ">";
+    os << "<" << type << ">";
     level.push_back(SPACE);
     if (l_opd) {
         os << "\n" << level;
@@ -306,8 +310,6 @@ void Sequence_Stmt_Ast::print(std::ostream &os, std::string &level) const {
         child->print(os, level);
     }
 }
-
-
 
 // void Ast::Error::semantic_check(bool check, const std::string &err_msg) {
 //     if (!sa_parse && !check) {

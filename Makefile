@@ -32,10 +32,10 @@ y.tab.o: y.tab.cc lexer.hh y.tab.h
 lex.yy.o: lex.yy.cc y.tab.h lexer.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-lex.yy.cc: lexer.l y.tab.h lexer.hh
+lex.yy.cc: lexer.l
 	flex lexer.l
 
-y.tab.h y.tab.cc: y.y lexer.hh symtab.hh ast.hh
+y.tab.h y.tab.cc: y.y
 	bison --language=c++ --header=y.tab.h -dv y.y
 
 clean:
