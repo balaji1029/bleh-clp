@@ -14,6 +14,8 @@ enum class Arith_Expr_Type { PLUS, MINUS, MULT, DIV, UMINUS };
 
 enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
 
+// ------------------------------ Main AST Class ------------------------------
+
 class Ast {
   protected:
     static bool sa_parse;

@@ -74,8 +74,6 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
 
     ######## sa-parse #########
 
-    rm -f "$toks_file" "$a2_toks_file"
-    rm -f "$ast_file" "$a2_ast_file"
 
     reference-implementations/A2-sclp "$file" --show-tokens --sa-parse 2>/dev/null
     a2_rc=$?
@@ -101,4 +99,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         echo -e "\e[31mERROR:\e[0m return code mismatch for $file with sa-parse"
     fi
 
+    rm -f "$toks_file" "$a2_toks_file"
+    rm -f "$ast_file" "$a2_ast_file"
+    
 done
