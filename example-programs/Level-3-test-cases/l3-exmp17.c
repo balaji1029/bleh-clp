@@ -1,7 +1,12 @@
+// bool c;
 int a,b,c;
+// void main;
 
-void main()
+void main (int a)
+
 {
+    // void alpha;
+    // void main;
     bool d,e;
     string z;
 
@@ -10,13 +15,17 @@ void main()
     print "Enter value of b: ";
     read b;
 
-    a = -b;
+    d = e;
+
+    a = -------------b;
 
     c = a+a + b-b;
     e = b*b > a/a;
 
     d = !(a > b);
-    c = a + b + c;
+    c = a + b + -c;
+    c = -b * a;
+    c = a * -c * b;
     d = (a >= b);
 
     z = "input";
@@ -24,5 +33,5 @@ void main()
     a = d ? 3 : 2;
 
     z = (d && e) ? "a" : e ? "b" : "none";
-    print z;
+    print b;
 }

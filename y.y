@@ -21,6 +21,7 @@
     int seen_func_decl = 0;
 %}
 
+
 %code requires {
     #include "symtab.hh"
     #include "ast.hh"
