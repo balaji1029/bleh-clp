@@ -93,21 +93,25 @@
 %token <std::string> INTEGER_NUMBER
 %token <std::string> STRING_CONSTANT 
 
-
-%type <std::shared_ptr<Ast>> program
-%type <std::shared_ptr<Sequence_Stmt_Ast>> statement_list
-
-%type <std::shared_ptr<Statement_Ast>> statement assignment_statement print_statement read_statement
-
 %type <Type> named_type
+%type <Type> param_type
+
+%type <std::shared_ptr<Func_Ast>> func_def
+
+%type <std::shared_ptr<Sequence_Stmt_Ast>> statement_list
+%type <std::shared_ptr<Statement_Ast>> statement assignment_statement print_statement read_statement
 
 %type <std::shared_ptr<Expression_Ast>> expression
 %type <std::shared_ptr<Relational_Expr_Ast>> rel_expression
 %type <std::shared_ptr<Base_Expr_Ast>> constant_as_operand
 %type <std::shared_ptr<Name_Expr_Ast>> variable_as_operand
+
+%type <std::vector<std::pair<Type, std::string>>> formal_param_list
+%type <std::pair<Type, std::string>> formal_param
+
 %type <std::pair<Type, std::string>> func_header
+
 %type <std::vector<std::string>> var_decl_item_list
-%type <std::shared_ptr<Func_Ast>> func_def
 %type <std::string> var_decl_item
 
 %right QUESTION_MARK COLON
@@ -122,8 +126,8 @@
 %%
 
 program
-    : global_decl_statement_list func_def_list {}
-    | func_def_list {}
+    : global_decl_statement_list func_def_list
+    | func_def_list
     ;
 
 global_decl_statement_list
@@ -146,9 +150,13 @@ global_decl_statement_list
 
 func_decl
     : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON {
-        Error::semantic_error("main does not take arguments");
+        if (!Error::get_sa_parse())
+            symtab->add_func($1.first, $1.second, $3);
     }
-    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON
+    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET SEMICOLON {
+        if (!Error::get_sa_parse())
+            symtab->add_func($1.first, $1.second, std::vector<std::pair<Type, std::string>>());
+    }
     ;
 
 func_def_list
@@ -168,41 +176,72 @@ func_header
     ;
 
 func_def
-    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
-        Error::semantic_error("main does not take arguments");
+    : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET {
+        if (!Error::get_sa_parse()) 
+            symtab->new_proc_symtab($1.first, $1.second, $3);
+    } LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
+        if (!Error::get_sa_parse()) {
+            auto proc_symtab = symtab->get_curr_proc_symtab();
+            $$ = std::make_shared<Func_Ast>(proc_symtab, $8);
+            symtab->go_global();
+        }
     }
-    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET LEFT_CURLY_BRACKET {
+    | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET {
         if (!Error::get_sa_parse())
-            symtab->new_proc_symtab($1.first, $1.second);
-    } optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
+            symtab->new_proc_symtab($1.first, $1.second, std::vector<std::pair<Type, std::string>>());
+    }  LEFT_CURLY_BRACKET  optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
         if (!Error::get_sa_parse()) {
             auto proc_symtab = symtab->get_curr_proc_symtab();
             $$ = std::make_shared<Func_Ast>(proc_symtab, $7);
+            symtab->go_global();
         }
     }
     ;
 
 formal_param_list
-    : formal_param_list COMMA formal_param
-    | formal_param
+    : formal_param_list COMMA formal_param {
+        if (!Error::get_sa_parse()) {
+            $$ = std::move($1);
+            $$.push_back($3);
+        }
+    }
+    | formal_param {
+        if (!Error::get_sa_parse())
+            $$.push_back($1);
+    }
     ;
 
 formal_param
-    : param_type NAME
+    : param_type NAME {
+        if (!Error::get_sa_parse())
+            $$ = std::make_pair($1, $2);
+    }
     ;
 
 param_type
-    : INTEGER
-    | FLOAT
-    | BOOL
-    | STRING
+    : INTEGER {
+        if (!Error::get_sa_parse())
+            $$ = Type::INT;
+    }
+    | FLOAT {
+        if (!Error::get_sa_parse())
+            $$ = Type::FLOAT;
+    }
+    | BOOL {
+        if (!Error::get_sa_parse())
+            $$ = Type::BOOL;
+    }
+    | STRING {
+        if (!Error::get_sa_parse())
+            $$ = Type::STRING;
+    }
     ;
 
 statement_list
     : statement_list statement {
         if (!Error::get_sa_parse()) {
             $1->add_child($2);
-            $$ = $1;
+            $$ = std::move($1);
         }
     }
     | %empty {
@@ -214,15 +253,15 @@ statement_list
 statement
     : assignment_statement {
         if (!Error::get_sa_parse())
-            $$ = $1;
+            $$ = std::move($1);
     }
     | print_statement {
         if (!Error::get_sa_parse())
-            $$ = $1;
+            $$ = std::move($1);
     }
     | read_statement {
         if (!Error::get_sa_parse())
-            $$ = $1;
+            $$ = std::move($1);
     }
     ;
 
@@ -240,13 +279,8 @@ var_decl_stmt
     : named_type var_decl_item_list SEMICOLON {
         if (!Error::get_sa_parse()) {
             Error::semantic_check($1 != Type::VOID, "Variale should not be type void");
-            for (auto item : $2) {
-                auto var_ptr = symtab->find_local(item);
-                if (var_ptr)
-                    Error::semantic_error(std::string("Var ") + item + " already declared");
-                else
-                    symtab->add_var($1, item);
-            }
+            for (auto item : $2)
+                symtab->add_var($1, item);
         }
     }
     ;
@@ -254,7 +288,7 @@ var_decl_stmt
 var_decl_item_list
     : var_decl_item_list COMMA var_decl_item {
         if (!Error::get_sa_parse()) {
-            $$ = $1;
+            $$ = std::move($1);
             $$.push_back($3);
         }
     }
@@ -355,15 +389,15 @@ expression
     }
     | rel_expression {
         if (!Error::get_sa_parse())
-            $$ = $1;
+            $$ = std::move($1);
     }
     | variable_as_operand {
         if (!Error::get_sa_parse())
-            $$ = $1;
+            $$ = std::move($1);
     }
     | constant_as_operand {
         if (!Error::get_sa_parse())
-            $$ = $1;
+            $$ = std::move($1);
     }
     ;
 

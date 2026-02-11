@@ -1,5 +1,10 @@
+int mai(bool a);
 
-void main()
+int mai(bool x) {
+	return 3;
+}
+
+void main(int abc)
 {
 	int x, y;
 	int c, b;
@@ -12,6 +17,7 @@ void main()
 
 	s = "Hi";
 	//r = p != q;
+
 
 	z = 3.5;
 
