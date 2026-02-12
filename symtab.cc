@@ -46,7 +46,8 @@ FuncEntry::FuncEntry(Type return_type, const std::string &name, const std::vecto
     for (std::pair<Type, std::string> param : params) {
         param_types.push_back(param.first);
         if (param_names.count(param.second))
-            Error::semantic_error("Function Declaration " + name + ": Parameter name " + param.second + " already used");
+            Error::semantic_error("Function Declaration " + name + ": Parameter name " + param.second +
+                                  " already used");
         param_names.insert(param.second);
     }
 }
@@ -111,6 +112,9 @@ void GlobalSymbolTable::add_param(Type type, const std::string &name) {
     if (!this->curr_symtab) {
         Error::semantic_error("parameter in global_scope??");
     }
+    auto func_ptr = find_func(name);
+    if (func_ptr)
+        Error::semantic_error("Variable " + name + " coincides with a procedure name");
     auto var_ptr = find_local(name);
     if (var_ptr)
         Error::semantic_error(std::string("Param ") + name + " already declared");
@@ -118,6 +122,9 @@ void GlobalSymbolTable::add_param(Type type, const std::string &name) {
 }
 
 void GlobalSymbolTable::add_var(Type type, const std::string &name) {
+    auto func_ptr = find_func(name);
+    if (func_ptr)
+        Error::semantic_error("Variable " + name + " coincides with a procedure name");
     auto var_ptr = find_local(name);
     if (var_ptr)
         Error::semantic_error(std::string("Var ") + name + " already declared");
@@ -133,9 +140,8 @@ void GlobalSymbolTable::add_func(Type return_type, const std::string &name,
     if (curr_symtab) {
         Error::semantic_error("We don't accept function definitions in functions");
     }
-    auto it = std::find_if(funcs.begin(), funcs.end(),
-                           [&](std::shared_ptr<FuncEntry> entry) { return entry->get_name() == name; });
-    if (it != funcs.end())
+    auto func_ptr = find_func(name);
+    if (func_ptr)
         Error::semantic_error("Function with the same name already exists");
     funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
 }
@@ -143,6 +149,14 @@ void GlobalSymbolTable::add_func(Type return_type, const std::string &name,
 void GlobalSymbolTable::go_global() { curr_symtab.reset(); }
 
 std::shared_ptr<ProcSymbolTable> GlobalSymbolTable::get_curr_proc_symtab() { return curr_symtab; }
+
+std::optional<std::shared_ptr<FuncEntry>> GlobalSymbolTable::find_func(const std::string &name) {
+    auto it = std::find_if(funcs.begin(), funcs.end(),
+                           [&](std::shared_ptr<FuncEntry> entry) { return entry->get_name() == name; });
+    if (it != funcs.end())
+        return *it;
+    return std::nullopt;
+}
 
 std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_var(const std::string &name) {
     if (curr_symtab) {
