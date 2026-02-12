@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
 
 #define SPACE '\t'
 
@@ -77,6 +77,7 @@ class GlobalSymbolTable {
     void go_global();
 
     std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();
+    std::optional<std::shared_ptr<FuncEntry>> find_func(const std::string &);
     std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string &);
     std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
 };

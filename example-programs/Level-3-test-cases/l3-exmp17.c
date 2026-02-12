@@ -2,12 +2,13 @@
 int a,b,c;
 // void main;
 
-void main (int a)
+void main (int a, void b)
 
 {
     // void alpha;
-    // void main;
+    void main;
     bool d,e;
+    int d;
     string z;
 
     print "Enter value of a: ";
