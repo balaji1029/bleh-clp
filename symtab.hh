@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <set>
 
 #define SPACE '\t'
 
@@ -37,6 +38,7 @@ class FuncEntry {
     const Type return_type;
     const std::string name;
     std::vector<Type> param_types;
+    std::set<std::string> param_names;
 
   public:
     FuncEntry(Type, const std::string &, const std::vector<std::pair<Type, std::string>> &);

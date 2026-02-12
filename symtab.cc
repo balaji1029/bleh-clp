@@ -45,6 +45,9 @@ FuncEntry::FuncEntry(Type return_type, const std::string &name, const std::vecto
     : return_type(return_type), name(name) {
     for (std::pair<Type, std::string> param : params) {
         param_types.push_back(param.first);
+        if (param_names.count(param.second))
+            Error::semantic_error("Function Declaration " + name + ": Parameter name " + param.second + " already used");
+        param_names.insert(param.second);
     }
 }
 
