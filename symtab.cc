@@ -92,15 +92,16 @@ std::optional<std::shared_ptr<SymTabEntry>> ProcSymbolTable::find_var(const std:
 
 void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &name,
                                         const std::vector<std::pair<Type, std::string>> &params) {
-    auto func_ptr = std::find_if(funcs.begin(), funcs.end(),
-                                 [&](std::shared_ptr<FuncEntry> entry) { return entry->get_name() == name; });
-    if (func_ptr != funcs.end()) {
+    auto func_ptr = find_func(name);
+    if (func_ptr) {
         const std::vector<Type> &param_types = (*func_ptr)->get_param_types();
         if (params.size() != param_types.size())
             Error::semantic_error("Number of parameters in the definition does not match with declaration");
         for (size_t idx = 0; idx < params.size() && idx < param_types.size(); idx++)
             if (params[idx].first != param_types[idx])
                 Error::semantic_error("Types of parameters do not match");
+    } else {
+        funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
     }
     procs.push_back(std::make_shared<ProcSymbolTable>(return_type, name));
     curr_symtab = procs.back();

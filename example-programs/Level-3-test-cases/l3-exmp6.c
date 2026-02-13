@@ -14,7 +14,7 @@ void main(int mai)
 	s = "Hi";
 	r = p != q;
 
-	main(3);
+	// main(3);
 
 	z = 3.5;
 
