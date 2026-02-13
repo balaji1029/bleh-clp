@@ -204,19 +204,22 @@ print   {
 
 ("."[0-9]+)|([0-9]+"."[0-9]*) {
 	display_token_info("FLOAT_NUM", YYText(), yylineno);
-	yylval->emplace<std::string>(YYText(), YYLeng());
+	if (!Error::get_sa_parse())
+		yylval->emplace<std::string>(YYText(), YYLeng());
 	return yy::parser::token::token_kind_type::DOUBLE_NUMBER;
 }
 
 \"[^\"\n]*\" {
 	display_token_info("STR_CONST", YYText(), yylineno);
-	yylval->emplace<std::string>(YYText(), YYLeng());
+	if (!Error::get_sa_parse())
+		yylval->emplace<std::string>(YYText(), YYLeng());
 	return yy::parser::token::token_kind_type::STRING_CONSTANT;
 }
 
 [0-9]+   {
 	display_token_info("INT_NUM", YYText(), yylineno);
-	yylval->emplace<std::string>(YYText(), YYLeng());
+	if (!Error::get_sa_parse())
+		yylval->emplace<std::string>(YYText(), YYLeng());
 	return yy::parser::token::token_kind_type::INTEGER_NUMBER;
 }
 
@@ -246,9 +249,11 @@ print   {
 
 [A-Za-z_][A-Za-z0-9_]* {
 	display_token_info("NAME", YYText(), yylineno);
-	std::string val = std::string(YYText(), YYLeng());
-	val += "_";
-	yylval->emplace<std::string>(val);
+	if (!Error::get_sa_parse()){
+		std::string val = std::string(YYText(), YYLeng());
+		val += "_";
+		yylval->emplace<std::string>(val);
+	}
 	return yy::parser::token::token_kind_type::NAME;
 }
 

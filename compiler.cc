@@ -19,7 +19,9 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                 flags.show_tokens = true;
             else if (std::string(long_opts[opt_idx].name) == "sa-scan") {
                 flags.sa_scan = true;
+                flags.sa_parse = true;
                 Error::sa_scan = true;
+                Error::sa_parse = true;
             } else if (std::string(long_opts[opt_idx].name) == "show-ast")
                 flags.show_ast = true;
             else if (std::string(long_opts[opt_idx].name) == "sa-parse") {
