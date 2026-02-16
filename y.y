@@ -257,6 +257,7 @@ statement
     }
     | print_statement {
         if (!Error::get_sa_parse())
+        
             $$ = std::move($1);
     }
     | read_statement {

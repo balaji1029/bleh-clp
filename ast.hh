@@ -126,9 +126,9 @@ class Ternary_Expr_Ast : public Expression_Ast {
 };
 
 class Conditional_Expr_Ast : public Ternary_Expr_Ast {
-    std::shared_ptr<Expression_Ast> condition;
-    std::shared_ptr<Expression_Ast> true_part;
-    std::shared_ptr<Expression_Ast> false_part;
+    const std::shared_ptr<Expression_Ast> condition;
+    const std::shared_ptr<Expression_Ast> true_part;
+    const std::shared_ptr<Expression_Ast> false_part;
 
   public:
     Conditional_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>,
@@ -178,8 +178,8 @@ class Sequence_Stmt_Ast : public Statement_Ast {
 };
 
 class Func_Ast : public Ast {
-    std::shared_ptr<ProcSymbolTable> proc_table;
-    std::shared_ptr<Sequence_Stmt_Ast> seq_ast;
+    const std::shared_ptr<ProcSymbolTable> proc_table;
+    const std::shared_ptr<Sequence_Stmt_Ast> seq_ast;
 
   public:
     Func_Ast(std::shared_ptr<ProcSymbolTable>, std::shared_ptr<Sequence_Stmt_Ast>);
@@ -193,5 +193,5 @@ class Root_Ast : public Ast {
     const std::vector<std::shared_ptr<Func_Ast>> &get_funcs() const;
     void add_func(std::shared_ptr<Func_Ast>);
     void print(std::ostream &os, std::string &level) const;
-};
+};                      
 
