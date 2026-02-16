@@ -29,7 +29,8 @@ void main (int a, void b)
     c = a * -c * b;
     d = (a >= b);
 
-    z = "input";
+        z = "input";
+
 
     a = d ? 3 : 2;
 

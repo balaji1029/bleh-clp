@@ -1,0 +1,740 @@
+Processing example-programs/Level-3-invalid-test-cases/l3-invalid-exmp3.c
+Processing example-programs/Level-3-invalid-test-cases/l3-invalid-exmp2.c
+0a1,37
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 2
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: STRING 	Lexeme: string 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: s 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: s 	 Lineno: 10
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 10
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 10
+> 	Token Name: GREATER_THAN 	Lexeme: > 	 Lineno: 10
+> 	Token Name: INT_NUM 	Lexeme: 0 	 Lineno: 10
+> 	Token Name: OR 	Lexeme: || 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 10
+> 	Token Name: QUESTION_MARK 	Lexeme: ? 	 Lineno: 10
+> 	Token Name: STR_CONST 	Lexeme: "works" 	 Lineno: 10
+> 	Token Name: COLON 	Lexeme: : 	 Lineno: 10
+> 	Token Name: STR_CONST 	Lexeme: "doesnt work" 	 Lineno: 10
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 10
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: s 	 Lineno: 11
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 11
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 12
+[31mERROR:[0m return code mismatch for example-programs/Level-3-invalid-test-cases/l3-invalid-exmp2.c with sa-parse
+Processing example-programs/Level-3-invalid-test-cases/l3-invalid-exmp4.c
+0a1,79
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 1
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 3
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 3
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 3
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 4
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 5
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 5
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 5
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 5
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: e 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 6
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 6
+> 	Token Name: INT_NUM 	Lexeme: 10 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 7
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 7
+> 	Token Name: INT_NUM 	Lexeme: 20 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 9
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 9
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 9
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 9
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 9
+> 	Token Name: MULT 	Lexeme: * 	 Lineno: 9
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 9
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 9
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 10
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 10
+> 	Token Name: GREATER_THAN 	Lexeme: > 	 Lineno: 10
+> 	Token Name: INT_NUM 	Lexeme: 0 	 Lineno: 10
+> 	Token Name: QUESTION_MARK 	Lexeme: ? 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 10
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 10
+> 	Token Name: COLON 	Lexeme: : 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 10
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 10
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: e 	 Lineno: 11
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 11
+> 	Token Name: DIV 	Lexeme: / 	 Lineno: 11
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 11
+> 	Token Name: LESS_THAN 	Lexeme: < 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 11
+> 	Token Name: AND 	Lexeme: && 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 11
+> 	Token Name: GREATER_THAN 	Lexeme: > 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 11
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 11
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 11
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 13
+> 	Token Name: NAME 	Lexeme: e 	 Lineno: 13
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 13
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 14
+[31mERROR:[0m return code mismatch for example-programs/Level-3-invalid-test-cases/l3-invalid-exmp4.c with sa-parse
+Processing example-programs/Level-3-invalid-test-cases/l3-invalid-exmp5.c
+0a1,123
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 1
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 1
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 1
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 1
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 3
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 3
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 3
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 4
+> 	Token Name: BOOL 	Lexeme: bool 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 5
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: e 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: f 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: STRING 	Lexeme: string 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: z 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: y 	 Lineno: 8
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 8
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 11
+> 	Token Name: STR_CONST 	Lexeme: "Enter value of a: " 	 Lineno: 11
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 11
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 12
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 12
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 12
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 13
+> 	Token Name: STR_CONST 	Lexeme: "Enter value of b: " 	 Lineno: 13
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 13
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 14
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 14
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 14
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 19
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 19
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 19
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 19
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 19
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 21
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 21
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 21
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 21
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 21
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 21
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 21
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 21
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 21
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 21
+> 	Token Name: NAME 	Lexeme: e 	 Lineno: 22
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 22
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 22
+> 	Token Name: MULT 	Lexeme: * 	 Lineno: 22
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 22
+> 	Token Name: GREATER_THAN 	Lexeme: > 	 Lineno: 22
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 22
+> 	Token Name: DIV 	Lexeme: / 	 Lineno: 22
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 22
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 22
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 24
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 24
+> 	Token Name: NOT 	Lexeme: ! 	 Lineno: 24
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 24
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 24
+> 	Token Name: GREATER_THAN 	Lexeme: > 	 Lineno: 24
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 24
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 24
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 24
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 25
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 25
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 25
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 25
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 25
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 25
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 25
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 25
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 26
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 26
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 26
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 26
+> 	Token Name: GREATER_THAN_EQUAL 	Lexeme: >= 	 Lineno: 26
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 26
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 26
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 26
+> 	Token Name: NAME 	Lexeme: z 	 Lineno: 28
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 28
+> 	Token Name: STR_CONST 	Lexeme: "input" 	 Lineno: 28
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 28
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 30
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 30
+> 	Token Name: QUESTION_MARK 	Lexeme: ? 	 Lineno: 30
+> 	Token Name: INT_NUM 	Lexeme: 3 	 Lineno: 30
+> 	Token Name: COLON 	Lexeme: : 	 Lineno: 30
+> 	Token Name: INT_NUM 	Lexeme: 2 	 Lineno: 30
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: z 	 Lineno: 32
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 32
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 32
+> 	Token Name: NAME 	Lexeme: d 	 Lineno: 32
+> 	Token Name: AND 	Lexeme: && 	 Lineno: 32
+> 	Token Name: NAME 	Lexeme: e 	 Lineno: 32
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 32
+> 	Token Name: QUESTION_MARK 	Lexeme: ? 	 Lineno: 32
+> 	Token Name: STR_CONST 	Lexeme: "a" 	 Lineno: 32
+> 	Token Name: COLON 	Lexeme: : 	 Lineno: 32
+> 	Token Name: NAME 	Lexeme: e 	 Lineno: 32
+> 	Token Name: QUESTION_MARK 	Lexeme: ? 	 Lineno: 32
+> 	Token Name: STR_CONST 	Lexeme: "b" 	 Lineno: 32
+> 	Token Name: COLON 	Lexeme: : 	 Lineno: 32
+> 	Token Name: STR_CONST 	Lexeme: "none" 	 Lineno: 32
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 32
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 33
+> 	Token Name: NAME 	Lexeme: z 	 Lineno: 33
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 33
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 34
+[31mERROR:[0m return code mismatch for example-programs/Level-3-invalid-test-cases/l3-invalid-exmp5.c with sa-parse
+Processing example-programs/Level-3-invalid-test-cases/l3-invalid-exmp1.c
+0a1,26
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 2
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 8
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 8
+> 	Token Name: GREATER_THAN 	Lexeme: > 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 8
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 8
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 10
+[31mERROR:[0m return code mismatch for example-programs/Level-3-invalid-test-cases/l3-invalid-exmp1.c with sa-parse
+Processing example-programs/Level-1-invalid-test-cases/l1-invalid-exmp4.c
+0a1,28
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 1
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 4
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 5
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 5
+> 	Token Name: INT_NUM 	Lexeme: 10 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 8
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 8
+> 	Token Name: FLOAT_NUM 	Lexeme: 20.0 	 Lineno: 8
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 8
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 10
+[31mERROR:[0m return code mismatch for example-programs/Level-1-invalid-test-cases/l1-invalid-exmp4.c with sa-parse
+Processing example-programs/Level-1-invalid-test-cases/l1-invalid-exmp1.c
+0a1,19
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 2
+> 	Token Name: STRING 	Lexeme: string 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 4
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 4
+> 	Token Name: STR_CONST 	Lexeme: "Trump" 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 7
+[31mERROR:[0m return code mismatch for example-programs/Level-1-invalid-test-cases/l1-invalid-exmp1.c with sa-parse
+Processing example-programs/Level-1-invalid-test-cases/l1-invalid-exmp7.c
+0a1,31
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 1
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 3
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 3
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 3
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 3
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 7
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 7
+> 	Token Name: FLOAT_NUM 	Lexeme: 20.8 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 8
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 8
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 10
+[31mERROR:[0m return code mismatch for example-programs/Level-1-invalid-test-cases/l1-invalid-exmp7.c with sa-parse
+Processing example-programs/Level-1-invalid-test-cases/l1-invalid-exmp5.c
+0a1,15
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 1
+> 	Token Name: BOOL 	Lexeme: bool 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 10
+[31mERROR:[0m return code mismatch for example-programs/Level-1-invalid-test-cases/l1-invalid-exmp5.c with sa-parse
+Processing example-programs/Level-1-invalid-test-cases/l1-invalid-exmp6.c
+0a1,22
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 1
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 3
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 3
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 3
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 3
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 6
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 6
+> 	Token Name: FLOAT_NUM 	Lexeme: 20.8 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 10
+[31mERROR:[0m return code mismatch for example-programs/Level-1-invalid-test-cases/l1-invalid-exmp6.c with sa-parse
+Processing example-programs/Level-1-invalid-test-cases/l1-invalid-exmp3.c
+0a1,15
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 3
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 7
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 7
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 7
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 7
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 8
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 10
+[31mERROR:[0m return code mismatch for example-programs/Level-1-invalid-test-cases/l1-invalid-exmp3.c with sa-parse
+Processing example-programs/Level-1-invalid-test-cases/l1-invalid-exmp2.c
+Processing example-programs/Level-2-test-cases/l2-exmp5.c
+Processing example-programs/Level-2-test-cases/l2-exmp17.c
+Processing example-programs/Level-2-test-cases/l2-exmp14.c
+Processing example-programs/Level-2-test-cases/l2-exmp2.c
+Processing example-programs/Level-2-test-cases/l2-exmp3.c
+0a1,36
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: value1 	 Lineno: 1
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 1
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 2
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 2
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 2
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 2
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 2
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: result 	 Lineno: 3
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: value2 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: value1 	 Lineno: 5
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 5
+> 	Token Name: FLOAT_NUM 	Lexeme: 2.4 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 6
+> 	Token Name: STR_CONST 	Lexeme: "Provide a floating point value:" 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: value2 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: result 	 Lineno: 8
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: value1 	 Lineno: 8
+> 	Token Name: MULT 	Lexeme: * 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: value2 	 Lineno: 8
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 8
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: result 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 10
+[31mERROR:[0m return code mismatch for example-programs/Level-2-test-cases/l2-exmp3.c with sa-parse
+Processing example-programs/Level-2-test-cases/l2-exmp12.c
+Processing example-programs/Level-2-test-cases/l2-exmp8.c
+Processing example-programs/Level-2-test-cases/l2-exmp6.c
+Processing example-programs/Level-2-test-cases/l2-exmp10.c
+Processing example-programs/Level-2-test-cases/l2-exmp18.c
+Processing example-programs/Level-2-test-cases/l2-exmp11.c
+Processing example-programs/Level-2-test-cases/l2-exmp16.c
+Processing example-programs/Level-2-test-cases/l2-exmp13.c
+Processing example-programs/Level-2-test-cases/l2-exmp15.c
+Processing example-programs/Level-2-test-cases/l2-exmp7.c
+Processing example-programs/Level-2-test-cases/l2-exmp1.c
+Processing example-programs/Level-2-test-cases/l2-exmp4.c
+Processing example-programs/Level-2-test-cases/l2-exmp9.c
+Processing example-programs/Level-2-invalid-test-cases/l2-invalid-exmp1.c
+Processing example-programs/Level-2-invalid-test-cases/l2-invalid-exmp5.c
+0a1,31
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 2
+> 	Token Name: STRING 	Lexeme: string 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: i 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 4
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: res 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: i 	 Lineno: 6
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 6
+> 	Token Name: STR_CONST 	Lexeme: "1" 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 7
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 7
+> 	Token Name: INT_NUM 	Lexeme: 1 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: res 	 Lineno: 9
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: i 	 Lineno: 9
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: res 	 Lineno: 11
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 11
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 12
+[31mERROR:[0m return code mismatch for example-programs/Level-2-invalid-test-cases/l2-invalid-exmp5.c with sa-parse
+Processing example-programs/Level-2-invalid-test-cases/l2-invalid-exmp3.c
+0a1,30
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 2
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 3
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 3
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: sum 	 Lineno: 3
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 4
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 4
+> 	Token Name: INT_NUM 	Lexeme: 1 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 5
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 5
+> 	Token Name: INT_NUM 	Lexeme: 2 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: sum 	 Lineno: 6
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 6
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: bb 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: sum 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 8
+[31mERROR:[0m return code mismatch for example-programs/Level-2-invalid-test-cases/l2-invalid-exmp3.c with sa-parse
+Processing example-programs/Level-2-invalid-test-cases/l2-invalid-exmp4.c
+Processing example-programs/Level-2-invalid-test-cases/l2-invalid-exmp2.c
+Processing example-programs/Level-1-test-cases/l1-exmp8.c
+Processing example-programs/Level-1-test-cases/l1-exmp5.c
+Processing example-programs/Level-1-test-cases/l1-exmp6.c
+Processing example-programs/Level-1-test-cases/l1-exmp3.c
+Processing example-programs/Level-1-test-cases/l1-exmp2.c
+Processing example-programs/Level-1-test-cases/l1-exmp7.c
+Processing example-programs/Level-1-test-cases/l1-exmp1.c
+Processing example-programs/Level-1-test-cases/l1-exmp4.c
+Processing example-programs/Level-3-test-cases/l3-exmp13.c
+Processing example-programs/Level-3-test-cases/l3-exmp15.c
+Processing example-programs/Level-3-test-cases/l3-exmp11.c
+Processing example-programs/Level-3-test-cases/l3-exmp9.c
+Processing example-programs/Level-3-test-cases/l3-exmp12.c
+Processing example-programs/Level-3-test-cases/l3-exmp8.c
+Processing example-programs/Level-3-test-cases/l3-exmp16.c
+Processing example-programs/Level-3-test-cases/l3-exmp18.c
+0a1,41
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 1
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 3
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 3
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 3
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 4
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 4
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 4
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 7
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 7
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 7
+> 	Token Name: INT_NUM 	Lexeme: 179769900000000006323030492138942643493033036433685336215410983289126434148906289940615299632196609445533816320312774433484859900046491141051651091672734470972759941382582304802812882753059262973637182942535982636884444611376868582636745405553206881859340916340092953230149901406738427651121855107737424232449 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: a 	 Lineno: 8
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 8
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 8
+> 	Token Name: INT_NUM 	Lexeme: 2147483648 	 Lineno: 8
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 9
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 9
+> 	Token Name: INT_NUM 	Lexeme: 0 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 10
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 10
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 10
+> 	Token Name: FLOAT_NUM 	Lexeme: 179760000000000006323030492138942643493033036433685336215410983289126434148906289940615299632196609445533816320312774433484859900046491141051651091672734470972759941382582304802812882753059262973637182942535982636884444611376868582636745405553206881859340916340092953230149901406738427651121855107737424232448.00 	 Lineno: 10
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 10
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 11
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 11
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 11
+> 	Token Name: FLOAT_NUM 	Lexeme: 179769900000000006323030492138942643493033036433685336215410983289126434148906289940615299632196609445533816320312774433484859900046491141051651091672734470972759941382582304802812882753059262973637182942535982636884444611376868582636745405553206881859340916340092953230149901406738427651121855107737424232448.00 	 Lineno: 11
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 11
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 12
+[31mERROR:[0m return code mismatch for example-programs/Level-3-test-cases/l3-exmp18.c with sa-parse
+Processing example-programs/Level-3-test-cases/l3-exmp7.c
+Processing example-programs/Level-3-test-cases/l3-exmp14.c
+Processing example-programs/Level-3-test-cases/l3-exmp17.c
+Processing example-programs/Level-3-test-cases/l3-exmp4.c
+Processing example-programs/Level-3-test-cases/l3-exmp6.c
+0a1,116
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 1
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 1
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 1
+> 	Token Name: NAME 	Lexeme: mai 	 Lineno: 1
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 1
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 1
+> 	Token Name: VOID 	Lexeme: void 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: main 	 Lineno: 3
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 3
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 3
+> 	Token Name: NAME 	Lexeme: mai 	 Lineno: 3
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 3
+> 	Token Name: LEFT_CURLY_BRACKET 	Lexeme: { 	 Lineno: 4
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 5
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 5
+> 	Token Name: NAME 	Lexeme: y 	 Lineno: 5
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 5
+> 	Token Name: INTEGER 	Lexeme: int 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 6
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 6
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 6
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 6
+> 	Token Name: BOOL 	Lexeme: bool 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: p 	 Lineno: 7
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: q 	 Lineno: 7
+> 	Token Name: COMMA 	Lexeme: , 	 Lineno: 7
+> 	Token Name: NAME 	Lexeme: r 	 Lineno: 7
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 7
+> 	Token Name: STRING 	Lexeme: string 	 Lineno: 8
+> 	Token Name: NAME 	Lexeme: s 	 Lineno: 8
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 8
+> 	Token Name: FLOAT 	Lexeme: float 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: z 	 Lineno: 9
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 9
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 11
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 11
+> 	Token Name: INT_NUM 	Lexeme: 2 	 Lineno: 11
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 11
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 12
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 12
+> 	Token Name: INT_NUM 	Lexeme: 3 	 Lineno: 12
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 12
+> 	Token Name: NAME 	Lexeme: s 	 Lineno: 14
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 14
+> 	Token Name: STR_CONST 	Lexeme: "Hi" 	 Lineno: 14
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 14
+> 	Token Name: NAME 	Lexeme: r 	 Lineno: 15
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 15
+> 	Token Name: NAME 	Lexeme: p 	 Lineno: 15
+> 	Token Name: NOT_EQUAL 	Lexeme: != 	 Lineno: 15
+> 	Token Name: NAME 	Lexeme: q 	 Lineno: 15
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 15
+> 	Token Name: NAME 	Lexeme: z 	 Lineno: 19
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 19
+> 	Token Name: FLOAT_NUM 	Lexeme: 3.5 	 Lineno: 19
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 19
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 21
+> 	Token Name: INT_NUM 	Lexeme: 5 	 Lineno: 21
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 21
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 22
+> 	Token Name: FLOAT_NUM 	Lexeme: 5.6 	 Lineno: 22
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 22
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 24
+> 	Token Name: STR_CONST 	Lexeme: "Hi" 	 Lineno: 24
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 24
+> 	Token Name: WRITE 	Lexeme: print 	 Lineno: 26
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 26
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 26
+> 	Token Name: READ 	Lexeme: read 	 Lineno: 28
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 28
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 28
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 30
+> 	Token Name: ASSIGN_OP 	Lexeme: = 	 Lineno: 30
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 30
+> 	Token Name: LESS_THAN 	Lexeme: < 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 30
+> 	Token Name: OR 	Lexeme: || 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 30
+> 	Token Name: GREATER_THAN 	Lexeme: > 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 30
+> 	Token Name: AND 	Lexeme: && 	 Lineno: 30
+> 	Token Name: NOT 	Lexeme: ! 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 30
+> 	Token Name: EQUAL 	Lexeme: == 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 30
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 30
+> 	Token Name: QUESTION_MARK 	Lexeme: ? 	 Lineno: 30
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 30
+> 	Token Name: MULT 	Lexeme: * 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 30
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 30
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: x 	 Lineno: 30
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 30
+> 	Token Name: DIV 	Lexeme: / 	 Lineno: 30
+> 	Token Name: LEFT_ROUND_BRACKET 	Lexeme: ( 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: b 	 Lineno: 30
+> 	Token Name: PLUS 	Lexeme: + 	 Lineno: 30
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 30
+> 	Token Name: RIGHT_ROUND_BRACKET 	Lexeme: ) 	 Lineno: 30
+> 	Token Name: COLON 	Lexeme: : 	 Lineno: 30
+> 	Token Name: NAME 	Lexeme: c 	 Lineno: 30
+> 	Token Name: MULT 	Lexeme: * 	 Lineno: 30
+> 	Token Name: INT_NUM 	Lexeme: 20 	 Lineno: 30
+> 	Token Name: MINUS 	Lexeme: - 	 Lineno: 30
+> 	Token Name: INT_NUM 	Lexeme: 30 	 Lineno: 30
+> 	Token Name: SEMICOLON 	Lexeme: ; 	 Lineno: 30
+> 	Token Name: RIGHT_CURLY_BRACKET 	Lexeme: } 	 Lineno: 31
+[31mERROR:[0m return code mismatch for example-programs/Level-3-test-cases/l3-exmp6.c with sa-parse
+Processing example-programs/Level-3-test-cases/l3-exmp3.c
+Processing example-programs/Level-3-test-cases/l3-exmp2.c
+Processing example-programs/Level-3-test-cases/l3-exmp1.c
+Processing example-programs/Level-3-test-cases/l3-exmp10.c
+Processing example-programs/Level-3-test-cases/l3-exmp5.c
