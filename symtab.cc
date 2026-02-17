@@ -88,13 +88,13 @@ Type ProcSymbolTable::get_return_type() { return func_entry->get_return_type(); 
 const std::vector<std::shared_ptr<SymTabEntry>> &ProcSymbolTable::get_params() { return params; }
 
 std::optional<std::shared_ptr<SymTabEntry>> ProcSymbolTable::find_var(const std::string &name) {
-    
+
     // Checks for the variable in the parameters
     auto it = std::find_if(params.begin(), params.end(),
                            [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
     if (it != params.end())
         return *it;
-    
+
     // Checks for the variable in the local variables
     auto it2 = std::find_if(locals.begin(), locals.end(),
                             [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
@@ -194,9 +194,9 @@ void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &nam
         // Add the function to the Function Entries
         // funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params, true));
         add_func(return_type, name, params);
-        
+
         func_ptr = find_func(name);
-        
+
         // Check if and sets function to be implemented
         (*func_ptr)->set_implemented();
     }
