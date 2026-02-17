@@ -41,8 +41,11 @@ Type SymTabEntry::get_type() { return type; }
 
 // ------------------------------ FuncEntry ------------------------------
 
-FuncEntry::FuncEntry(Type return_type, const std::string &name, const std::vector<std::pair<Type, std::string>> &params)
-    : return_type(return_type), name(name) {
+FuncEntry::FuncEntry(Type return_type, const std::string &name, const std::vector<std::pair<Type, std::string>> &params,
+                     bool implemented)
+    : return_type(return_type), name(name), implemented(implemented) {
+    // The set of names of the parameters
+    std::set<std::string> param_names;
     for (std::pair<Type, std::string> param : params) {
         param_types.push_back(param.first);
         if (param_names.count(param.second))
@@ -57,6 +60,14 @@ Type FuncEntry::get_return_type() const { return return_type; }
 const std::string &FuncEntry::get_name() const { return name; }
 
 const std::vector<Type> &FuncEntry::get_param_types() const { return param_types; }
+
+void FuncEntry::set_implemented() {
+    if (implemented)
+        Error::semantic_error("Function was implemented before");
+    implemented = true;
+}
+
+bool FuncEntry::is_implemented() const { return implemented; }
 
 // ------------------------------ ProcSymbolTable ------------------------------
 
@@ -145,6 +156,11 @@ void GlobalSymbolTable::add_func(Type return_type, const std::string &name,
     if (func_ptr)
         Error::semantic_error("Function with the same name already exists");
 
+    // Check if there exists a variable with the same name in the Symbol Table
+    auto var_ptr = find_var(name);
+    if (var_ptr)
+        Error::semantic_error("Variable with the same name already exists");
+
     // Adds the function to the Function Symbol Table
     funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
 }
@@ -152,10 +168,11 @@ void GlobalSymbolTable::add_func(Type return_type, const std::string &name,
 void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &name,
                                         const std::vector<std::pair<Type, std::string>> &params) {
 
-    // Check if there exists a function with the same name in the Symbol Table
     auto func_ptr = find_func(name);
     if (func_ptr) {
-        // Check if the paramter types match with the declaration found 
+        // Check if and set function is implemented now
+        (*func_ptr)->set_implemented();
+        // Check if the paramter types match with the declaration found
         const std::vector<Type> &param_types = (*func_ptr)->get_param_types();
 
         // Check if the number of parameters in the declaration and deifinition match
@@ -168,7 +185,7 @@ void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &nam
                 Error::semantic_error("Types of parameters do not match");
     } else {
         // Add the function to the Function Entries
-        funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
+        funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params, true));
     }
 
     // Add the Process Symbol Table to the vector of Symbol Tables and set it to be the Current Symbol Table
