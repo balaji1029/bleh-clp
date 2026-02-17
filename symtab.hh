@@ -44,13 +44,13 @@ class FuncEntry {
     /* The vector of types of the parameters of the function */
     std::vector<Type> param_types;
 
-    /* The set of names of the parameters */
-    std::set<std::string> param_names;
+    /* The bool to check if the function is implemented */
+    bool implemented;
 
   public:
     /* Creates a FuncEntry from the return type, the function name, and a vector of pair of type and the parameter name,
      * should also check if there exists a function with one of the parameter names */
-    FuncEntry(Type, const std::string &, const std::vector<std::pair<Type, std::string>> &);
+    FuncEntry(Type, const std::string &, const std::vector<std::pair<Type, std::string>> &, bool = false);
 
     /* Gets the return type of the function */
     Type get_return_type() const;
@@ -60,6 +60,8 @@ class FuncEntry {
 
     /* Gets the vector of parameter types of the function */
     const std::vector<Type> &get_param_types() const;
+    void set_implemented();
+    bool is_implemented() const;
 };
 
 class ProcSymbolTable {
@@ -100,7 +102,7 @@ class ProcSymbolTable {
 };
 
 class GlobalSymbolTable {
-    
+
     /* The pointer to the current Symbol Table, the one being filled right now */
     std::shared_ptr<ProcSymbolTable> curr_symtab;
 
@@ -114,7 +116,6 @@ class GlobalSymbolTable {
     std::vector<std::shared_ptr<ProcSymbolTable>> procs;
 
   public:
-
     /* Adds parameter to the current Process Symbol Table after checking the parameter  */
     void add_param(Type, const std::string &);
     void add_var(Type, const std::string &);
