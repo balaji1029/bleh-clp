@@ -20,8 +20,13 @@ const Type get_type_enum(std::string);
 enum class EntityType { VAR, FUNC, TEMP };
 
 class SymTabEntry {
+    /* The type of the variable  */
     const Type type;
+
+    /* The name of the variable */
     const std::string name;
+
+    /* bool to check if the offset is set */
     bool offset_set;
     int offset;
     int size;
@@ -66,21 +71,24 @@ class FuncEntry {
 
 class ProcSymbolTable {
 
-    /* The name of the function related to this symbol table */
-    std::string name;
+    // /* The name of the function related to this symbol table */
+    // std::string name;
 
-    /* The return type of the function related to this symbol table */
-    Type return_type;
+    // /* The return type of the function related to this symbol table */
+    // Type return_type;
 
+    const std::shared_ptr<FuncEntry> func_entry;
+    
     /* The vector of the pointers to the Symbol Table Entries of the parameters in the Process Symbol Table */
     std::vector<std::shared_ptr<SymTabEntry>> params;
 
     /* The vector of the pointers to the Symbol Table Entries of the local variables in the Process Symbol Table */
     std::vector<std::shared_ptr<SymTabEntry>> locals;
 
+
   public:
     /* Creates a Process Symbol Table from the return type and the function name */
-    ProcSymbolTable(Type, const std::string &);
+    ProcSymbolTable(std::shared_ptr<FuncEntry>);
 
     /* Adds a parameter to the Process Symbol Table from the type and the name of the parameter name */
     void add_param(Type, const std::string &);
@@ -116,15 +124,32 @@ class GlobalSymbolTable {
     std::vector<std::shared_ptr<ProcSymbolTable>> procs;
 
   public:
-    /* Adds parameter to the current Process Symbol Table after checking the parameter  */
+    /* Adds parameter to the current Process Symbol Table after checking if the parameter name exists in the function
+     * names or the previously defined parameter names */
     void add_param(Type, const std::string &);
+
+    /* Adds variable to the current Process Symbol Table (or the Global variables) after checking if the variable name
+     * exists in the previously defined functions or the Global variables */
     void add_var(Type, const std::string &);
+
+    /* Adds a function to the Function Symbol Table upon being declared for the first time */
     void add_func(Type, const std::string &, const std::vector<std::pair<Type, std::string>> &);
+
+    /* Creates a new Process Symbol Table after checking if a Function was declared with the name (otherwise declare it) and if there was already an implementation, raise an error */
     void new_proc_symtab(Type, const std::string &, const std::vector<std::pair<Type, std::string>> &);
+
+    /* Sets the curr_symtab to `std::nullopt` to indicate the current scop to be global */
     void go_global();
 
+    /* Gets the pointer to the current scope */
     std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();
+
+    /* Finds and returns an `std::optional` if there exists a function of the given name in the Function Symbol Table Entries */
     std::optional<std::shared_ptr<FuncEntry>> find_func(const std::string &);
+
+    /* Finds and returns an `std::optional` if there exists a variable of given name in the reachable scope */
     std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string &);
+
+    /* Finds and returns an `std::optional` if there exists a variable of the given name only in the current scope */
     std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
 };

@@ -252,7 +252,8 @@ print   {
 	display_token_info("NAME", YYText(), yylineno);
 	if (!Error::get_sa_parse()){
 		std::string val = std::string(YYText(), YYLeng());
-		val += "_";
+		if (val != "main")
+			val += "_";
 		yylval->emplace<std::string>(val);
 	}
 	return yy::parser::token::token_kind_type::NAME;
