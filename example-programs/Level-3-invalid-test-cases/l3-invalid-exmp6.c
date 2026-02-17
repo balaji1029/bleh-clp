@@ -1,6 +1,7 @@
-int main;
+bool f();
 
-void main(int a) {
-    int b;
-    print b;
+void main(int x) {
+    bool a;
+    a = f();
+    // print a;
 }

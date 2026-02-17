@@ -279,23 +279,25 @@ void Assignment_Stmt_Ast::print(std::ostream &os, std::string &level) const {
 
 // ------------------------------ Read_Stmt_Ast ------------------------------
 
-Read_Stmt_Ast::Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> name_expr_ast) : child(name_expr_ast) {
+Read_Stmt_Ast::Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> name_expr_ast) : operand(name_expr_ast) {
     Error::semantic_check(name_expr_ast->get_type() == Type::INT || name_expr_ast->get_type() == Type::FLOAT,
                           "Read: var not numeric");
 }
 
 void Read_Stmt_Ast::print(std::ostream &os, std::string &level) const {
     os << "\n" << level << "Read: ";
-    child->print(os, level);
+    operand->print(os, level);
 }
 
 // ------------------------------ Write_Stmt_Ast ------------------------------
 
-Write_Stmt_Ast::Write_Stmt_Ast(std::shared_ptr<Expression_Ast> expr_ast) : child(expr_ast) {}
+Write_Stmt_Ast::Write_Stmt_Ast(std::shared_ptr<Expression_Ast> expr_ast) : operand(expr_ast) {
+    Error::semantic_check(expr_ast->get_type() != Type::BOOL, "A bool variable is not allowed in a print statement");
+}
 
 void Write_Stmt_Ast::print(std::ostream &os, std::string &level) const {
     os << "\n" << level << "Write: ";
-    child->print(os, level);
+    operand->print(os, level);
 }
 
 // ------------------------------ Sequence_Stmt_Ast ------------------------------

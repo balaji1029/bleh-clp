@@ -1,4 +1,4 @@
-void main(int mai);
+int p;
 
 void main(int mai)
 {
@@ -11,8 +11,10 @@ void main(int mai)
 	c = 2;
 	b = 3;
 
+	p = 3;
+
 	s = "Hi";
-	r = p != q;
+	// r = p != q;
 
 	// main(3);
 
