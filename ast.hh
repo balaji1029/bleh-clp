@@ -264,26 +264,44 @@ class Sequence_Stmt_Ast : public Statement_Ast {
     std::vector<std::shared_ptr<Statement_Ast>> children;
 
   public:
-    /* Constructor with  */
+    /* Constructor for Sequence Statements */
     Sequence_Stmt_Ast();
+
+    /* Add child, from the Statement */
     void add_child(std::shared_ptr<Statement_Ast>);
+
+    /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
 };
 
+/* Class for the Functions */
 class Func_Ast : public Ast {
+    /* Pointer to the process symbol table */
     const std::shared_ptr<ProcSymbolTable> proc_table;
+
+    /* Pointer to the `Sequence_Stmt_Ast` node */
     const std::shared_ptr<Sequence_Stmt_Ast> seq_ast;
 
   public:
+    /* Constructor with the Process Symbol Table and the `Sequence_Stmt_Ast` node */
     Func_Ast(std::shared_ptr<ProcSymbolTable>, std::shared_ptr<Sequence_Stmt_Ast>);
+
+    /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
 };
 
+/* Class for the Root of the AST */
 class Root_Ast : public Ast {
+    /* Vector of functions */
     std::vector<std::shared_ptr<Func_Ast>> funcs;
 
-  public:
+    /* Get the vector of shared pointers */
     const std::vector<std::shared_ptr<Func_Ast>> &get_funcs() const;
+
+  public:
+    /* Add function to the vector of functions */
     void add_func(std::shared_ptr<Func_Ast>);
+
+    /* Print to the given output stream */
     void print(std::ostream &os, std::string &level) const;
 };
