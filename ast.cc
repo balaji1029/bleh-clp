@@ -247,7 +247,7 @@ void Assignment_Stmt_Ast::print(std::ostream &os, std::string &level) const {
 // ------------------------------ Read_Stmt_Ast ------------------------------
 
 Read_Stmt_Ast::Read_Stmt_Ast(std::shared_ptr<Name_Expr_Ast> name_expr_ast) : operand(name_expr_ast) {
-    // Check if the read statement is taking  only INT or FLOAT
+    // Check if the read statement is taking only INT or FLOAT
     Error::semantic_check((name_expr_ast->get_type() == Type::INT) || (name_expr_ast->get_type() == Type::FLOAT),
                           "Read: var not numeric");
 }
@@ -260,8 +260,8 @@ void Read_Stmt_Ast::print(std::ostream &os, std::string &level) const {
 // ------------------------------ Write_Stmt_Ast ------------------------------
 
 Write_Stmt_Ast::Write_Stmt_Ast(std::shared_ptr<Expression_Ast> expr_ast) : operand(expr_ast) {
-    // Check if the write statement is being given an INT or VOID
-    Error::semantic_check(expr_ast->get_type() != Type::INT, "A bool variable is not allowed in a print statement");
+    // Check if the write statement is not being given an BOOL or VOID
+    Error::semantic_check(expr_ast->get_type() != Type::BOOL, "A bool variable is not allowed in a print statement");
     Error::semantic_check(expr_ast->get_type() != Type::VOID, "A void variable is not allowed in a print statement");
 
 }
