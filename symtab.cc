@@ -71,7 +71,7 @@ bool FuncEntry::is_implemented() const { return implemented; }
 
 // ------------------------------ ProcSymbolTable ------------------------------
 
-ProcSymbolTable::ProcSymbolTable(Type return_type, const std::string &name) : name(name), return_type(return_type) {}
+ProcSymbolTable::ProcSymbolTable(std::shared_ptr<FuncEntry> func_entry) : func_entry(func_entry) {}
 
 void ProcSymbolTable::add_param(Type type, const std::string &name) {
     params.push_back(std::make_shared<SymTabEntry>(type, name));
@@ -81,17 +81,21 @@ void ProcSymbolTable::add_local(Type type, const std::string &name) {
     locals.push_back(std::make_shared<SymTabEntry>(type, name));
 }
 
-const std::string &ProcSymbolTable::get_name() { return name; }
+const std::string &ProcSymbolTable::get_name() { return func_entry->get_name(); }
 
-Type ProcSymbolTable::get_return_type() { return return_type; }
+Type ProcSymbolTable::get_return_type() { return func_entry->get_return_type(); }
 
 const std::vector<std::shared_ptr<SymTabEntry>> &ProcSymbolTable::get_params() { return params; }
 
 std::optional<std::shared_ptr<SymTabEntry>> ProcSymbolTable::find_var(const std::string &name) {
+    
+    // Checks for the variable in the parameters
     auto it = std::find_if(params.begin(), params.end(),
                            [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
     if (it != params.end())
         return *it;
+    
+    // Checks for the variable in the local variables
     auto it2 = std::find_if(locals.begin(), locals.end(),
                             [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
     if (it2 != locals.end())
@@ -124,6 +128,8 @@ void GlobalSymbolTable::add_param(Type type, const std::string &name) {
 }
 
 void GlobalSymbolTable::add_var(Type type, const std::string &name) {
+
+    // Check if the variable name is main
 
     // Check if there exists a function with the same name in the Symbol Table
     auto func_ptr = find_func(name);
@@ -170,12 +176,10 @@ void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &nam
 
     auto func_ptr = find_func(name);
     if (func_ptr) {
-        // Check if and set function is implemented now
-        (*func_ptr)->set_implemented();
         // Check if the paramter types match with the declaration found
         const std::vector<Type> &param_types = (*func_ptr)->get_param_types();
 
-        // Check if the number of parameters in the declaration and deifinition match
+        // Check if the number of parameters in the declaration and definition match
         if (params.size() != param_types.size())
             Error::semantic_error("Number of parameters in the definition does not match with declaration");
 
@@ -183,13 +187,22 @@ void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &nam
         for (size_t idx = 0; idx < params.size() && idx < param_types.size(); idx++)
             if (params[idx].first != param_types[idx])
                 Error::semantic_error("Types of parameters do not match");
+
+        // Check if and sets function to be implemented
+        (*func_ptr)->set_implemented();
     } else {
         // Add the function to the Function Entries
-        funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params, true));
+        // funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params, true));
+        add_func(return_type, name, params);
+        
+        func_ptr = find_func(name);
+        
+        // Check if and sets function to be implemented
+        (*func_ptr)->set_implemented();
     }
 
     // Add the Process Symbol Table to the vector of Symbol Tables and set it to be the Current Symbol Table
-    procs.push_back(std::make_shared<ProcSymbolTable>(return_type, name));
+    procs.push_back(std::make_shared<ProcSymbolTable>(*func_ptr));
     curr_symtab = procs.back();
 
     // Adds parameters to the Current Symbol Table
@@ -210,11 +223,14 @@ std::optional<std::shared_ptr<FuncEntry>> GlobalSymbolTable::find_func(const std
 }
 
 std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_var(const std::string &name) {
+    // If the local scope is not global check there
     if (curr_symtab) {
         auto curr_var_ptr = curr_symtab->find_var(name);
         if (curr_var_ptr)
             return curr_var_ptr;
     }
+
+    // Then check in the global scope too
     auto it = std::find_if(globals.begin(), globals.end(),
                            [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
     if (it != globals.end())
@@ -223,13 +239,13 @@ std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_var(const st
 }
 
 std::optional<std::shared_ptr<SymTabEntry>> GlobalSymbolTable::find_local(const std::string &name) {
-    // std::cout << curr_symtab << std::endl;
     if (curr_symtab) {
+        // If the local scope is not global, check here
         auto curr_var_ptr = curr_symtab->find_var(name);
         if (curr_var_ptr)
             return curr_var_ptr;
     } else {
-        // std::cout << "I'm here" << std::endl;
+        // Else check in the global scope
         auto it = std::find_if(globals.begin(), globals.end(),
                                [&](std::shared_ptr<SymTabEntry> entry) { return entry->get_name() == name; });
         if (it != globals.end())

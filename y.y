@@ -168,7 +168,7 @@ func_def_list
 
 func_header
     : named_type NAME {
-        Error::semantic_check($2 == "main_", "func is not main");
+        Error::semantic_check($2 == "main", "func is not main");
         Error::semantic_check($1 == Type::VOID, "main is not void");
         if ($2 == "main_") $2.pop_back();
         $$ = std::make_pair($1, $2);
