@@ -1,14 +1,17 @@
 // bool c;
 int a,b,c;
+
 // void main;
 
-void main (int a, void b)
+void main(int b);
+
+void main (int a)
 
 {
     // void alpha;
-    void main;
+    // void main;
     bool d,e;
-    int d;
+    // int d;
     string z;
 
     print "Enter value of a: ";

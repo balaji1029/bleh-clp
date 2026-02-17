@@ -90,45 +90,41 @@ std::optional<std::shared_ptr<SymTabEntry>> ProcSymbolTable::find_var(const std:
 
 // ------------------------------ GlobalSymbolTable ------------------------------
 
-void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &name,
-                                        const std::vector<std::pair<Type, std::string>> &params) {
-    auto func_ptr = find_func(name);
-    if (func_ptr) {
-        const std::vector<Type> &param_types = (*func_ptr)->get_param_types();
-        if (params.size() != param_types.size())
-            Error::semantic_error("Number of parameters in the definition does not match with declaration");
-        for (size_t idx = 0; idx < params.size() && idx < param_types.size(); idx++)
-            if (params[idx].first != param_types[idx])
-                Error::semantic_error("Types of parameters do not match");
-    } else {
-        funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
-    }
-    procs.push_back(std::make_shared<ProcSymbolTable>(return_type, name));
-    curr_symtab = procs.back();
-    for (auto param : params)
-        add_param(param.first, param.second);
-}
-
 void GlobalSymbolTable::add_param(Type type, const std::string &name) {
+
+    // Checks if the current symbol table pointer points to something
     if (!this->curr_symtab) {
         Error::semantic_error("parameter in global_scope??");
     }
+
+    // Check if there exists a function with the same name in the Symbol Table
     auto func_ptr = find_func(name);
     if (func_ptr)
         Error::semantic_error("Variable " + name + " coincides with a procedure name");
+
+    // Checks if there exists a local variable (including the parameters) with the same name in the Symbol Table
     auto var_ptr = find_local(name);
     if (var_ptr)
         Error::semantic_error(std::string("Param ") + name + " already declared");
-    this->curr_symtab->add_param(type, name);
+
+    // Adds the parameter
+    if (this->curr_symtab)
+        this->curr_symtab->add_param(type, name);
 }
 
 void GlobalSymbolTable::add_var(Type type, const std::string &name) {
+
+    // Check if there exists a function with the same name in the Symbol Table
     auto func_ptr = find_func(name);
     if (func_ptr)
         Error::semantic_error("Variable " + name + " coincides with a procedure name");
+
+    // Checks if there exists a local variable (including the parameters) with the same name in the Symbol Table
     auto var_ptr = find_local(name);
     if (var_ptr)
         Error::semantic_error(std::string("Var ") + name + " already declared");
+
+    // Adds it to the Current Symbol Table or the global variables accordingly
     if (this->curr_symtab) {
         this->curr_symtab->add_local(type, name);
     } else {
@@ -138,13 +134,50 @@ void GlobalSymbolTable::add_var(Type type, const std::string &name) {
 
 void GlobalSymbolTable::add_func(Type return_type, const std::string &name,
                                  const std::vector<std::pair<Type, std::string>> &params) {
+
+    // Checks if the current symbol table pointer points to something
     if (curr_symtab) {
         Error::semantic_error("We don't accept function definitions in functions");
     }
+
+    // Check if there exists a function with the same name in the Symbol Table
     auto func_ptr = find_func(name);
     if (func_ptr)
         Error::semantic_error("Function with the same name already exists");
+
+    // Adds the function to the Function Symbol Table
     funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
+}
+
+void GlobalSymbolTable::new_proc_symtab(Type return_type, const std::string &name,
+                                        const std::vector<std::pair<Type, std::string>> &params) {
+
+    // Check if there exists a function with the same name in the Symbol Table
+    auto func_ptr = find_func(name);
+    if (func_ptr) {
+        // Check if the paramter types match with the declaration found 
+        const std::vector<Type> &param_types = (*func_ptr)->get_param_types();
+
+        // Check if the number of parameters in the declaration and deifinition match
+        if (params.size() != param_types.size())
+            Error::semantic_error("Number of parameters in the definition does not match with declaration");
+
+        // Check if the parameter types match
+        for (size_t idx = 0; idx < params.size() && idx < param_types.size(); idx++)
+            if (params[idx].first != param_types[idx])
+                Error::semantic_error("Types of parameters do not match");
+    } else {
+        // Add the function to the Function Entries
+        funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
+    }
+
+    // Add the Process Symbol Table to the vector of Symbol Tables and set it to be the Current Symbol Table
+    procs.push_back(std::make_shared<ProcSymbolTable>(return_type, name));
+    curr_symtab = procs.back();
+
+    // Adds parameters to the Current Symbol Table
+    for (auto param : params)
+        add_param(param.first, param.second);
 }
 
 void GlobalSymbolTable::go_global() { curr_symtab.reset(); }
