@@ -253,6 +253,7 @@ print   {
 	if (!Error::get_sa_parse()){
 		std::string val = std::string(YYText(), YYLeng());
 		if (val != "main")
+			
 			val += "_";
 		yylval->emplace<std::string>(val);
 	}
