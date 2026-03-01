@@ -5,14 +5,20 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
-#include <type_traits>
 
+/* Space for printing out in AST */
+#define SPACE '\t'
+
+/* Type of Binary Expression: `BOOLEAN`, `ARITHMETIC` or `RELATIONAL` */
 enum class Binary_Expr_Type { BOOLEAN, ARITHMETIC, RELATIONAL };
 
+/* Type of Boolean Operation: `AND`, `OR` or `NOT` */
 enum class Boolean_Expr_Type { AND, OR, NOT };
 
+/* Type of Arithmetic Operation: `PLUS`, `MINUS`, `MULT`, `DIV` or `UMINUS` */
 enum class Arith_Expr_Type { PLUS, MINUS, MULT, DIV, UMINUS };
 
+/* Type of Relational Operation: `GT`, `LT`, `EQ`, `LE` or `NE` */
 enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
 
 // ------------------------------ Main AST Class ------------------------------

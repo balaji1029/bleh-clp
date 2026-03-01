@@ -7,18 +7,18 @@
 #include <string>
 #include <vector>
 
-#define SPACE '\t'
+/* Type of variable */
+enum class Type { INT, BOOL, FLOAT, STRING, VOID };
 
-enum class Type { INT, BOOL, FLOAT, STRING, VOID, ASIAN };
-
+/* Gets the string type of the enum `Type` */
 std::string get_type_str(Type);
 
 std::ostream &operator<<(std::ostream &, Type);
 
-const Type get_type_enum(std::string);
-
+/* Entity type of a Symbol Table Entry */
 enum class EntityType { VAR, FUNC, TEMP };
 
+/* Class for entries in Symbol Table */
 class SymTabEntry {
     /* The type of the variable  */
     const Type type;
@@ -39,6 +39,7 @@ class SymTabEntry {
     Type get_type();
 };
 
+/* Class for Function entries in the Global Symbol Table */
 class FuncEntry {
     /* The return type of the function */
     const Type return_type;
@@ -69,8 +70,8 @@ class FuncEntry {
     bool is_implemented() const;
 };
 
+/* Class for Process Symbol Table */
 class ProcSymbolTable {
-
     /* The Pointer to the Symbol Table Entry for the function */
     const std::shared_ptr<FuncEntry> func_entry;
 
@@ -103,8 +104,8 @@ class ProcSymbolTable {
     std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string &);
 };
 
+/* Class for Global Symbol Table */
 class GlobalSymbolTable {
-
     /* The pointer to the current Symbol Table, the one being filled right now */
     std::shared_ptr<ProcSymbolTable> curr_symtab;
 

@@ -23,6 +23,7 @@ struct flags_t {
     bool demo = false;
 };
 
+/* Main Class for the whole Compiler */
 class Compiler {
     flags_t flags;
 
@@ -39,9 +40,17 @@ class Compiler {
     Lexer lexer;
 
   public:
+    /* Constructor with the arguments given to the main function */
     Compiler(int, char *[]);
+
+    /* Runs the compiler according to the flags */
     int run();
+
+    /* Scans the code given as input */
     int scan();
+
+    /* Parse the code given as input */
     int parse();
+
     void output(std::string);
 };
