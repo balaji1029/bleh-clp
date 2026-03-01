@@ -1,6 +1,3 @@
-int global;
-void main();
-
 void main()
 {
     int num1,num2,greater;
