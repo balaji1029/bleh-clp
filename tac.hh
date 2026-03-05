@@ -15,8 +15,6 @@ class TAC_Code {
   public:
     void append(std::shared_ptr<TAC_Stmt>);
     void append(std::shared_ptr<TAC_Code>);
-
-    
 };
 
 class TAC_Stmt {
