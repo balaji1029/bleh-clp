@@ -7,4 +7,5 @@ y.tab.*
 *.o
 **/*.ast
 **/*.toks
+**/*.tac
 .gdb_history

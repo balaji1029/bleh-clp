@@ -2,9 +2,7 @@
 
 int Label_TAC_Opd::index = 0;
 
-void TAC_Code::append(std::shared_ptr<TAC_Stmt> stmt) {
-    tacStmts.push_back(stmt);
-}
+void TAC_Code::append(std::shared_ptr<TAC_Stmt> stmt) { tacStmts.push_back(stmt); }
 
 void TAC_Code::append(std::shared_ptr<TAC_Code> code) {
     tacStmts.insert(tacStmts.end(), code->tacStmts.begin(), code->tacStmts.end());
@@ -35,5 +33,3 @@ Temporary_TAC_Opd::Temporary_TAC_Opd(int temp_num) : temp_mum(temp_mum) {}
 STemporary_TAC_Opd::STemporary_TAC_Opd(int temp_num) : Temporary_TAC_Opd(temp_num) {}
 
 Variable_TAC_Opd::Variable_TAC_Opd(std::shared_ptr<SymTabEntry> entry) : entry(entry) {}
-
-
