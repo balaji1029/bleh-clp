@@ -9,6 +9,16 @@ enum class IO_Opd {
     PRINT,
 };
 
+class TAC_Code {
+    std::vector<std::shared_ptr<TAC_Stmt>> tacStmts;
+
+  public:
+    void append(std::shared_ptr<TAC_Stmt>);
+    void append(std::shared_ptr<TAC_Code>);
+
+    
+};
+
 class TAC_Stmt {
   public:
     virtual ~TAC_Stmt() = 0;
@@ -81,11 +91,11 @@ class Int_Const_TAC_Opd : public TAC_Opd, public TAC_Expr {
     Int_Const_TAC_Opd(int);
 };
 
-class Str_TAC_Opd : public TAC_Opd, public TAC_Expr {
+class Str_Const_TAC_Opd : public TAC_Opd, public TAC_Expr {
     std::string value;
 
   public:
-    Str_TAC_Opd(std::string);
+    Str_Const_TAC_Opd(std::string);
 };
 
 class Label_TAC_Opd : public TAC_Opd {

@@ -2,21 +2,25 @@
 int a,b,c;
 
 // void main;
-
 void main(int b);
 
-void main (int a)
+int blah() {
+    // c = (a + b + c);
+    return (a + b + c);
+}
 
+
+void main (int a)
 {
     // void alpha;
     // void main;
-    bool d,e;
+    bool temp0, d,e;
     // int d;
     string z;
 
     print "Enter value of a: ";
     read a;
-    print "Enter value of b: ";
+    print "Enter value of b: "; 
     read b;
 
     d = e;
@@ -32,11 +36,14 @@ void main (int a)
     c = a * -c * b;
     d = (a >= b);
 
-        z = "input";
+    z = "input";
 
 
     a = d ? 3 : 2;
 
-    z = (d && e) ? "a" : e ? "b" : "none";
+    temp0 = (d && e) || (d || e);
+
+    // z = (d && e) ? "a" : e ? "b" : "none";
     print b;
+    // return 3;
 }

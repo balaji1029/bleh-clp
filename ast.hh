@@ -1,6 +1,8 @@
 #pragma once
 
 #include "symtab.hh"
+#include "tac.hh"
+
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -24,17 +26,22 @@ enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
 // ------------------------------ Main AST Class ------------------------------
 
 /* Abstract class `Ast` for the AST nodes */
-class Ast {};
+class Ast {
+  std::shared_ptr<TAC_Code> code;
+};
 
 /* Abstract class for all the Expressions */
 class Expression_Ast : public Ast {
   protected:
     /* Type of the expression */
     Type type;
+    std::shared_ptr<TAC_Opd> place;
 
   public:
     /* Print to the given output stream */
     virtual void print(std::ostream &, std::string &) const = 0;
+
+    virtual void build_tac() = 0;
 
     /* Gets the type of the Expression */
     Type get_type() { return type; }
@@ -45,6 +52,8 @@ class Base_Expr_Ast : public Expression_Ast {
   public:
     /* Print to the given output stream */
     virtual void print(std::ostream &, std::string &) const = 0;
+
+    virtual void build_tac() = 0;
 };
 
 /* Class for identifiers */
@@ -61,6 +70,8 @@ class Name_Expr_Ast : public Base_Expr_Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void build_tac();
 };
 
 /* Class for Numeric constants */
@@ -76,6 +87,8 @@ template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
         os << std::fixed << std::setprecision(2);
         os << "Num : " << value << "<" << type << ">";
     }
+
+    void build_tac();
 };
 
 /* Class for String constants */
@@ -89,6 +102,8 @@ class String_Expr_Ast : public Base_Expr_Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void build_tac();
 };
 
 // ------------------------------ BINARY ------------------------------
@@ -116,6 +131,8 @@ class Binary_Expr_Ast : public Base_Expr_Ast {
 
     /* Deleted virtual function to get the operand string */
     virtual std::string get_binary_op_str() const = 0;
+
+    void build_tac();
 };
 
 /* Class for Boolean Expressions */
@@ -138,6 +155,8 @@ class Boolean_Expr_Ast : public Binary_Expr_Ast {
   public:
     /* Constructor with the left and right operands and the operation */
     Boolean_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Boolean_Expr_Type);
+
+    void build_tac();
 };
 
 /* Class for Arithmetic Expressions */
@@ -160,6 +179,8 @@ class Arith_Expr_Ast : public Binary_Expr_Ast {
   public:
     /* Constructor with the left and right operands and the operation */
     Arith_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Arith_Expr_Type);
+
+    void build_tac();
 };
 
 /* Class for Relational Expressions */
@@ -182,6 +203,8 @@ class Relational_Expr_Ast : public Binary_Expr_Ast {
   public:
     /* Constructor with the left and right operands and the operation */
     Relational_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Relational_Expr_Type);
+
+    void build_tac();
 };
 
 // ------------------------------ TERNARY ------------------------------
@@ -191,6 +214,8 @@ class Ternary_Expr_Ast : public Expression_Ast {
   public:
     /* Deleted function to print to the given output stream */
     virtual void print(std::ostream &, std::string &) const = 0;
+
+    void build_tac();
 };
 
 /* Class for Ternary Conditional Expressions */
@@ -211,6 +236,8 @@ class Conditional_Expr_Ast : public Ternary_Expr_Ast {
 
     /* Prints to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void build_tac();
 };
 
 // ------------------------------ STATEMENT ------------------------------
