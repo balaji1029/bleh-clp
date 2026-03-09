@@ -1,4 +1,3 @@
-1121121109
 #!/bin/bash
 DIR="example-programs"
 
@@ -10,22 +9,22 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     a2_toks_file="${file}.A2.toks"
     a2_ast_file="${file}.A2.ast"
 
-    reference-implementations/A2-sclp "$file" --show-tokens --show-ast 2>/dev/null
+    reference-implementations/A3-sclp "$file" --show-tokens --show-ast --show-tac 2>/dev/null
     a2_rc=$?
 
     if [[ ! -f "$toks_file" ]]; then
-        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by A2-sclp"
+        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by A3-sclp"
         continue
     fi
     if [[ ! -f "$ast_file" ]]; then
-        echo -e "\e[31mERROR:\e[0m .ast file not generated for $file by A2-sclp"
+        echo -e "\e[31mERROR:\e[0m .ast file not generated for $file by A3-sclp"
         continue
     fi
 
     mv "$toks_file" "$a2_toks_file"
     mv "$ast_file" "$a2_ast_file"
 
-    ./sclp --show-tokens --show-ast "$file" 2>/dev/null
+    ./sclp --show-tokens --show-ast --show-tac "$file" 2>/dev/null
     our_rc=$?
 
     if [[ ! -f "$toks_file" ]]; then
@@ -33,7 +32,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         continue
     fi
     if [[ ! -f "$ast_file" ]]; then
-        echo -e "\e[31mERROR:\e[0m .ast file not generated for $file by A2-sclp"
+        echo -e "\e[31mERROR:\e[0m .ast file not generated for $file by A3-sclp"
         continue
     fi
 
@@ -49,11 +48,11 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$toks_file" "$a2_toks_file"
     rm -f "$ast_file" "$a2_ast_file"
 
-    reference-implementations/A2-sclp "$file" --show-tokens --sa-scan 2>/dev/null
+    reference-implementations/A3-sclp "$file" --show-tokens --sa-scan 2>/dev/null
     a2_rc=$?
 
     if [[ ! -f "$toks_file" ]]; then
-        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by A2-sclp sa-scan"
+        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by A3-sclp sa-scan"
         continue
     fi
 
@@ -76,17 +75,46 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     ######## sa-parse #########
 
 
-    reference-implementations/A2-sclp "$file" --show-tokens --sa-parse 2>/dev/null
+    reference-implementations/A3-sclp "$file" --show-tokens --sa-parse 2>/dev/null
     a2_rc=$?
 
     if [[ ! -f "$toks_file" ]]; then
-        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by A2-sclp sa-parse"
+        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by A3-sclp sa-parse"
         continue
     fi
 
     mv "$toks_file" "$a2_toks_file"
 
     ./sclp --show-tokens "$file" --sa-parse 2>/dev/null
+    our_rc=$?
+
+    if [[ ! -f "$toks_file" ]]; then
+        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by our sclp sa-parse"
+        continue
+    fi
+
+    diff -Bw "$toks_file" "$a2_toks_file"
+
+    if [[ ($a2_rc -ne 0 && $our_rc -eq 0) || ($a2_rc -eq 0 && $our_rc -ne 0) ]]; then
+        echo -e "\e[31mERROR:\e[0m return code mismatch for $file with sa-parse"
+    fi
+
+    rm -f "$toks_file" "$a2_toks_file"
+    rm -f "$ast_file" "$a2_ast_file"
+
+    ######## sa-ast #########
+
+    reference-implementations/A3-sclp "$file" --show-tokens --show-tac --sa-ast 2>/dev/null
+    a2_rc=$?
+
+    if [[ ! -f "$toks_file" ]]; then
+        echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by A3-sclp sa-ast"
+        continue
+    fi
+
+    mv "$toks_file" "$a2_toks_file"
+
+    ./sclp --show-tokens --show-tac "$file" --sa-ast 2>/dev/null
     our_rc=$?
 
     if [[ ! -f "$toks_file" ]]; then

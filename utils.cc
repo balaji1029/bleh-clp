@@ -2,6 +2,7 @@
 
 bool Error::sa_parse = false;
 bool Error::sa_scan = false;
+bool Error::sa_ast = false;
 
 bool Error::get_sa_parse() { return sa_parse; }
 

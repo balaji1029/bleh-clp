@@ -45,7 +45,7 @@ void main (int a)
 
     temp0 = (d && e) || (d || e);
 
-    a = (d && e) ? (c + b + c) : (b + c + c);
+    a = (d && e) ? ((d || e) ? (a+ b) : (c + b)) : (!d ?(b + c + c) : (c + b));
     print b;
     // return 3;
 }
