@@ -11,6 +11,8 @@ void TAC_Code::append(std::shared_ptr<TAC_Code> code) {
     tacStmts.insert(tacStmts.end(), code->tacStmts.begin(), code->tacStmts.end());
 }
 
+bool TAC_Code::is_empty() { return tacStmts.size() == 0; }
+
 Assign_TAC_Stmt::Assign_TAC_Stmt(std::shared_ptr<TAC_LOpd> lOpd, std::shared_ptr<TAC_Expr> expr)
     : lOpd(lOpd), expr(expr) {}
 

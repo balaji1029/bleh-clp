@@ -87,6 +87,7 @@ void Root_Ast::print_tac(std::ostream &os) {
 }
 
 void Func_Ast::print_tac(std::ostream &os) {
+    if (code->is_empty()) return;
     os << "**PROCEDURE: " << proc_table->get_name() << "\n";
     os << "**BEGIN: Three Address Code Statements\n";
     code->print(os);
