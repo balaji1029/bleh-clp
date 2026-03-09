@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Werror -std=c++20 -O2
+CXXFLAGS = -Wall -Werror -std=c++20 -g
 TARGET = sclp
 
 all: sclp
@@ -8,7 +8,7 @@ all: sclp
 debug: CXXFLAGS = -Wall -std=c++20 -g -fsanitize=address
 debug: sclp
 
-sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o
+sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o tac.o tac_print.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 main.o: main.cc compiler.hh lexer.hh y.tab.h ast.hh symtab.hh
@@ -21,6 +21,12 @@ compiler.o: compiler.cc compiler.hh lexer.hh y.tab.h ast.hh symtab.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 ast.o: ast.cc ast.hh symtab.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+tac.o: tac.cc tac.hh symtab.hh ast.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+tac_print.o: tac_print.cc symtab.hh ast.hh tac.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 symtab.o: symtab.cc symtab.hh
