@@ -184,6 +184,8 @@ class TAC_Code {
     std::vector<std::shared_ptr<TAC_Stmt>> tacStmts;
 
   public:
+    bool is_empty();
+
     void append(std::shared_ptr<TAC_Stmt>);
     void append(std::shared_ptr<TAC_Code>);
 
