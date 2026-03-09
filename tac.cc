@@ -124,17 +124,19 @@ void Relational_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 }
 
 void Conditional_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+    place = symtab->getNewSTemp();
+    
+    auto false_label = std::make_shared<Label_TAC_Opd>();
+    auto end_label = std::make_shared<Label_TAC_Opd>();
+    
     condition->build_tac(symtab);
     true_part->build_tac(symtab);
     false_part->build_tac(symtab);
-    place = symtab->getNewSTemp();
-
-    auto temp1 = symtab->getNewTemp();
-
-    auto false_label = std::make_shared<Label_TAC_Opd>();
+    
     auto false_label_stmt = std::make_shared<Label_TAC_Stmt>(false_label);
-    auto end_label = std::make_shared<Label_TAC_Opd>();
     auto end_label_stmt = std::make_shared<Label_TAC_Stmt>(end_label);
+    
+    auto temp1 = symtab->getNewTemp();
 
     auto neg_cond = std::make_shared<Binary_TAC_Opd>(condition->get_place(), nullptr, Binary_Opd_Type::NOT);
 

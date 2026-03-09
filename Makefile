@@ -53,4 +53,5 @@ clean:
 	-rm -f *.log
 	-find . -type f -name "*.toks" -delete
 	-find . -type f -name "*.ast" -delete
+	-find . -type f -name "*.tac" -delete
 	-find . -type f -name "*.spim" -delete
