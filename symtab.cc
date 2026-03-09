@@ -103,6 +103,14 @@ std::optional<std::shared_ptr<SymTabEntry>> ProcSymbolTable::find_var(const std:
     return std::nullopt;
 }
 
+std::shared_ptr<Temporary_TAC_Opd> ProcSymbolTable::getNewTemp() {
+    return std::make_shared<Temporary_TAC_Opd>(num_temps++);
+}
+
+std::shared_ptr<Temporary_TAC_Opd> ProcSymbolTable::getNewSTemp() {
+    return std::make_shared<STemporary_TAC_Opd>(num_stemps++);
+}
+
 // ------------------------------ GlobalSymbolTable ------------------------------
 
 void GlobalSymbolTable::add_param(Type type, const std::string &name) {

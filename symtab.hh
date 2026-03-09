@@ -7,6 +7,10 @@
 #include <string>
 #include <vector>
 
+#include "tac.hh"
+
+class Temporary_TAC_Opd;
+
 /* Type of variable */
 enum class Type { INT, BOOL, FLOAT, STRING, VOID };
 
@@ -81,6 +85,10 @@ class ProcSymbolTable {
     /* The vector of the pointers to the Symbol Table Entries of the local variables in the Process Symbol Table */
     std::vector<std::shared_ptr<SymTabEntry>> locals;
 
+    int num_temps = 0;
+
+    int num_stemps = 0;
+
   public:
     /* Creates a Process Symbol Table from the pointer to the Symbol Table Entry for the function */
     ProcSymbolTable(std::shared_ptr<FuncEntry>);
@@ -102,6 +110,10 @@ class ProcSymbolTable {
 
     /* Finds and returns the optional pointer to the variable with the name */
     std::optional<std::shared_ptr<SymTabEntry>> find_var(const std::string &);
+
+    std::shared_ptr<Temporary_TAC_Opd> getNewTemp();
+
+    std::shared_ptr<Temporary_TAC_Opd> getNewSTemp();
 };
 
 /* Class for Global Symbol Table */

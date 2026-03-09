@@ -14,20 +14,64 @@
 /* Type of Binary Expression: `BOOLEAN`, `ARITHMETIC` or `RELATIONAL` */
 enum class Binary_Expr_Type { BOOLEAN, ARITHMETIC, RELATIONAL };
 
-/* Type of Boolean Operation: `AND`, `OR` or `NOT` */
-enum class Boolean_Expr_Type { AND, OR, NOT };
+// /* Type of Boolean Operation: `AND`, `OR` or `NOT` */
+// enum class Boolean_Expr_Type { AND, OR, NOT };
 
-/* Type of Arithmetic Operation: `PLUS`, `MINUS`, `MULT`, `DIV` or `UMINUS` */
-enum class Arith_Expr_Type { PLUS, MINUS, MULT, DIV, UMINUS };
+// /* Type of Arithmetic Operation: `PLUS`, `MINUS`, `MULT`, `DIV` or `UMINUS` */
+// enum class Arith_Expr_Type { PLUS, MINUS, MULT, DIV, UMINUS };
 
-/* Type of Relational Operation: `GT`, `LT`, `EQ`, `LE` or `NE` */
-enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
+// /* Type of Relational Operation: `GT`, `LT`, `EQ`, `LE` or `NE` */
+// enum class Relational_Expr_Type { GT, LT, EQ, GE, LE, NE };
+
+enum class Binary_Opd_Type { AND, OR, NOT, PLUS, MINUS, MULT, DIV, UMINUS, GT, LT, EQ, GE, LE, NE };
+
+inline std::string to_string(Binary_Opd_Type opd_type) {
+  switch (opd_type) {
+    case Binary_Opd_Type::AND:
+      return "&&";
+    case Binary_Opd_Type::OR:
+      return "||";
+    case Binary_Opd_Type::NOT:
+      return "!";
+    case Binary_Opd_Type::PLUS:
+      return "+";
+    case Binary_Opd_Type::MINUS:
+    case Binary_Opd_Type::UMINUS:
+      return "-";
+    case Binary_Opd_Type::MULT:
+      return "*";
+    case Binary_Opd_Type::DIV:
+      return "/";
+    case Binary_Opd_Type::GT:
+      return ">";
+    case Binary_Opd_Type::LT:
+      return "<";
+    case Binary_Opd_Type::EQ:
+      return "==";
+    case Binary_Opd_Type::GE:
+      return ">=";
+    case Binary_Opd_Type::LE:
+      return "<=";
+    case Binary_Opd_Type::NE:
+      return "!=";
+    default:
+      return "";
+    }
+}
+
+using Boolean_Expr_Type = Binary_Opd_Type;
+using Arith_Expr_Type = Binary_Opd_Type;
+using Relational_Expr_Type = Binary_Opd_Type;
 
 // ------------------------------ Main AST Class ------------------------------
 
 /* Abstract class `Ast` for the AST nodes */
 class Ast {
-  std::shared_ptr<TAC_Code> code;
+  protected:
+    std::shared_ptr<TAC_Code> code;
+
+  public:
+    std::shared_ptr<TAC_Code> get_code() { return code; }
 };
 
 /* Abstract class for all the Expressions */
@@ -35,16 +79,18 @@ class Expression_Ast : public Ast {
   protected:
     /* Type of the expression */
     Type type;
-    std::shared_ptr<TAC_Opd> place;
+    std::shared_ptr<Printable_Opd> place;
 
   public:
     /* Print to the given output stream */
     virtual void print(std::ostream &, std::string &) const = 0;
 
-    virtual void build_tac() = 0;
+    virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
 
     /* Gets the type of the Expression */
     Type get_type() { return type; }
+
+    std::shared_ptr<Printable_Opd> get_place() { return place; }
 };
 
 /* Abstract class for names and constants */
@@ -53,7 +99,7 @@ class Base_Expr_Ast : public Expression_Ast {
     /* Print to the given output stream */
     virtual void print(std::ostream &, std::string &) const = 0;
 
-    virtual void build_tac() = 0;
+    virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
 /* Class for identifiers */
@@ -71,7 +117,7 @@ class Name_Expr_Ast : public Base_Expr_Ast {
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
 
-    void build_tac();
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for Numeric constants */
@@ -88,13 +134,15 @@ template <typename T> class Number_Expr_Ast : public Base_Expr_Ast {
         os << "Num : " << value << "<" << type << ">";
     }
 
-    void build_tac();
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for String constants */
 class String_Expr_Ast : public Base_Expr_Ast {
     /* String of the string constant */
     std::string s;
+
+    std::shared_ptr<Str_Const_TAC_Opd> const_opd;
 
   public:
     /* Constructor with the string */
@@ -103,7 +151,7 @@ class String_Expr_Ast : public Base_Expr_Ast {
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
 
-    void build_tac();
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 // ------------------------------ BINARY ------------------------------
@@ -116,6 +164,7 @@ class Binary_Expr_Ast : public Base_Expr_Ast {
     /* Virtual function to return the type of expresion */
     virtual const Binary_Expr_Type &get_binary_expr_type() const = 0;
 
+  protected:
     /* Left operand of the binary expression */
     const std::shared_ptr<Expression_Ast> l_opd;
 
@@ -132,7 +181,7 @@ class Binary_Expr_Ast : public Base_Expr_Ast {
     /* Deleted virtual function to get the operand string */
     virtual std::string get_binary_op_str() const = 0;
 
-    void build_tac();
+    virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
 /* Class for Boolean Expressions */
@@ -156,7 +205,7 @@ class Boolean_Expr_Ast : public Binary_Expr_Ast {
     /* Constructor with the left and right operands and the operation */
     Boolean_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Boolean_Expr_Type);
 
-    void build_tac();
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for Arithmetic Expressions */
@@ -180,7 +229,7 @@ class Arith_Expr_Ast : public Binary_Expr_Ast {
     /* Constructor with the left and right operands and the operation */
     Arith_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Arith_Expr_Type);
 
-    void build_tac();
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for Relational Expressions */
@@ -204,7 +253,7 @@ class Relational_Expr_Ast : public Binary_Expr_Ast {
     /* Constructor with the left and right operands and the operation */
     Relational_Expr_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Expression_Ast>, Relational_Expr_Type);
 
-    void build_tac();
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 // ------------------------------ TERNARY ------------------------------
@@ -215,7 +264,9 @@ class Ternary_Expr_Ast : public Expression_Ast {
     /* Deleted function to print to the given output stream */
     virtual void print(std::ostream &, std::string &) const = 0;
 
-    void build_tac();
+    virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
+
+    // virtual ~Ternary_Expr_Ast();
 };
 
 /* Class for Ternary Conditional Expressions */
@@ -237,7 +288,7 @@ class Conditional_Expr_Ast : public Ternary_Expr_Ast {
     /* Prints to the given output stream */
     void print(std::ostream &, std::string &) const;
 
-    void build_tac();
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 // ------------------------------ STATEMENT ------------------------------
@@ -247,6 +298,8 @@ class Statement_Ast : public Ast {
   public:
     /* Deleted function to print to the given output stream */
     virtual void print(std::ostream &os, std::string &level) const = 0;
+
+    virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
 /* Class for Assignment Statements */
@@ -263,6 +316,8 @@ class Assignment_Stmt_Ast : public Statement_Ast {
 
     /* Prints to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for Read Statements */
@@ -276,6 +331,8 @@ class Read_Stmt_Ast : public Statement_Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for Write Statements */
@@ -289,6 +346,8 @@ class Write_Stmt_Ast : public Statement_Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for sequence of statements */
@@ -305,6 +364,8 @@ class Sequence_Stmt_Ast : public Statement_Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
 
 /* Class for the Functions */
@@ -321,6 +382,12 @@ class Func_Ast : public Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;
+
+    void print_tac(std::ostream& os);
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
+
+    std::shared_ptr<ProcSymbolTable> get_symtab() { return proc_table; }
 };
 
 /* Class for the Root of the AST */
@@ -337,4 +404,8 @@ class Root_Ast : public Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &os, std::string &level) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
+
+    void print_tac(std::ostream& os);
 };

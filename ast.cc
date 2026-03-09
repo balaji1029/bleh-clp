@@ -147,7 +147,7 @@ std::string Arith_Expr_Ast::get_binary_op_str() const {
 Relational_Expr_Ast::Relational_Expr_Ast(std::shared_ptr<Expression_Ast> l_opd, std::shared_ptr<Expression_Ast> r_opd,
                                          Relational_Expr_Type relational_expr_type)
     : Binary_Expr_Ast(l_opd, r_opd), relational_expr_type(relational_expr_type) {
-    
+
     // Check if the operands are both either INT or FLOAT
     Error::semantic_check(l_opd->get_type() == Type::INT || l_opd->get_type() == Type::FLOAT,
                           "Relational: l_opd not numeric");
@@ -187,6 +187,8 @@ std::string Relational_Expr_Ast::get_binary_op_str() const {
     };
     return relational_expr_type_str;
 }
+
+// Ternary_Expr_Ast::~Ternary_Expr_Ast() = default;
 
 // ------------------------------ Conditional_Expr_Ast ------------------------------
 
@@ -263,7 +265,6 @@ Write_Stmt_Ast::Write_Stmt_Ast(std::shared_ptr<Expression_Ast> expr_ast) : opera
     // Check if the write statement is not being given an BOOL or VOID
     Error::semantic_check(expr_ast->get_type() != Type::BOOL, "A bool variable is not allowed in a print statement");
     Error::semantic_check(expr_ast->get_type() != Type::VOID, "A void variable is not allowed in a print statement");
-
 }
 
 void Write_Stmt_Ast::print(std::ostream &os, std::string &level) const {
@@ -318,7 +319,6 @@ void Root_Ast::print(std::ostream &os, std::string &level) const {
         child->print(os, level);
     }
 }
-
 
 // void Ast::Error::semantic_check(bool check, const std::string &err_msg) {
 //     if (!sa_parse && !check) {

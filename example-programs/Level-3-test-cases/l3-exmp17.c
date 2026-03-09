@@ -4,10 +4,10 @@ int a,b,c;
 // void main;
 void main(int b);
 
-int blah() {
-    // c = (a + b + c);
-    return (a + b + c);
-}
+// int blah() {
+//     // c = (a + b + c);
+//     return (a + b + c);
+// }
 
 
 void main (int a)
@@ -27,6 +27,8 @@ void main (int a)
 
     a = -------------b;
 
+    c = 3 + 3;
+
     c = a+a + b-b;
     e = b*b > a/a;
 
@@ -43,7 +45,7 @@ void main (int a)
 
     temp0 = (d && e) || (d || e);
 
-    // z = (d && e) ? "a" : e ? "b" : "none";
+    a = (d && e) ? (c + b + c) : (b + c + c);
     print b;
     // return 3;
 }

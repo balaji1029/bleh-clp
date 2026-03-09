@@ -70,6 +70,9 @@ int Compiler::run() {
     if (flags.show_tokens)
         output(lexer.token_output);
 
+    root_ast->build_tac(nullptr);
+    root_ast->print_tac(std::cout);
+
     return status;
 }
 
