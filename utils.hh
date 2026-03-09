@@ -12,6 +12,8 @@ class Error {
     /* Flag bool to stop after scanning */
     static bool sa_scan;
 
+    static bool sa_ast;
+
   public:
     /* Get the sa_parse flag */
     static bool get_sa_parse();
