@@ -43,9 +43,13 @@ void main (int a)
 
     a = d ? 3 : 2;
 
-    temp0 = (d && e) || (d || e);
+    // temp0 = (d && e) || (d || e);
 
-    a = (d && e) ? ((d || e) ? (a+ b) : (c + b)) : (!d ?(b + c + c) : (c + b));
+    // a = (d || e) ? 9.0 : 10;
+
+    d = ((d && e)) ? (d && e) : 9;
+
+    // a = ((a > b) ? (d && e) : (d || e)) ? ((d || e) ? (9.0) : (c + b)) : (!d ?(b + c + c) : (c + b));
     print b;
     // return 3;
 }
