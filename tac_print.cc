@@ -75,19 +75,20 @@ void Label_TAC_Stmt::print(std::ostream &os) {
 }
 
 void TAC_Code::print(std::ostream &os) {
-    for (auto stmt : tacStmts) {
+    for (const std::shared_ptr<TAC_Stmt> &stmt : tacStmts) {
         stmt->print(os);
     }
 }
 
 void Root_Ast::print_tac(std::ostream &os) {
-    for (auto func : funcs) {
+    for (const std::shared_ptr<Func_Ast> &func : funcs) {
         func->print_tac(os);
     }
 }
 
 void Func_Ast::print_tac(std::ostream &os) {
-    if (code->is_empty()) return;
+    if (code->is_empty())
+        return;
     os << "**PROCEDURE: " << proc_table->get_name() << "\n";
     os << "**BEGIN: Three Address Code Statements\n";
     code->print(os);

@@ -280,7 +280,7 @@ var_decl_stmt
     : named_type var_decl_item_list SEMICOLON {
         if (!Error::get_sa_parse()) {
             Error::semantic_check($1 != Type::VOID, "Variale should not be type void");
-            for (auto item : $2)
+            for (const std::string& item : $2)
                 symtab->add_var($1, item);
         }
     }
