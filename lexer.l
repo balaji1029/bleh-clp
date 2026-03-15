@@ -63,25 +63,21 @@ return	{
 
 if		{
 	display_token_info("IF", YYText(), yylineno);
-	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::IF;
 }
 
 else 	{
 	display_token_info("ELSE", YYText(), yylineno);
-	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::ELSE;
 }
 
 do		{
 	display_token_info("DO", YYText(), yylineno);
-	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::DO;
 }
 
 while	{
 	display_token_info("WHILE", YYText(), yylineno);
-	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::WHILE;
 }
 
