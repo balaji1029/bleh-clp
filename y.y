@@ -255,6 +255,10 @@ statement
         if (!Error::get_sa_parse())
             $$ = std::move($1);
     }
+    | if_statement
+    | do_while_statement
+    | while_statement
+    | compound_statement
     | print_statement {
         if (!Error::get_sa_parse())
         
@@ -331,6 +335,27 @@ assignment_statement
         if (!Error::get_sa_parse())
             $$ = std::make_shared<Assignment_Stmt_Ast>(std::move($1), std::move($3));
     }
+    ;
+
+if_condition
+    : LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET
+    ;
+
+if_statement
+    : IF if_condition statement ELSE statement
+    | IF if_condition statement
+    ;
+
+do_while_statement
+    : DO statement WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET SEMICOLON
+    ;
+
+while_statement
+    : WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET statement
+    ;
+
+compound_statement
+    : LEFT_CURLY_BRACKET statement RIGHT_CURLY_BRACKET
     ;
 
 print_statement
