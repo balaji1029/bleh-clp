@@ -11,5 +11,10 @@ void main(bool d) {
     // d = a != b;
     // d = !d;
     string e;
-    e = "";
+    if (a < b) {
+        if (b < a)
+            b = c;
+    } else {
+        b = c;
+    }
 }

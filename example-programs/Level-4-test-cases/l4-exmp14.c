@@ -1,6 +1,7 @@
 void main();
 
 void main()
+
 {
 	int a, b, c, d, e, f;
 	a = 2; b = 4; c = 10; d = 3; e = 8; f = 7;
