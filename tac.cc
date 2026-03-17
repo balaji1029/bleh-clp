@@ -227,16 +227,21 @@ void Sequence_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 }
 
 void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+    // TODO
     condition->build_tac(symtab);
+    code = std::make_shared<TAC_Code>();
 }
 
 void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     // TODO
+    code = std::make_shared<TAC_Code>();
 }
 
 void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     condition->build_tac(symtab);
 
+    true_body->build_tac(symtab);
+    
     std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
 
     std::shared_ptr<Binary_TAC_Opd> neg_cond = std::make_shared<Binary_TAC_Opd>(
@@ -244,18 +249,16 @@ void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
     std::shared_ptr<Assign_TAC_Stmt> negation_stmt =
         std::make_shared<Assign_TAC_Stmt>(temp1, neg_cond);
-
-    true_body->build_tac(symtab);
+        std::shared_ptr<Label_TAC_Opd> end_label =
+            std::make_shared<Label_TAC_Opd>();
+        std::shared_ptr<Label_TAC_Stmt> end_label_stmt =
+            std::make_shared<Label_TAC_Stmt>(end_label);
 
     std::shared_ptr<Label_TAC_Opd> false_label =
         std::make_shared<Label_TAC_Opd>();
     std::shared_ptr<Label_TAC_Stmt> false_label_stmt =
         std::make_shared<Label_TAC_Stmt>(false_label);
 
-    std::shared_ptr<Label_TAC_Opd> end_label =
-        std::make_shared<Label_TAC_Opd>();
-    std::shared_ptr<Label_TAC_Stmt> end_label_stmt =
-        std::make_shared<Label_TAC_Stmt>(end_label);
 
     std::shared_ptr<If_Goto_TAC_Stmt> if_goto =
         std::make_shared<If_Goto_TAC_Stmt>(temp1, false_label);
