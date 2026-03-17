@@ -229,7 +229,40 @@ void Sequence_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     // TODO
     condition->build_tac(symtab);
+    body->build_tac(symtab);
+
+    std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
+
+    std::shared_ptr<Binary_TAC_Opd> neg_cond = std::make_shared<Binary_TAC_Opd>(
+        condition->get_place(), nullptr, Binary_Opd_Type::NOT);
+
+    std::shared_ptr<Assign_TAC_Stmt> negation_stmt =
+        std::make_shared<Assign_TAC_Stmt>(temp1, neg_cond);
+
+    std::shared_ptr<Label_TAC_Opd> begin_label =
+        std::make_shared<Label_TAC_Opd>();
+
+    std::shared_ptr<Label_TAC_Stmt> begin_label_stmt =
+        std::make_shared<Label_TAC_Stmt>(begin_label);
+
+    std::shared_ptr<Goto_TAC_Stmt> goto_begin =
+        std::make_shared<Goto_TAC_Stmt>(begin_label);
+
+    std::shared_ptr<Label_TAC_Opd> end_label =
+        std::make_shared<Label_TAC_Opd>();
+
+    std::shared_ptr<Label_TAC_Stmt> end_label_stmt =
+        std::make_shared<Label_TAC_Stmt>(end_label);
+
+    // std::shared_ptr<Goto_TAC_Stmt> goto_end =
+    // std::make_shared<Goto_TAC_Stmt>(end_label);
+
+    std::shared_ptr<If_Goto_TAC_Stmt> if_goto =
+        std::make_shared<If_Goto_TAC_Stmt>(temp1, end_label);
+
     code = std::make_shared<TAC_Code>();
+    code->append(begin_label_stmt, condition->get_code(), negation_stmt, if_goto, body->get_code(),
+                 goto_begin, end_label_stmt);
 }
 
 void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
@@ -239,7 +272,6 @@ void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
 void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     condition->build_tac(symtab);
-
     true_body->build_tac(symtab);
 
     std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
@@ -252,7 +284,7 @@ void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
     std::shared_ptr<Label_TAC_Opd> end_label =
         std::make_shared<Label_TAC_Opd>();
-    
+
     std::shared_ptr<Label_TAC_Stmt> end_label_stmt =
         std::make_shared<Label_TAC_Stmt>(end_label);
 
