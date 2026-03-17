@@ -98,10 +98,10 @@
 
 %type <std::shared_ptr<Func_Ast>> func_def
 
-%type <std::shared_ptr<Sequence_Stmt_Ast>> statement_list
+%type <std::shared_ptr<Sequence_Stmt_Ast>> statement_list compound_statement
 %type <std::shared_ptr<Statement_Ast>> statement assignment_statement print_statement read_statement
 
-%type <std::shared_ptr<Expression_Ast>> expression
+%type <std::shared_ptr<Expression_Ast>> expression if_condition
 %type <std::shared_ptr<Relational_Expr_Ast>> rel_expression
 %type <std::shared_ptr<Base_Expr_Ast>> constant_as_operand
 %type <std::shared_ptr<Name_Expr_Ast>> variable_as_operand
@@ -114,6 +114,11 @@
 %type <std::vector<std::string>> var_decl_item_list
 %type <std::string> var_decl_item
 
+%type <std::shared_ptr<While_Loop_Ast>> while_statement
+%type <std::shared_ptr<Do_While_Loop_Ast>> do_while_statement
+
+%type <std::shared_ptr<Selection_Stmt_Ast>> if_statement
+
 %right QUESTION_MARK COLON
 %left OR
 %left AND
@@ -122,6 +127,9 @@
 %left PLUS MINUS
 %left MULT DIV
 %right UMINUS
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
 
 %%
 
@@ -255,10 +263,22 @@ statement
         if (!Error::get_sa_parse())
             $$ = std::move($1);
     }
-    | if_statement
-    | do_while_statement
-    | while_statement
-    | compound_statement
+    | if_statement {
+        if (!Error::get_sa_parse())
+            $$ = std::move($1);
+    }
+    | do_while_statement {
+        if (!Error::get_sa_parse())
+            $$ = std::move($1);
+    }
+    | while_statement {
+        if (!Error::get_sa_parse())
+            $$ = std::move($1);
+    }
+    | compound_statement {
+        if (!Error::get_sa_parse())
+            $$ = std::move($1);
+    }
     | print_statement {
         if (!Error::get_sa_parse())
         
@@ -338,24 +358,42 @@ assignment_statement
     ;
 
 if_condition
-    : LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET
+    : LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET {
+        if (!Error::get_sa_parse())
+            $$ = std::move($2);
+    }
     ;
 
 if_statement
-    : IF if_condition statement ELSE statement
-    | IF if_condition statement
+    : IF if_condition statement ELSE statement {
+        if (!Error::get_sa_parse())
+            $$ = std::make_shared<Selection_Stmt_Ast>($2, $3, $5);
+    }
+    | IF if_condition statement {
+        if (!Error::get_sa_parse())
+            $$ = std::make_shared<Selection_Stmt_Ast>($2, $3);
+    } %prec LOWER_THAN_ELSE
     ;
 
 do_while_statement
-    : DO statement WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET SEMICOLON
+    : DO statement WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET SEMICOLON {
+        if (!Error::get_sa_parse())
+            $$ = std::make_shared<Do_While_Loop_Ast>($5, $2);
+    }
     ;
 
 while_statement
-    : WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET statement
+    : WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET statement {
+        if (!Error::get_sa_parse())
+            $$ = std::make_shared<While_Loop_Ast>($3, $5);
+    }
     ;
 
 compound_statement
-    : LEFT_CURLY_BRACKET statement RIGHT_CURLY_BRACKET
+    : LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET {
+        if (!Error::get_sa_parse())
+            $$ = std::move($2);
+    }
     ;
 
 print_statement

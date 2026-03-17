@@ -336,6 +336,67 @@ void Sequence_Stmt_Ast::print(std::ostream &os, std::string &level) const {
     }
 }
 
+// ----------------------------- Iteraion_Stmt_Ast -----------------------------
+
+Iteration_Stmt_Ast::Iteration_Stmt_Ast(
+    std::shared_ptr<Expression_Ast> condition,
+    std::shared_ptr<Statement_Ast> body)
+    : condition(condition), body(body) {
+    Error::semantic_check(condition->get_type() == Type::BOOL,
+                          "Iteration stmt condition is not a boolean");
+}
+
+While_Loop_Ast::While_Loop_Ast(std::shared_ptr<Expression_Ast> condition,
+                               std::shared_ptr<Statement_Ast> body)
+    : Iteration_Stmt_Ast(condition, body) {}
+
+Do_While_Loop_Ast::Do_While_Loop_Ast(std::shared_ptr<Expression_Ast> condition,
+                                     std::shared_ptr<Statement_Ast> body)
+    : Iteration_Stmt_Ast(condition, body) {}
+
+void While_Loop_Ast::print(std::ostream &, std::string &) const {
+    // TODO
+}
+
+void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
+    // TODO
+}
+
+void Do_While_Loop_Ast::print(std::ostream &, std::string &) const {
+    // TODO
+}
+
+void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
+    // TODO
+}
+
+// ---------------------------- Selection_Stmt_Ast ----------------------------
+
+Selection_Stmt_Ast::Selection_Stmt_Ast(
+    std::shared_ptr<Expression_Ast> condition,
+    std::shared_ptr<Statement_Ast> true_body)
+    : condition(condition), true_body(true_body), false_body(std::nullopt) {
+    Error::semantic_check(condition->get_type() == Type::BOOL,
+                          "Selection stmt condition is not bool");
+}
+
+Selection_Stmt_Ast::Selection_Stmt_Ast(
+    std::shared_ptr<Expression_Ast> condition,
+    std::shared_ptr<Statement_Ast> true_body,
+    std::shared_ptr<Statement_Ast> false_body)
+    : condition(condition), true_body(true_body), false_body(false_body) {
+    Error::semantic_check(condition->get_type() == Type::BOOL,
+                          "Selection stmt condition is not bool");
+}
+
+void Selection_Stmt_Ast::print(std::ostream &, std::string &) const {
+    // TODO
+}
+
+void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
+    // TODO
+}
+
 // ------------------------------ Func_Ast ------------------------------
 
 Func_Ast::Func_Ast(std::shared_ptr<ProcSymbolTable> proc_table,
