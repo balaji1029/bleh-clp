@@ -336,6 +336,98 @@ void Sequence_Stmt_Ast::print(std::ostream &os, std::string &level) const {
     }
 }
 
+// ----------------------------- Iteraion_Stmt_Ast -----------------------------
+
+Iteration_Stmt_Ast::Iteration_Stmt_Ast(
+    std::shared_ptr<Expression_Ast> condition,
+    std::shared_ptr<Statement_Ast> body)
+    : condition(condition), body(body) {
+    Error::semantic_check(condition->get_type() == Type::BOOL,
+                          "Iteration stmt condition is not a boolean");
+}
+
+While_Loop_Ast::While_Loop_Ast(std::shared_ptr<Expression_Ast> condition,
+                               std::shared_ptr<Statement_Ast> body)
+    : Iteration_Stmt_Ast(condition, body) {}
+
+Do_While_Loop_Ast::Do_While_Loop_Ast(std::shared_ptr<Expression_Ast> condition,
+                                     std::shared_ptr<Statement_Ast> body)
+    : Iteration_Stmt_Ast(condition, body) {}
+
+void While_Loop_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "While: ";
+    level.push_back(SPACE);
+    os << "\n" << level << "Condition (";
+    level.push_back(SPACE);
+    condition->print(os, level);
+    os << ")";
+    level.pop_back();
+    os << "\n" << level << "Body (";
+    level.push_back(SPACE);
+    body->print(os, level);
+    os << ")";
+    level.pop_back();
+    level.pop_back();
+}
+
+void Do_While_Loop_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "Do: ";
+    level.push_back(SPACE);
+    os << "\n" << level << "Body (";
+    level.push_back(SPACE);
+    body->print(os, level);
+    os << ")";
+    level.pop_back();
+    os << "\n" << level << "While Condition (";
+    level.push_back(SPACE);
+    condition->print(os, level);
+    os << ")";
+    level.pop_back();
+    level.pop_back();
+}
+
+// ---------------------------- Selection_Stmt_Ast ----------------------------
+
+Selection_Stmt_Ast::Selection_Stmt_Ast(
+    std::shared_ptr<Expression_Ast> condition,
+    std::shared_ptr<Statement_Ast> true_body)
+    : condition(condition), true_body(true_body), false_body(std::nullopt) {
+    Error::semantic_check(condition->get_type() == Type::BOOL,
+                          "Selection stmt condition is not bool");
+}
+
+Selection_Stmt_Ast::Selection_Stmt_Ast(
+    std::shared_ptr<Expression_Ast> condition,
+    std::shared_ptr<Statement_Ast> true_body,
+    std::shared_ptr<Statement_Ast> false_body)
+    : condition(condition), true_body(true_body), false_body(false_body) {
+    Error::semantic_check(condition->get_type() == Type::BOOL,
+                          "Selection stmt condition is not bool");
+}
+
+void Selection_Stmt_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "If: ";
+    level.push_back(SPACE);
+    os << "\n" << level << "Condition (";
+    level.push_back(SPACE);
+    condition->print(os, level);
+    os << ")";
+    level.pop_back();
+    os << "\n" << level << "Then (";
+    level.push_back(SPACE);
+    true_body->print(os, level);
+    os << ")";
+    level.pop_back();
+    if (false_body != std::nullopt) {
+        os << "\n" << level << "Else (";
+        level.push_back(SPACE);
+        (*false_body)->print(os, level);
+        os << ")";
+        level.pop_back();
+    }
+    level.pop_back();
+}
+
 // ------------------------------ Func_Ast ------------------------------
 
 Func_Ast::Func_Ast(std::shared_ptr<ProcSymbolTable> proc_table,
