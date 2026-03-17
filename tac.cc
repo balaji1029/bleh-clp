@@ -227,7 +227,6 @@ void Sequence_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 }
 
 void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
-    // TODO
     condition->build_tac(symtab);
     body->build_tac(symtab);
 
@@ -253,9 +252,6 @@ void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
     std::shared_ptr<Label_TAC_Stmt> end_label_stmt =
         std::make_shared<Label_TAC_Stmt>(end_label);
-
-    // std::shared_ptr<Goto_TAC_Stmt> goto_end =
-    // std::make_shared<Goto_TAC_Stmt>(end_label);
 
     std::shared_ptr<If_Goto_TAC_Stmt> if_goto =
         std::make_shared<If_Goto_TAC_Stmt>(temp1, end_label);
