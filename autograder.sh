@@ -2,10 +2,10 @@
 DIR="example-programs"
 
 flags=(
-    "--show-tokens --show-ast --show-tac --sa-parse",
-    "--show-tokens --sa-scan --sa-parse",
+    "--show-tokens --show-ast --show-tac --sa-ast",
+    "--show-tokens --sa-scan --sa-ast",
     "--show-tokens --sa-parse",
-    "--show-tokens --sa-ast --sa-parse"
+    "--show-tokens --sa-ast --sa-ast"
 )
 
 find "$DIR" -type f -name "*.c" | while read -r file; do
@@ -19,6 +19,10 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     ref_ast_file="${file}.A4.ast"
     ref_tac_file="${file}.A4.tac"
     ref_rtl_file="${file}.A4.rtl"
+
+    rm -f "$toks_file" "$ref_toks_file"
+    rm -f "$ast_file" "$ref_ast_file"
+    rm -f "$tac_file" "$ref_tac_file"
 
     for flag in "${flags[@]}"; do
 

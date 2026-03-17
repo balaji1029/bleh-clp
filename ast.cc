@@ -354,16 +354,40 @@ Do_While_Loop_Ast::Do_While_Loop_Ast(std::shared_ptr<Expression_Ast> condition,
                                      std::shared_ptr<Statement_Ast> body)
     : Iteration_Stmt_Ast(condition, body) {}
 
-void While_Loop_Ast::print(std::ostream &, std::string &) const {
-    // TODO
+void While_Loop_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "While: ";
+    level.push_back(SPACE);
+    os << "\n" << level << "Condition (";
+    level.push_back(SPACE);
+    condition->print(os, level);
+    os << ")";
+    level.pop_back();
+    os << "\n" << level << "Body (";
+    level.push_back(SPACE);
+    body->print(os, level);
+    os << ")";
+    level.pop_back();
+    level.pop_back();
 }
 
 void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
     // TODO
 }
 
-void Do_While_Loop_Ast::print(std::ostream &, std::string &) const {
-    // TODO
+void Do_While_Loop_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "Do: ";
+    level.push_back(SPACE);
+    os << "\n" << level << "Body (";
+    level.push_back(SPACE);
+    body->print(os, level);
+    os << ")";
+    level.pop_back();
+    os << "\n" << level << "While Condition (";
+    level.push_back(SPACE);
+    condition->print(os, level);
+    os << ")";
+    level.pop_back();
+    level.pop_back();
 }
 
 void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
@@ -389,8 +413,27 @@ Selection_Stmt_Ast::Selection_Stmt_Ast(
                           "Selection stmt condition is not bool");
 }
 
-void Selection_Stmt_Ast::print(std::ostream &, std::string &) const {
-    // TODO
+void Selection_Stmt_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "If: ";
+    level.push_back(SPACE);
+    os << "\n" << level << "Condition (";
+    level.push_back(SPACE);
+    condition->print(os, level);
+    os << ")";
+    level.pop_back();
+    os << "\n" << level << "Then (";
+    level.push_back(SPACE);
+    true_body->print(os, level);
+    os << ")";
+    level.pop_back();
+    if (false_body != std::nullopt) {
+        os << "\n" << level << "Else (";
+        level.push_back(SPACE);
+        (*false_body)->print(os, level);
+        os << ")";
+        level.pop_back();
+    }
+    level.pop_back();
 }
 
 void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {

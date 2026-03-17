@@ -393,6 +393,7 @@ class Sequence_Stmt_Ast : public Statement_Ast {
 
 /* Class for do-while and while loop */
 class Iteration_Stmt_Ast : public Statement_Ast {
+  protected:
     /* Pointer to the condition */
     const std::shared_ptr<Expression_Ast> condition;
 
