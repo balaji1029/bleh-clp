@@ -22,8 +22,10 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
             else if (std::string(long_opts[opt_idx].name) == "sa-scan") {
                 flags.sa_scan = true;
                 flags.sa_parse = true;
+                flags.sa_ast = true;
                 Error::sa_scan = true;
                 Error::sa_parse = true;
+                Error::sa_ast = true;
             } else if (std::string(long_opts[opt_idx].name) == "show-ast")
                 flags.show_ast = true;
             else if (std::string(long_opts[opt_idx].name) == "sa-parse") {
@@ -82,6 +84,9 @@ int Compiler::run() {
 
     if (flags.show_tokens)
         output(lexer.token_output);
+
+    if (flags.sa_parse || flags.sa_ast)
+        return status;
 
     if (!flags.sa_ast)
         root_ast->build_tac(nullptr);
