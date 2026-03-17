@@ -370,10 +370,6 @@ void While_Loop_Ast::print(std::ostream &os, std::string &level) const {
     level.pop_back();
 }
 
-void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
-    // TODO
-}
-
 void Do_While_Loop_Ast::print(std::ostream &os, std::string &level) const {
     os << "\n" << level << "Do: ";
     level.push_back(SPACE);
@@ -388,10 +384,6 @@ void Do_While_Loop_Ast::print(std::ostream &os, std::string &level) const {
     os << ")";
     level.pop_back();
     level.pop_back();
-}
-
-void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
-    // TODO
 }
 
 // ---------------------------- Selection_Stmt_Ast ----------------------------
@@ -434,10 +426,6 @@ void Selection_Stmt_Ast::print(std::ostream &os, std::string &level) const {
         level.pop_back();
     }
     level.pop_back();
-}
-
-void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) {
-    // TODO
 }
 
 // ------------------------------ Func_Ast ------------------------------
