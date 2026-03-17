@@ -11,10 +11,15 @@ void main(bool d) {
     // d = a != b;
     // d = !d;
     string e;
-    if (a < b) {
-        if (b < a)
-            b = c;
-    } else {
-        b = c;
+    // if ((a < b)?(a > b):(a < b)) {
+    //     if (b < a)
+    //         b = c;
+    // } else {
+    //     b = c;
+    // }
+
+    while ((a < b)?(a > b):(a < b)) {
+        b =(a < b)?(b + 1):b;
+        print b;
     }
 }
