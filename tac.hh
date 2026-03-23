@@ -1,6 +1,7 @@
 #pragma once
 
 #include "register.hh"
+#include "rtl.hh"
 #include "symtab.hh"
 #include <initializer_list>
 #include <memory>
@@ -14,10 +15,15 @@ enum class IO_Opd {
 };
 
 class TAC_Opd {
+  protected:
+    std::shared_ptr<RTL_Code> rtl_code;
+
   public:
     virtual void print(std::ostream &) = 0;
 
     virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+
+    std::shared_ptr<RTL_Code> getRTLCode();
 };
 
 class TAC_Expr : public TAC_Opd {
@@ -149,10 +155,15 @@ class Variable_TAC_Opd : public TAC_LOpd, public Printable_Opd {
 };
 
 class TAC_Stmt {
+  protected:
+    std::shared_ptr<RTL_Code> rtl_code;
+
   public:
     virtual void print(std::ostream &os) = 0;
 
     virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+
+    std::shared_ptr<RTL_Code> getRTLCode();
 };
 
 class Assign_TAC_Stmt : public TAC_Stmt {

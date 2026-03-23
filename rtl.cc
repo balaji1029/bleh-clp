@@ -15,7 +15,7 @@ RTL_Var_Opd::RTL_Var_Opd(std::shared_ptr<SymTabEntry> entry) : entry(entry) {}
 
 Compute_RTL_Stmt::Compute_RTL_Stmt(std::shared_ptr<RTL_Opd> lOpd,
                                    std::shared_ptr<RTL_Opd> rOpd,
-                                   Binary_Opd_Type opd)
+                                   Compute_Opd_Type opd)
     : lOpd(lOpd), rOpd(rOpd), opd(opd) {}
 
 Goto_RTL_Stmt::Goto_RTL_Stmt(std::shared_ptr<RTL_Label_Opd> label)

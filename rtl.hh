@@ -5,6 +5,27 @@
 #include <iostream>
 #include <memory>
 
+enum class Compute_Opd_Type {
+    ADD,
+    ADD_D,
+    SUB,
+    SUB_D,
+    MUL,
+    MUL_D,
+    DIV,
+    DIV_D,
+    SLT,
+    SLT_D,
+    SGT,
+    SEQ,
+    SEQ_D,
+    SLE,
+    SLE_D,
+    SGE,
+    SNE,
+    SNE_D
+};
+
 class RTL_Opd {
   public:
     virtual void print(std::ostream &) = 0;
@@ -66,12 +87,11 @@ class RTL_Stmt {
 class Compute_RTL_Stmt : RTL_Stmt {
     std::shared_ptr<RTL_Opd> lOpd;
     std::shared_ptr<RTL_Opd> rOpd;
-
-    Binary_Opd_Type opd;
+    Compute_Opd_Type opd;
 
   public:
     Compute_RTL_Stmt(std::shared_ptr<RTL_Opd>, std::shared_ptr<RTL_Opd>,
-                     Binary_Opd_Type);
+                     Compute_Opd_Type);
     void print(std::ostream &) override;
 };
 

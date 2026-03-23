@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "register.hh"
-#include "tac.hh"
 
 class Temporary_TAC_Opd;
 
