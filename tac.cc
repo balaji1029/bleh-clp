@@ -35,8 +35,8 @@ Label_TAC_Stmt::Label_TAC_Stmt(std::shared_ptr<Label_TAC_Opd> label)
 
 Binary_TAC_Opd::Binary_TAC_Opd(std::shared_ptr<Printable_Opd> lOpd,
                                std::shared_ptr<Printable_Opd> rOpd,
-                               const Binary_Opd_Type &opd)
-    : lOpd(lOpd), rOpd(rOpd), opd(opd) {}
+                               const Binary_Opd_Type &opd, std::shared_ptr<Temporary_TAC_Opd> temp)
+    : lOpd(lOpd), rOpd(rOpd), opd(opd), temp(temp) {}
 
 Float_Const_TAC_Opd::Float_Const_TAC_Opd(double value) : value(value) {}
 
@@ -83,14 +83,15 @@ void Boolean_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     l_opd->build_tac(symtab);
     if (r_opd)
         r_opd->build_tac(symtab);
-    place = symtab->getNewTemp();
+    std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
+    place = temp1;
     std::shared_ptr<Binary_TAC_Opd> opd;
     if (r_opd)
         opd = std::make_shared<Binary_TAC_Opd>(
-            l_opd->get_place(), r_opd->get_place(), boolean_expr_type);
+            l_opd->get_place(), r_opd->get_place(), boolean_expr_type, temp1);
     else
         opd = std::make_shared<Binary_TAC_Opd>(l_opd->get_place(), nullptr,
-                                               boolean_expr_type);
+                                               boolean_expr_type, temp1);
     code = std::make_shared<TAC_Code>();
     std::shared_ptr<Assign_TAC_Stmt> stmt = std::make_shared<Assign_TAC_Stmt>(
         std::dynamic_pointer_cast<TAC_LOpd>(place), opd);
@@ -104,14 +105,15 @@ void Arith_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     l_opd->build_tac(symtab);
     if (r_opd)
         r_opd->build_tac(symtab);
-    place = symtab->getNewTemp();
+    std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
+    place = temp1;
     std::shared_ptr<Binary_TAC_Opd> opd;
     if (r_opd)
         opd = std::make_shared<Binary_TAC_Opd>(
-            l_opd->get_place(), r_opd->get_place(), arith_expr_type);
+            l_opd->get_place(), r_opd->get_place(), arith_expr_type, temp1);
     else
         opd = std::make_shared<Binary_TAC_Opd>(l_opd->get_place(), nullptr,
-                                               arith_expr_type);
+                                               arith_expr_type, temp1);
     code = std::make_shared<TAC_Code>();
     std::shared_ptr<Assign_TAC_Stmt> stmt = std::make_shared<Assign_TAC_Stmt>(
         std::dynamic_pointer_cast<TAC_LOpd>(place), opd);
@@ -125,14 +127,16 @@ void Relational_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     l_opd->build_tac(symtab);
     if (r_opd)
         r_opd->build_tac(symtab);
-    place = symtab->getNewTemp();
+    std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
+    place = temp1;
     std::shared_ptr<Binary_TAC_Opd> opd;
     if (r_opd)
-        opd = std::make_shared<Binary_TAC_Opd>(
-            l_opd->get_place(), r_opd->get_place(), relational_expr_type);
+        opd = std::make_shared<Binary_TAC_Opd>(l_opd->get_place(),
+                                               r_opd->get_place(),
+                                               relational_expr_type, temp1);
     else
         opd = std::make_shared<Binary_TAC_Opd>(l_opd->get_place(), nullptr,
-                                               relational_expr_type);
+                                               relational_expr_type, temp1);
     code = std::make_shared<TAC_Code>();
     std::shared_ptr<Assign_TAC_Stmt> stmt = std::make_shared<Assign_TAC_Stmt>(
         std::dynamic_pointer_cast<TAC_LOpd>(place), opd);
@@ -164,7 +168,7 @@ void Conditional_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
 
     std::shared_ptr<Binary_TAC_Opd> neg_cond = std::make_shared<Binary_TAC_Opd>(
-        condition->get_place(), nullptr, Binary_Opd_Type::NOT);
+        condition->get_place(), nullptr, Binary_Opd_Type::NOT, temp1);
 
     std::shared_ptr<Assign_TAC_Stmt> negation_stmt =
         std::make_shared<Assign_TAC_Stmt>(temp1, neg_cond);
@@ -233,7 +237,7 @@ void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
 
     std::shared_ptr<Binary_TAC_Opd> neg_cond = std::make_shared<Binary_TAC_Opd>(
-        condition->get_place(), nullptr, Binary_Opd_Type::NOT);
+        condition->get_place(), nullptr, Binary_Opd_Type::NOT, temp1);
 
     std::shared_ptr<Assign_TAC_Stmt> negation_stmt =
         std::make_shared<Assign_TAC_Stmt>(temp1, neg_cond);
@@ -286,7 +290,7 @@ void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
 
     std::shared_ptr<Binary_TAC_Opd> neg_cond = std::make_shared<Binary_TAC_Opd>(
-        condition->get_place(), nullptr, Binary_Opd_Type::NOT);
+        condition->get_place(), nullptr, Binary_Opd_Type::NOT, temp1);
 
     std::shared_ptr<Assign_TAC_Stmt> negation_stmt =
         std::make_shared<Assign_TAC_Stmt>(temp1, neg_cond);

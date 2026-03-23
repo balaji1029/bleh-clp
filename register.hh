@@ -6,6 +6,8 @@
 
 class Temporary_TAC_Opd;
 
+class RTL_Register_Opd;
+
 class Register {
     std::string name;
     bool is_free;
@@ -16,27 +18,26 @@ class Register {
     std::string get_name();
     bool isFree();
     void markFree();
-    void markUse();
     std::shared_ptr<Temporary_TAC_Opd> getTemp();
     void setTemp(std::shared_ptr<Temporary_TAC_Opd>);
 };
 
 class RegisterPool {
-    std::vector<std::shared_ptr<Register>> regs;
-    std::vector<std::shared_ptr<Register>> arg_regs;
-    std::vector<std::shared_ptr<Register>> float_regs;
+    std::vector<std::shared_ptr<RTL_Register_Opd>> regs;
+    std::vector<std::shared_ptr<RTL_Register_Opd>> arg_regs;
+    std::vector<std::shared_ptr<RTL_Register_Opd>> float_regs;
 
   public:
     RegisterPool();
 
-    std::shared_ptr<Register>
+    std::shared_ptr<RTL_Register_Opd>
         getTempRegister(std::shared_ptr<Temporary_TAC_Opd>);
 
     void markTempFree(std::shared_ptr<Temporary_TAC_Opd>);
 
-    std::shared_ptr<Register> getRegister();
+    std::shared_ptr<RTL_Register_Opd> getRegister();
 
-    std::shared_ptr<Register> getArgRegister();
+    std::shared_ptr<RTL_Register_Opd> getArgRegister();
 
-    std::shared_ptr<Register> getFloatRegister();
+    std::shared_ptr<RTL_Register_Opd> getFloatRegister();
 };

@@ -8,9 +8,14 @@ void main(bool d) {
     string f;
     float g,h;
     read a;
+
+    a = (1 + (2 + (3 + 4 + (5 + (6 + (7 + 8))))));
     
-    d = g != h;
+    d = (a != b) && (g != h);
+    d = !(a == b);
     a = a + 3;
+    a = -2;
+    g = -2.0;
     g = 1.5;
     g = g / h;
     d = g < h;
