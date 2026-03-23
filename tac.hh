@@ -152,11 +152,11 @@ class Goto_TAC_Stmt : public TAC_Stmt {
 };
 
 class If_Goto_TAC_Stmt : public TAC_Stmt {
-    std::shared_ptr<Temporary_TAC_Opd> cond;
+    std::shared_ptr<Printable_Opd> cond;
     std::shared_ptr<Label_TAC_Opd> label;
 
   public:
-    If_Goto_TAC_Stmt(std::shared_ptr<Temporary_TAC_Opd>, std::shared_ptr<Label_TAC_Opd>);
+    If_Goto_TAC_Stmt(std::shared_ptr<Printable_Opd>, std::shared_ptr<Label_TAC_Opd>);
 
     void print(std::ostream &);
 };
