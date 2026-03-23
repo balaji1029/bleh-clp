@@ -5,33 +5,18 @@
 #include <iostream>
 #include <memory>
 
-enum class Compute_Opd_Type {
-    ADD,
-    ADD_D,
-    SUB,
-    SUB_D,
-    MUL,
-    MUL_D,
-    DIV,
-    DIV_D,
-    SLT,
-    SLT_D,
-    SGT,
-    SEQ,
-    SEQ_D,
-    SLE,
-    SLE_D,
-    SGE,
-    SNE,
-    SNE_D
-};
+enum class Binary_Opd_Type;
 
-class RTL_Opd {
+enum class Loadable_Opd_Type { INT, DOUBLE, STR };
+
+class RTL {
   public:
     virtual void print(std::ostream &) = 0;
 };
 
-class RTL_Double_Const_Opd : RTL_Opd {
+class RTL_Opd : public RTL {};
+
+class RTL_Double_Const_Opd : public RTL_Opd {
     double value;
 
   public:
@@ -39,7 +24,7 @@ class RTL_Double_Const_Opd : RTL_Opd {
     void print(std::ostream &) override;
 };
 
-class RTL_Int_Const_Opd : RTL_Opd {
+class RTL_Int_Const_Opd : public RTL_Opd {
     int value;
 
   public:
@@ -47,7 +32,7 @@ class RTL_Int_Const_Opd : RTL_Opd {
     void print(std::ostream &) override;
 };
 
-class RTL_Label_Opd : RTL_Opd {
+class RTL_Label_Opd : public RTL_Opd {
     int label_index;
 
   public:
@@ -55,15 +40,24 @@ class RTL_Label_Opd : RTL_Opd {
     void print(std::ostream &) override;
 };
 
-class RTL_Register_Opd : RTL_Opd {
+class RTL_Register_Opd : public RTL_Opd {
     std::shared_ptr<Register> reg;
 
   public:
     RTL_Register_Opd(std::shared_ptr<Register>);
+    std::shared_ptr<Register> getReg();
     void print(std::ostream &) override;
 };
 
-class RTL_Str_Const_Opd : RTL_Opd {
+class RTL_Stemp_Opd : public RTL_Opd {
+    int stemp_index;
+
+  public:
+    RTL_Stemp_Opd(int);
+    void print(std::ostream &) override;
+};
+
+class RTL_Str_Const_Opd : public RTL_Opd {
     std::string value;
 
   public:
@@ -71,7 +65,7 @@ class RTL_Str_Const_Opd : RTL_Opd {
     void print(std::ostream &) override;
 };
 
-class RTL_Var_Opd : RTL_Opd {
+class RTL_Var_Opd : public RTL_Opd {
     std::shared_ptr<SymTabEntry> entry;
 
   public:
@@ -79,35 +73,30 @@ class RTL_Var_Opd : RTL_Opd {
     void print(std::ostream &) override;
 };
 
-class RTL_Stmt {
-  public:
-    virtual void print(std::ostream &) = 0;
-};
+class RTL_Stmt : public RTL {};
 
-class Compute_RTL_Stmt : RTL_Stmt {
+class Compute_RTL_Stmt : public RTL_Stmt {
+    std::shared_ptr<RTL_Register_Opd> reg;
     std::shared_ptr<RTL_Opd> lOpd;
     std::shared_ptr<RTL_Opd> rOpd;
-    Compute_Opd_Type opd;
+    Binary_Opd_Type opd;
 
   public:
-    Compute_RTL_Stmt(std::shared_ptr<RTL_Opd>, std::shared_ptr<RTL_Opd>,
-                     Compute_Opd_Type);
+    Compute_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>,
+                     std::shared_ptr<RTL_Opd>, std::shared_ptr<RTL_Opd>,
+                     Binary_Opd_Type);
     void print(std::ostream &) override;
 };
 
-class Control_Flow_RTL_Stmt : RTL_Stmt {
-
-  public:
-    virtual void print(std::ostream &) = 0;
-};
+class Control_Flow_RTL_Stmt : public RTL_Stmt {};
 
 // TODO: A5
-class Call_RTL_Stmt : Control_Flow_RTL_Stmt {
+class Call_RTL_Stmt : public Control_Flow_RTL_Stmt {
   public:
     virtual void print(std::ostream &) = 0;
 };
 
-class Goto_RTL_Stmt : Control_Flow_RTL_Stmt {
+class Goto_RTL_Stmt : public Control_Flow_RTL_Stmt {
     std::shared_ptr<RTL_Label_Opd> label;
 
   public:
@@ -115,7 +104,7 @@ class Goto_RTL_Stmt : Control_Flow_RTL_Stmt {
     void print(std::ostream &) override;
 };
 
-class If_Goto_RTL_Stmt : Control_Flow_RTL_Stmt {
+class If_Goto_RTL_Stmt : public Control_Flow_RTL_Stmt {
     std::shared_ptr<RTL_Register_Opd> reg;
     std::shared_ptr<RTL_Label_Opd> label;
 
@@ -126,12 +115,12 @@ class If_Goto_RTL_Stmt : Control_Flow_RTL_Stmt {
 };
 
 // TODO: A5
-class Return_RTL_Stmt : Control_Flow_RTL_Stmt {
+class Return_RTL_Stmt : public Control_Flow_RTL_Stmt {
   public:
     virtual void print(std::ostream &) = 0;
 };
 
-class Label_RTL_Stmt : RTL_Stmt {
+class Label_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Label_Opd> label;
 
   public:
@@ -139,7 +128,7 @@ class Label_RTL_Stmt : RTL_Stmt {
     void print(std::ostream &) override;
 };
 
-class Move_RTL_Stmt : RTL_Stmt {
+class Move_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Register_Opd> lReg;
     std::shared_ptr<RTL_Register_Opd> rReg;
 
@@ -149,7 +138,7 @@ class Move_RTL_Stmt : RTL_Stmt {
     void print(std::ostream &) override;
 };
 
-class Read_RTL_Stmt : RTL_Stmt {
+class Read_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Var_Opd> var;
 
   public:
@@ -157,11 +146,22 @@ class Read_RTL_Stmt : RTL_Stmt {
     void print(std::ostream &) override;
 };
 
-class Write_RTL_Stmt : RTL_Stmt {
+class Write_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Var_Opd> var;
 
   public:
     Write_RTL_Stmt(std::shared_ptr<RTL_Var_Opd>);
+    void print(std::ostream &) override;
+};
+
+class Load_RTL_Stmt : public RTL_Stmt {
+    std::shared_ptr<RTL_Register_Opd> reg;
+    std::shared_ptr<RTL_Opd> opd;
+    Loadable_Opd_Type type;
+
+  public:
+    Load_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Opd>,
+                  Loadable_Opd_Type);
     void print(std::ostream &) override;
 };
 
@@ -172,6 +172,7 @@ class RTL_Code {
     bool is_empty();
 
     void append(std::shared_ptr<RTL_Stmt>);
+
     void append(std::shared_ptr<RTL_Code>);
 
     template <typename... Args>
