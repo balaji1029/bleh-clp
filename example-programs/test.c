@@ -9,6 +9,7 @@ void main(bool d) {
     float g,h;
     read a;
     
+    d = g != h;
     a = a + 3;
     g = 1.5;
     g = g / h;
