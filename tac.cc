@@ -23,7 +23,7 @@ Assign_TAC_Stmt::Assign_TAC_Stmt(std::shared_ptr<TAC_LOpd> lOpd,
 Goto_TAC_Stmt::Goto_TAC_Stmt(std::shared_ptr<Label_TAC_Opd> label)
     : label(label) {}
 
-If_Goto_TAC_Stmt::If_Goto_TAC_Stmt(std::shared_ptr<Temporary_TAC_Opd> cond,
+If_Goto_TAC_Stmt::If_Goto_TAC_Stmt(std::shared_ptr<Printable_Opd> cond,
                                    std::shared_ptr<Label_TAC_Opd> label)
     : cond(cond), label(label) {}
 
@@ -257,13 +257,26 @@ void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
         std::make_shared<If_Goto_TAC_Stmt>(temp1, end_label);
 
     code = std::make_shared<TAC_Code>();
-    code->append(begin_label_stmt, condition->get_code(), negation_stmt, if_goto, body->get_code(),
-                 goto_begin, end_label_stmt);
+    code->append(begin_label_stmt, condition->get_code(), negation_stmt,
+                 if_goto, body->get_code(), goto_begin, end_label_stmt);
 }
 
 void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
-    // TODO
+    body->build_tac(symtab);
+    condition->build_tac(symtab);
+
+    std::shared_ptr<Label_TAC_Opd> begin_label =
+        std::make_shared<Label_TAC_Opd>();
+
+    std::shared_ptr<Label_TAC_Stmt> begin_label_stmt =
+        std::make_shared<Label_TAC_Stmt>(begin_label);
+
+    std::shared_ptr<If_Goto_TAC_Stmt> if_goto =
+        std::make_shared<If_Goto_TAC_Stmt>(condition->get_place(), begin_label);
+
     code = std::make_shared<TAC_Code>();
+    code->append(begin_label_stmt, body->get_code(), condition->get_code(),
+                 if_goto);
 }
 
 void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
