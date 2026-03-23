@@ -1,5 +1,6 @@
 #pragma once
 
+#include "register.hh"
 #include "symtab.hh"
 #include <initializer_list>
 #include <memory>
@@ -15,21 +16,29 @@ enum class IO_Opd {
 class TAC_Opd {
   public:
     virtual void print(std::ostream &) = 0;
+
+    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
 };
 
 class TAC_Expr : public TAC_Opd {
   public:
     virtual void print(std::ostream &) = 0;
+
+    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
 };
 
 class TAC_LOpd : public TAC_Expr {
   public:
     virtual void print(std::ostream &os) = 0;
+
+    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
 };
 
 class Printable_Opd : public TAC_Expr {
   public:
     virtual void print(std::ostream &) = 0;
+
+    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
 };
 
 class Binary_TAC_Opd : public TAC_Expr {
@@ -38,16 +47,14 @@ class Binary_TAC_Opd : public TAC_Expr {
     Binary_Opd_Type opd;
 
   public:
-    Binary_TAC_Opd(std::shared_ptr<Printable_Opd>, std::shared_ptr<Printable_Opd>, const Binary_Opd_Type &);
+    Binary_TAC_Opd(std::shared_ptr<Printable_Opd>,
+                   std::shared_ptr<Printable_Opd>, const Binary_Opd_Type &);
 
     virtual ~Binary_TAC_Opd() {}
 
     void print(std::ostream &);
-};
 
-class Numeric : public TAC_Opd {
-  public:
-    virtual void print(std::ostream &) = 0;
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Float_Const_TAC_Opd : public Printable_Opd {
@@ -59,6 +66,8 @@ class Float_Const_TAC_Opd : public Printable_Opd {
     virtual ~Float_Const_TAC_Opd() {}
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Int_Const_TAC_Opd : public Printable_Opd {
@@ -70,6 +79,8 @@ class Int_Const_TAC_Opd : public Printable_Opd {
     virtual ~Int_Const_TAC_Opd() {}
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Str_Const_TAC_Opd : public Printable_Opd {
@@ -81,6 +92,8 @@ class Str_Const_TAC_Opd : public Printable_Opd {
     virtual ~Str_Const_TAC_Opd() {}
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Label_TAC_Opd : public TAC_Opd {
@@ -93,6 +106,8 @@ class Label_TAC_Opd : public TAC_Opd {
     virtual ~Label_TAC_Opd() {}
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Temporary_TAC_Opd : public TAC_LOpd, public Printable_Opd {
@@ -105,6 +120,8 @@ class Temporary_TAC_Opd : public TAC_LOpd, public Printable_Opd {
     virtual ~Temporary_TAC_Opd() {}
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class STemporary_TAC_Opd : public Temporary_TAC_Opd {
@@ -114,6 +131,8 @@ class STemporary_TAC_Opd : public Temporary_TAC_Opd {
     virtual ~STemporary_TAC_Opd() {}
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Variable_TAC_Opd : public TAC_LOpd, public Printable_Opd {
@@ -125,11 +144,15 @@ class Variable_TAC_Opd : public TAC_LOpd, public Printable_Opd {
     virtual ~Variable_TAC_Opd() {}
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class TAC_Stmt {
   public:
     virtual void print(std::ostream &os) = 0;
+
+    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
 };
 
 class Assign_TAC_Stmt : public TAC_Stmt {
@@ -140,6 +163,8 @@ class Assign_TAC_Stmt : public TAC_Stmt {
     Assign_TAC_Stmt(std::shared_ptr<TAC_LOpd>, std::shared_ptr<TAC_Expr>);
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Goto_TAC_Stmt : public TAC_Stmt {
@@ -149,6 +174,8 @@ class Goto_TAC_Stmt : public TAC_Stmt {
     Goto_TAC_Stmt(std::shared_ptr<Label_TAC_Opd>);
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class If_Goto_TAC_Stmt : public TAC_Stmt {
@@ -156,9 +183,12 @@ class If_Goto_TAC_Stmt : public TAC_Stmt {
     std::shared_ptr<Label_TAC_Opd> label;
 
   public:
-    If_Goto_TAC_Stmt(std::shared_ptr<Printable_Opd>, std::shared_ptr<Label_TAC_Opd>);
+    If_Goto_TAC_Stmt(std::shared_ptr<Printable_Opd>,
+                     std::shared_ptr<Label_TAC_Opd>);
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class IO_TAC_Stmt : public TAC_Stmt {
@@ -169,6 +199,8 @@ class IO_TAC_Stmt : public TAC_Stmt {
     IO_TAC_Stmt(IO_Opd, std::shared_ptr<Printable_Opd>);
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Label_TAC_Stmt : public TAC_Stmt {
@@ -178,6 +210,8 @@ class Label_TAC_Stmt : public TAC_Stmt {
     Label_TAC_Stmt(std::shared_ptr<Label_TAC_Opd>);
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class TAC_Code {

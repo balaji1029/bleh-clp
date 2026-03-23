@@ -77,7 +77,7 @@ bool FuncEntry::is_implemented() const { return implemented; }
 // ------------------------------ ProcSymbolTable ------------------------------
 
 ProcSymbolTable::ProcSymbolTable(std::shared_ptr<FuncEntry> func_entry)
-    : func_entry(func_entry) {}
+    : func_entry(func_entry), register_pool(std::make_shared<RegisterPool>()) {}
 
 void ProcSymbolTable::add_param(Type type, const std::string &name) {
     params.push_back(std::make_shared<SymTabEntry>(type, name));
@@ -126,6 +126,10 @@ std::shared_ptr<Temporary_TAC_Opd> ProcSymbolTable::getNewTemp() {
 
 std::shared_ptr<Temporary_TAC_Opd> ProcSymbolTable::getNewSTemp() {
     return std::make_shared<STemporary_TAC_Opd>(num_stemps++);
+}
+
+std::shared_ptr<RegisterPool> ProcSymbolTable::getRegisterPool() {
+    return register_pool;
 }
 
 // ------------------------------ GlobalSymbolTable

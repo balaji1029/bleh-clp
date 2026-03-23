@@ -8,4 +8,6 @@ y.tab.*
 **/*.ast
 **/*.toks
 **/*.tac
+**/*.rtl
+*.py
 .gdb_history
