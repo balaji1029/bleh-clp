@@ -1,0 +1,6 @@
+Global Declarations:
+**PROCEDURE: main, Return Type:<void>
+	Formal Parameters
+Local Declarations
+	Name: year_<int> Entity Type: VAR (No offset assigned yet)
+	Name: cntr_<int> Entity Type: VAR (No offset assigned yet)

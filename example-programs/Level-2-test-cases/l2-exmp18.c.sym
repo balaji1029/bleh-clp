@@ -1,0 +1,7 @@
+Global Declarations:
+**PROCEDURE: main, Return Type:<void>
+	Formal Parameters
+Local Declarations
+	Name: wt_<float> Entity Type: VAR (No offset assigned yet)
+	Name: ht_<float> Entity Type: VAR (No offset assigned yet)
+	Name: bmi_<float> Entity Type: VAR (No offset assigned yet)

@@ -1,0 +1,13 @@
+Global Declarations:
+**PROCEDURE: main, Return Type:<void>
+	Formal Parameters
+Local Declarations
+	Name: x_<int> Entity Type: VAR (No offset assigned yet)
+	Name: y_<int> Entity Type: VAR (No offset assigned yet)
+	Name: c_<int> Entity Type: VAR (No offset assigned yet)
+	Name: b_<int> Entity Type: VAR (No offset assigned yet)
+	Name: p_<bool> Entity Type: VAR (No offset assigned yet)
+	Name: q_<bool> Entity Type: VAR (No offset assigned yet)
+	Name: r_<bool> Entity Type: VAR (No offset assigned yet)
+	Name: s_<string> Entity Type: VAR (No offset assigned yet)
+	Name: z_<float> Entity Type: VAR (No offset assigned yet)

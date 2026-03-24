@@ -1,0 +1,8 @@
+Global Declarations:
+	Name: global1_<int> Entity Type: VAR (No offset assigned yet)
+	Name: global2_<int> Entity Type: VAR (No offset assigned yet)
+**PROCEDURE: main, Return Type:<void>
+	Formal Parameters
+Local Declarations
+	Name: local_<int> Entity Type: VAR (No offset assigned yet)
+	Name: ans_<int> Entity Type: VAR (No offset assigned yet)
