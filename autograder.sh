@@ -2,7 +2,7 @@
 DIR="example-programs"
 
 flags=(
-    "--show-tokens --show-ast --show-symtab --show-ast"
+    "--show-tokens --show-ast --show-symtab --show-ast --show-symtab"
     # "--show-tokens --sa-scan",
     # "--show-tokens --sa-parse",
     # "--show-tokens --sa-ast"
@@ -16,16 +16,20 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     tac_file="${file}.tac"
     rtl_file="${file}.rtl"
     sym_file="${file}.sym"
+    spim_file="${file}.spim"
+
     ref_toks_file="${file}.A4.toks"
     ref_ast_file="${file}.A4.ast"
     ref_tac_file="${file}.A4.tac"
     ref_rtl_file="${file}.A4.rtl"
     ref_sym_file="${file}.A4.sym"
+    ref_spim_file="${file}.A4.spim"
 
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
     rm -f "$tac_file" "$ref_tac_file"
     rm -f "$sym_file" "$ref_sym_file"
+    rm -f "$spim_file" "$ref_spim_file"
 
     for flag in "${flags[@]}"; do
         reference-implementations/A4-sclp "$file" $flag 2>/dev/null
@@ -35,6 +39,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         mv "$ast_file" "$ref_ast_file" 2>/dev/null
         mv "$tac_file" "$ref_tac_file" 2>/dev/null
         mv "$sym_file" "$ref_sym_file" 2>/dev/null
+        mv "$spim_file" "$ref_spim_file" 2>/dev/null
 
         ./sclp $flag "$file" 2>/dev/null
         our_rc=$?
@@ -80,7 +85,16 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\e[31mERROR:\e[0m .sym file not generated for $file by our sclp"
             continue
         elif [[ -f "$sym_file" && -f "$ref_sym_file" ]]; then
-            diff -Bw "$sym_file" "$ref_sym_file"
+            diff -Bw <(grep -vE '^\s*(;;|$)' "$sym_file") <(grep -vE '^\s*(;;|$)' "$ref_sym_file")
+            if [[ $? -ne 0 ]]; then
+                echo "in the $file"
+            fi
+        fi
+        if [[ ! -f "$spim_file" && -f "$ref_spim_file" ]]; then
+            echo -e "\e[31mERROR:\e[0m .spim file not generated for $file by our sclp"
+            continue
+        elif [[ -f "$spim_file" && -f "$ref_spim_file" ]]; then
+            diff -Bw <(grep -vE '^\s*(;;|$)' "$spim_file") <(grep -vE '^\s*(;;|$)' "$ref_spim_file")
             if [[ $? -ne 0 ]]; then
                 echo "in the $file"
             fi
@@ -94,5 +108,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$ast_file" "$ref_ast_file"
     rm -f "$tac_file" "$ref_tac_file"
     rm -f "$sym_file" "$ref_sym_file"
+    rm -f "$rtl_file" "$ref_rtl_file"
+    rm -f "$spim_file" "$ref_spim_file"
 
 done
