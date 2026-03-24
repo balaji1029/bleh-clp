@@ -1,9 +1,0 @@
-Global Declarations:
-	Name: gpi_<float> Entity Type: VAR (No offset assigned yet)
-**PROCEDURE: main, Return Type:<void>
-	Formal Parameters
-Local Declarations
-	Name: pi_<float> Entity Type: VAR (No offset assigned yet)
-	Name: l_<int> Entity Type: VAR (No offset assigned yet)
-	Name: u_<int> Entity Type: VAR (No offset assigned yet)
-	Name: m_<string> Entity Type: VAR (No offset assigned yet)

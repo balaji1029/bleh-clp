@@ -1,7 +1,0 @@
-Global Declarations:
-	Name: gv_lv_<int> Entity Type: VAR (No offset assigned yet)
-**PROCEDURE: main, Return Type:<void>
-	Formal Parameters
-Local Declarations
-	Name: gv_lv_<int> Entity Type: VAR (No offset assigned yet)
-	Name: test_<bool> Entity Type: VAR (No offset assigned yet)

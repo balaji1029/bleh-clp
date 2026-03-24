@@ -34,7 +34,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         mv "$toks_file" "$ref_toks_file" 2>/dev/null
         mv "$ast_file" "$ref_ast_file" 2>/dev/null
         mv "$tac_file" "$ref_tac_file" 2>/dev/null
-        # mv "$sym_file" "$ref_sym_file" 2>/dev/null
+        mv "$sym_file" "$ref_sym_file" 2>/dev/null
 
         ./sclp $flag "$file" 2>/dev/null
         our_rc=$?
@@ -93,6 +93,6 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
     rm -f "$tac_file" "$ref_tac_file"
-    # rm -f "$sym_file" "$ref_sym_file"
+    rm -f "$sym_file" "$ref_sym_file"
 
 done
