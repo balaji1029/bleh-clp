@@ -1,25 +1,46 @@
 void main(bool a);
 
+string e;
+
 void main(bool d) {
     int a;
     int b, c;
-    // d = a > b;
-    // d = a >= b;
-    // d = a == b;
-    // d = a <= b;
-    // d = a < b;
-    // d = a != b;
-    // d = !d;
-    string e;
-    // if ((a < b)?(a > b):(a < b)) {
-    //     if (b < a)
-    //         b = c;
-    // } else {
-    //     b = c;
-    // }
+    string f;
+    float g,h;
+    read a;
 
-    while ((a < b)?(a > b):(a < b)) {
+    a = (1 + (2 + (3 + 4 + (5 + (6 + (7 + 8))))));
+    
+    d = (a != b) && (g != h);
+    d = !(a == b);
+    a = a + 3;
+    a = -2;
+    g = -2.0;
+    g = 1.5;
+    g = g / h;
+    d = g < h;
+    h = g * h;
+    h = g + h;
+    h = g - h;
+
+    do {
         b =(a < b)?(b + 1):b;
         print b;
     }
+    while ((a <= b)?(a > b):(a < b));
+
+    while (d) {
+        print a;
+    }
+
+    if (d) {
+        print a;
+    } else  {
+        print b;
+    }
+
+
+    e = "AAAA";
+    f = "VERFRF";
+    print e;
 }

@@ -84,7 +84,7 @@ bool FuncEntry::is_implemented() const { return implemented; }
 // ------------------------------ ProcSymbolTable ------------------------------
 
 ProcSymbolTable::ProcSymbolTable(std::shared_ptr<FuncEntry> func_entry)
-    : func_entry(func_entry) {}
+    : func_entry(func_entry), register_pool(std::make_shared<RegisterPool>()) {}
 
 void ProcSymbolTable::add_param(Type type, const std::string &name) {
     params.push_back(std::make_shared<SymTabEntry>(type, name));
@@ -146,6 +146,10 @@ void ProcSymbolTable::print(std::ostream& os, std::string& level) {
     for (std::shared_ptr<SymTabEntry> entry: locals)
         entry->print(os, level);
     level.pop_back();
+}
+
+std::shared_ptr<RegisterPool> ProcSymbolTable::getRegisterPool() {
+    return register_pool;
 }
 
 // ------------------------------ GlobalSymbolTable

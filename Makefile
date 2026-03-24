@@ -8,7 +8,7 @@ all: sclp
 debug: CXXFLAGS = -Wall -std=c++20 -g -fsanitize=address
 debug: sclp
 
-sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o tac.o tac_print.o
+sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o tac.o tac_print.o rtl.o rtl_print.o register.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 main.o: main.cc compiler.hh lexer.hh y.tab.h ast.hh symtab.hh
@@ -23,10 +23,19 @@ compiler.o: compiler.cc compiler.hh lexer.hh y.tab.h ast.hh symtab.hh
 ast.o: ast.cc ast.hh symtab.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-tac.o: tac.cc tac.hh symtab.hh ast.hh
+tac.o: tac.cc tac.hh symtab.hh ast.hh register.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 tac_print.o: tac_print.cc symtab.hh ast.hh tac.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+rtl.o: rtl.cc rtl.hh tac.hh register.hh symtab.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+rtl_print.o: rtl_print.cc rtl.hh register.hh symtab.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+register.o: register.cc register.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 symtab.o: symtab.cc symtab.hh

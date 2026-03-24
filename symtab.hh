@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "tac.hh"
+#include "register.hh"
 
 class Temporary_TAC_Opd;
 
@@ -90,6 +90,8 @@ class ProcSymbolTable {
      * variables in the Process Symbol Table */
     std::vector<std::shared_ptr<SymTabEntry>> locals;
 
+    std::shared_ptr<RegisterPool> register_pool;
+
     int num_temps = 0;
 
     int num_stemps = 0;
@@ -125,6 +127,8 @@ class ProcSymbolTable {
 
     std::shared_ptr<Temporary_TAC_Opd> getNewSTemp();
 
+    std::shared_ptr<RegisterPool> getRegisterPool();
+    
     void print(std::ostream&, std::string&);
 };
 
