@@ -40,6 +40,13 @@ std::string SymTabEntry::get_name() { return name; }
 
 Type SymTabEntry::get_type() { return type; }
 
+void SymTabEntry::print(std::ostream& os, const std::string& level) {
+    os << level << "Name: " << name << "<" << get_type_str(type) << ">" << " ";
+    if (offset == std::nullopt) {
+        os << "Entity Type: VAR (No offset assigned yet)" << "\n";
+    }
+}
+
 // ------------------------------ FuncEntry ------------------------------
 
 FuncEntry::FuncEntry(Type return_type, const std::string &name,
@@ -55,13 +62,6 @@ FuncEntry::FuncEntry(Type return_type, const std::string &name,
                                   ": Parameter name " + param.second +
                                   " already used");
         param_names.insert(param.second);
-    }
-}
-
-void SymTabEntry::print(std::ostream& os, const std::string& level) {
-    os << level << "Name: " << name << "<" << get_type_str(type) << ">" << " ";
-    if (offset) {
-        os << "Entity Type: VAR (No offset assigned yet)" << "\n";
     }
 }
 

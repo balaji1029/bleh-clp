@@ -2,7 +2,7 @@
 DIR="example-programs"
 
 flags=(
-    "--show-tokens --show-ast --show-tac --show-ast"
+    "--show-tokens --show-ast --show-symtab --show-ast"
     # "--show-tokens --sa-scan",
     # "--show-tokens --sa-parse",
     # "--show-tokens --sa-ast"
@@ -15,14 +15,17 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     ast_file="${file}.ast"
     tac_file="${file}.tac"
     rtl_file="${file}.rtl"
+    sym_file="${file}.sym"
     ref_toks_file="${file}.A4.toks"
     ref_ast_file="${file}.A4.ast"
     ref_tac_file="${file}.A4.tac"
     ref_rtl_file="${file}.A4.rtl"
+    ref_sym_file="${file}.A4.sym"
 
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
     rm -f "$tac_file" "$ref_tac_file"
+    rm -f "$sym_file" "$ref_sym_file"
 
     for flag in "${flags[@]}"; do
         reference-implementations/A4-sclp "$file" $flag 2>/dev/null
@@ -31,6 +34,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         mv "$toks_file" "$ref_toks_file" 2>/dev/null
         mv "$ast_file" "$ref_ast_file" 2>/dev/null
         mv "$tac_file" "$ref_tac_file" 2>/dev/null
+        # mv "$sym_file" "$ref_sym_file" 2>/dev/null
 
         ./sclp $flag "$file" 2>/dev/null
         our_rc=$?
@@ -72,6 +76,15 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
                 echo "in the $file"
             fi
         fi
+        if [[ ! -f "$sym_file" && -f "$ref_sym_file" ]]; then
+            echo -e "\e[31mERROR:\e[0m .sym file not generated for $file by our sclp"
+            continue
+        elif [[ -f "$sym_file" && -f "$ref_sym_file" ]]; then
+            diff -Bw "$sym_file" "$ref_sym_file"
+            if [[ $? -ne 0 ]]; then
+                echo "in the $file"
+            fi
+        fi
 
         if [[ ($ref_rc -ne 0 && $our_rc -eq 0) || ($ref_rc -eq 0 && $our_rc -ne 0) ]]; then
             echo -e "\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
@@ -80,4 +93,6 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
     rm -f "$tac_file" "$ref_tac_file"
+    # rm -f "$sym_file" "$ref_sym_file"
+
 done

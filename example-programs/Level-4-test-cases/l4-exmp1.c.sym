@@ -1,0 +1,6 @@
+Global Declarations:
+	Name: test_<int> Entity Type: VAR (No offset assigned yet)
+**PROCEDURE: main, Return Type:<void>
+	Formal Parameters
+Local Declarations
+	Name: loop_<int> Entity Type: VAR (No offset assigned yet)
