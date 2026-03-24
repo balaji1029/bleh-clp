@@ -31,8 +31,7 @@ class SymTabEntry {
     const std::string name;
 
     /* bool to check if the offset is set */
-    bool offset_set;
-    int offset;
+    std::optional<int> offset;
     int size;
     EntityType entity_type;
 
@@ -41,6 +40,8 @@ class SymTabEntry {
 
     std::string get_name();
     Type get_type();
+
+    void print(std::ostream&, const std::string&);
 };
 
 /* Class for Function entries in the Global Symbol Table */
@@ -123,6 +124,8 @@ class ProcSymbolTable {
     std::shared_ptr<Temporary_TAC_Opd> getNewTemp();
 
     std::shared_ptr<Temporary_TAC_Opd> getNewSTemp();
+
+    void print(std::ostream&, std::string&);
 };
 
 /* Class for Global Symbol Table */
@@ -180,4 +183,6 @@ class GlobalSymbolTable {
     /* Finds and returns an `std::optional` if there exists a variable of the
      * given name only in the current scope */
     std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
+
+    void print(std::ostream&, std::string&);
 };
