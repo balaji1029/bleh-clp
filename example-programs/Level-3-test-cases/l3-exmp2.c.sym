@@ -1,8 +1,0 @@
-Global Declarations:
-	Name: averageWorkingHoursPerDay_<float> Entity Type: VAR (No offset assigned yet)
-**PROCEDURE: main, Return Type:<void>
-	Formal Parameters
-Local Declarations
-	Name: salary_<float> Entity Type: VAR (No offset assigned yet)
-	Name: bonus_<float> Entity Type: VAR (No offset assigned yet)
-	Name: employeeDailyWorkingHours_<float> Entity Type: VAR (No offset assigned yet)

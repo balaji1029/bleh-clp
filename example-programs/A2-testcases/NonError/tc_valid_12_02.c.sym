@@ -1,9 +1,0 @@
-Global Declarations:
-	Name: k_<bool> Entity Type: VAR (No offset assigned yet)
-**PROCEDURE: main, Return Type:<void>
-	Formal Parameters
-Local Declarations
-	Name: a_<float> Entity Type: VAR (No offset assigned yet)
-	Name: b_<float> Entity Type: VAR (No offset assigned yet)
-	Name: c_<int> Entity Type: VAR (No offset assigned yet)
-	Name: d_<int> Entity Type: VAR (No offset assigned yet)

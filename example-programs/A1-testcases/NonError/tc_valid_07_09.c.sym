@@ -1,8 +1,0 @@
-Global Declarations:
-	Name: r_<float> Entity Type: VAR (No offset assigned yet)
-**PROCEDURE: main, Return Type:<void>
-	Formal Parameters
-Local Declarations
-	Name: si_<float> Entity Type: VAR (No offset assigned yet)
-	Name: p_<float> Entity Type: VAR (No offset assigned yet)
-	Name: t_<float> Entity Type: VAR (No offset assigned yet)

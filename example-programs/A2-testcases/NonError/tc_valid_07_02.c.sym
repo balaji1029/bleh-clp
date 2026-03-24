@@ -1,8 +1,0 @@
-Global Declarations:
-	Name: w_<int> Entity Type: VAR (No offset assigned yet)
-	Name: x_<int> Entity Type: VAR (No offset assigned yet)
-	Name: y_<int> Entity Type: VAR (No offset assigned yet)
-	Name: z_<int> Entity Type: VAR (No offset assigned yet)
-**PROCEDURE: main, Return Type:<void>
-	Formal Parameters
-Local Declarations

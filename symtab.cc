@@ -142,7 +142,7 @@ void ProcSymbolTable::print(std::ostream& os, std::string& level) {
     for (std::shared_ptr<SymTabEntry> entry: params)
         entry->print(os, level);
 
-    os << "Local Declarations\n";
+    os << level << "Local Declarartions\n";
     for (std::shared_ptr<SymTabEntry> entry: locals)
         entry->print(os, level);
     level.pop_back();

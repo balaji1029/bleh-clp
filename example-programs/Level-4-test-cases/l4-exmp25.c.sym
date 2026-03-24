@@ -1,9 +1,0 @@
-Global Declarations:
-**PROCEDURE: main, Return Type:<void>
-	Formal Parameters
-Local Declarations
-	Name: maxInput_<int> Entity Type: VAR (No offset assigned yet)
-	Name: number_<int> Entity Type: VAR (No offset assigned yet)
-	Name: average_<int> Entity Type: VAR (No offset assigned yet)
-	Name: sum_<int> Entity Type: VAR (No offset assigned yet)
-	Name: i_<int> Entity Type: VAR (No offset assigned yet)
