@@ -17,6 +17,7 @@ struct flags_t {
     bool show_tokens = false;
     bool show_ast = false;
     bool show_tac = false;
+    bool show_symtab = false;
 
     bool sa_scan = false;
     bool sa_parse = false;
@@ -33,11 +34,13 @@ class Compiler {
     std::string output_token_filename;
     std::string output_ast_filename;
     std::string output_tac_filename;
+    std::string output_symtab_filename;
 
     std::ifstream input_file;
     std::ofstream output_token_file;
     std::ofstream output_ast_file;
     std::ofstream output_tac_file;
+    std::ofstream output_symtab_file;
     std::shared_ptr<GlobalSymbolTable> sym_tab;
     std::shared_ptr<Root_Ast> root_ast;
 

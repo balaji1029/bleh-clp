@@ -34,7 +34,7 @@ std::ostream &operator<<(std::ostream &os, Type type) {
 // ------------------------------ SymTabEntry ------------------------------
 
 SymTabEntry::SymTabEntry(Type type, const std::string &name)
-    : type(type), name(name) {}
+    : type(type), name(name), offset(std::nullopt) {}
 
 std::string SymTabEntry::get_name() { return name; }
 
@@ -55,6 +55,13 @@ FuncEntry::FuncEntry(Type return_type, const std::string &name,
                                   ": Parameter name " + param.second +
                                   " already used");
         param_names.insert(param.second);
+    }
+}
+
+void SymTabEntry::print(std::ostream& os, const std::string& level) {
+    os << level << "Name: " << name << "<" << get_type_str(type) << ">" << " ";
+    if (offset) {
+        os << "Entity Type: VAR (No offset assigned yet)" << "\n";
     }
 }
 
@@ -126,6 +133,19 @@ std::shared_ptr<Temporary_TAC_Opd> ProcSymbolTable::getNewTemp() {
 
 std::shared_ptr<Temporary_TAC_Opd> ProcSymbolTable::getNewSTemp() {
     return std::make_shared<STemporary_TAC_Opd>(num_stemps++);
+}
+
+void ProcSymbolTable::print(std::ostream& os, std::string& level) {
+    os << "**PROCEDURE: " << func_entry->get_name() << ", Return Type:<" << func_entry->get_return_type() << ">" << "\n";
+    level.push_back(SPACE);
+    os << level << "Formal Parameters\n";
+    for (std::shared_ptr<SymTabEntry> entry: params)
+        entry->print(os, level);
+
+    os << "Local Declarations\n";
+    for (std::shared_ptr<SymTabEntry> entry: locals)
+        entry->print(os, level);
+    level.pop_back();
 }
 
 // ------------------------------ GlobalSymbolTable
@@ -304,4 +324,16 @@ GlobalSymbolTable::find_local(const std::string &name) {
             return *it;
     }
     return std::nullopt;
+}
+
+void GlobalSymbolTable::print(std::ostream& os, std::string& level) {
+    os << "Global Declarations:\n";
+    level.push_back(SPACE);
+    for (std::shared_ptr<SymTabEntry> entry : globals)
+        entry->print(os, level);
+    level.pop_back();
+
+    for (std::shared_ptr<ProcSymbolTable> symtab : procs)
+        symtab->print(os, level);
+
 }
