@@ -1,4 +1,10 @@
 void main() {
-    int a,b,c,d,e,f,g,h;
-    a = b / (c / (d / (e / (f / (g / h)))));
+    int a;
+    int b;
+    float c;
+    float d;
+    a = 1;
+    b = a + b;
+    c = 1.0;
+    c = c + d;
 }

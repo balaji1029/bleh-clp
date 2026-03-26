@@ -169,10 +169,13 @@ class Load_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Register_Opd> reg;
     std::shared_ptr<RTL_Opd> opd;
     Opd_Type type;
+    Type var_type;
 
   public:
     Load_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Opd>,
                   Opd_Type);
+    Load_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Opd>,
+                  Opd_Type, Type);
     void print(std::ostream &) override;
 };
 
@@ -180,10 +183,13 @@ class Store_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Var_Opd> var;
     std::shared_ptr<RTL_Register_Opd> reg;
     Opd_Type type;
+    Type var_type;
 
   public:
     Store_RTL_Stmt(std::shared_ptr<RTL_Var_Opd>,
-                   std::shared_ptr<RTL_Register_Opd>, Opd_Type type);
+                   std::shared_ptr<RTL_Register_Opd>, Opd_Type);
+    Store_RTL_Stmt(std::shared_ptr<RTL_Var_Opd>,
+                   std::shared_ptr<RTL_Register_Opd>, Opd_Type, Type);
     void print(std::ostream &) override;
 };
 

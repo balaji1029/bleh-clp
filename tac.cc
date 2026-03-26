@@ -102,8 +102,8 @@ void Boolean_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
         opd = std::make_shared<Binary_TAC_Opd>(l_opd->get_place(), nullptr,
                                                boolean_expr_type, temp1);
     code = std::make_shared<TAC_Code>();
-    std::shared_ptr<Assign_TAC_Stmt> stmt = std::make_shared<Assign_TAC_Stmt>(
-        std::dynamic_pointer_cast<TAC_LOpd>(place), opd);
+    std::shared_ptr<Assign_TAC_Stmt> stmt =
+        std::make_shared<Assign_TAC_Stmt>(temp1, opd);
     if (r_opd)
         code->append(l_opd->get_code(), r_opd->get_code(), stmt);
     else
@@ -125,8 +125,8 @@ void Arith_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
         opd = std::make_shared<Binary_TAC_Opd>(l_opd->get_place(), nullptr,
                                                arith_expr_type, temp1);
     code = std::make_shared<TAC_Code>();
-    std::shared_ptr<Assign_TAC_Stmt> stmt = std::make_shared<Assign_TAC_Stmt>(
-        std::dynamic_pointer_cast<TAC_LOpd>(place), opd);
+    std::shared_ptr<Assign_TAC_Stmt> stmt =
+        std::make_shared<Assign_TAC_Stmt>(temp1, opd);
     if (r_opd)
         code->append(l_opd->get_code(), r_opd->get_code(), stmt);
     else
@@ -149,8 +149,8 @@ void Relational_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
         opd = std::make_shared<Binary_TAC_Opd>(l_opd->get_place(), nullptr,
                                                relational_expr_type, temp1);
     code = std::make_shared<TAC_Code>();
-    std::shared_ptr<Assign_TAC_Stmt> stmt = std::make_shared<Assign_TAC_Stmt>(
-        std::dynamic_pointer_cast<TAC_LOpd>(place), opd);
+    std::shared_ptr<Assign_TAC_Stmt> stmt =
+        std::make_shared<Assign_TAC_Stmt>(temp1, opd);
     if (r_opd)
         code->append(l_opd->get_code(), r_opd->get_code(), stmt);
     else
