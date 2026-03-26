@@ -127,7 +127,7 @@ Move_RTL_Stmt::Move_RTL_Stmt(std::shared_ptr<RTL_Register_Opd> lReg,
                              std::shared_ptr<RTL_Register_Opd> rReg)
     : lReg(lReg), rReg(rReg) {}
 
-Read_RTL_Stmt::Read_RTL_Stmt(std::shared_ptr<RTL_Var_Opd> var) : var(var) {}
+Read_RTL_Stmt::Read_RTL_Stmt() {}
 
 Write_RTL_Stmt::Write_RTL_Stmt() {}
 
@@ -357,6 +357,33 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_code = std::make_shared<RTL_Code>();
     var->build_rtl(reg_pool);
     if (opd == IO_Opd::READ) {
+        std::shared_ptr<RTL_Var_Opd> varRtl =
+            std::dynamic_pointer_cast<RTL_Var_Opd>(var->getRTLPlace());
+        Type varType = varRtl->getVarType();
+        std::shared_ptr<Load_RTL_Stmt> syscallLoad;
+        std::shared_ptr<RTL_Register_Opd> v0 = reg_pool->getV0();
+        std::shared_ptr<Read_RTL_Stmt> readStmt =
+            std::make_shared<Read_RTL_Stmt>();
+        std::shared_ptr<Store_RTL_Stmt> storeStmt;
+        if (varType == Type::FLOAT) {
+            std::shared_ptr<RTL_Int_Const_Opd> syscallInt =
+                std::make_shared<RTL_Int_Const_Opd>(7);
+            syscallLoad =
+                std::make_shared<Load_RTL_Stmt>(v0, syscallInt, Opd_Type::INT);
+            std::shared_ptr<RTL_Register_Opd> f0 = reg_pool->getF0();
+            storeStmt =
+                std::make_shared<Store_RTL_Stmt>(varRtl, f0, Opd_Type::FLOAT);
+            f0->getReg()->markFree();
+        } else {
+            std::shared_ptr<RTL_Int_Const_Opd> syscallInt =
+                std::make_shared<RTL_Int_Const_Opd>(5);
+            syscallLoad =
+                std::make_shared<Load_RTL_Stmt>(v0, syscallInt, Opd_Type::INT);
+            storeStmt =
+                std::make_shared<Store_RTL_Stmt>(varRtl, v0, Opd_Type::INT);
+        }
+        v0->getReg()->markFree();
+        rtl_code->append(syscallLoad, readStmt, storeStmt);
     } else {
         Type type = Type::INT;
         std::shared_ptr<RTL_Opd> varPlace = var->getRTLPlace();

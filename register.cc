@@ -21,6 +21,8 @@ void Register::setTemp(std::shared_ptr<Temporary_TAC_Opd> temp) {
 }
 
 RegisterPool::RegisterPool() {
+    f0 = std::make_shared<RTL_Register_Opd>(std::make_shared<Register>("f0"),
+                                            Type::FLOAT);
     std::vector<std::string> reg_names = {
         "v0", "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8",
         "t9", "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7"};
@@ -120,4 +122,9 @@ std::shared_ptr<RTL_Register_Opd> RegisterPool::getV0() {
             return reg;
         }
     return nullptr;
+}
+
+std::shared_ptr<RTL_Register_Opd> RegisterPool::getF0() {
+    f0->getReg()->setTemp(nullptr);
+    return f0;
 }
