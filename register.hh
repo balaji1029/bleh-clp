@@ -26,18 +26,16 @@ class RegisterPool {
     std::vector<std::shared_ptr<RTL_Register_Opd>> regs;
     std::vector<std::shared_ptr<RTL_Register_Opd>> arg_regs;
     std::vector<std::shared_ptr<RTL_Register_Opd>> float_regs;
+    std::vector<std::shared_ptr<RTL_Register_Opd>> float_arg_regs;
 
   public:
     RegisterPool();
-
     std::shared_ptr<RTL_Register_Opd>
         getTempRegister(std::shared_ptr<Temporary_TAC_Opd>);
-
     void markTempFree(std::shared_ptr<Temporary_TAC_Opd>);
-
     std::shared_ptr<RTL_Register_Opd> getRegister();
-
     std::shared_ptr<RTL_Register_Opd> getArgRegister();
-
     std::shared_ptr<RTL_Register_Opd> getFloatRegister();
+    std::shared_ptr<RTL_Register_Opd> getFloatArgRegister();
+    std::shared_ptr<RTL_Register_Opd> getV0();
 };
