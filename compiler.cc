@@ -88,8 +88,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     if (flags.show_symtab && !flags.demo && !flags.sa_ast)
         output_symtab_file.open(output_symtab_filename);
 
-    if (flags.show_tac && !flags.demo && !flags.sa_tac)
-        output_tac_file.open(output_rtl_filename);
+    if (flags.show_rtl && !flags.demo && !flags.sa_tac)
+        output_rtl_file.open(output_rtl_filename);
 }
 
 int Compiler::run() {
@@ -124,7 +124,7 @@ int Compiler::run() {
         if (flags.demo)
             root_ast->print_rtl(std::cout);
         else
-            root_ast->print_tac(output_rtl_file);
+            root_ast->print_rtl(output_rtl_file);
     }
 
     std::string level = "";

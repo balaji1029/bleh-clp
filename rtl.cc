@@ -79,8 +79,18 @@ RTL_Zero_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
     return std::make_pair(reg, load);
 }
 
+std::unordered_map<std::string, int> RTL_Str_Const_Opd::string_map =
+    std::unordered_map<std::string, int>();
+
 RTL_Str_Const_Opd::RTL_Str_Const_Opd(std::string value)
-    : RTL_Opd(Opd_Type::STR), value(value) {}
+    : RTL_Opd(Opd_Type::STR) {
+    if (string_map.find(value) != string_map.end())
+        id = string_map[value];
+    else {
+        id = string_map.size();
+        string_map[value] = id;
+    }
+}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
 RTL_Str_Const_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
@@ -398,6 +408,8 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
             type = varRtl->getVarType();
         } else if (varType == Opd_Type::FLOAT)
             type = Type::FLOAT;
+        else if (varType == Opd_Type::STR)
+            type = Type::STRING;
 
         std::shared_ptr<Load_RTL_Stmt> syscallLoad;
         std::shared_ptr<Load_RTL_Stmt> argLoad;
@@ -412,8 +424,11 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
             argLoad = std::make_shared<Load_RTL_Stmt>(
                 argReg, varPlace, varPlace->getType(), type);
         } else {
-            std::shared_ptr<RTL_Int_Const_Opd> syscallInt =
-                std::make_shared<RTL_Int_Const_Opd>(1);
+            std::shared_ptr<RTL_Int_Const_Opd> syscallInt;
+            if (type == Type::STRING)
+                syscallInt = std::make_shared<RTL_Int_Const_Opd>(4);
+            else
+                syscallInt = std::make_shared<RTL_Int_Const_Opd>(1);
             syscallLoad =
                 std::make_shared<Load_RTL_Stmt>(v0, syscallInt, Opd_Type::INT);
             argReg = reg_pool->getArgRegister();

@@ -19,7 +19,7 @@ void RTL_Stemp_Opd::print(std::ostream &os) { os << "stemp" << stemp_index; }
 
 void RTL_Zero_Opd::print(std::ostream &os) { os << "zero"; }
 
-void RTL_Str_Const_Opd::print(std::ostream &os) { os << value; }
+void RTL_Str_Const_Opd::print(std::ostream &os) { os << "_str_" << id; }
 
 void RTL_Var_Opd::print(std::ostream &os) { os << entry->get_name(); }
 
@@ -107,12 +107,12 @@ void Move_RTL_Stmt::print(std::ostream &os) { os << RTL_SPACE; }
 
 void Read_RTL_Stmt::print(std::ostream &os) {
     os << RTL_SPACE;
-    os << "read: ";
+    os << "read";
 }
 
 void Write_RTL_Stmt::print(std::ostream &os) {
     os << RTL_SPACE;
-    os << "write: ";
+    os << "write";
 }
 
 void Load_RTL_Stmt::print(std::ostream &os) {
@@ -127,8 +127,10 @@ void Load_RTL_Stmt::print(std::ostream &os) {
             os << "iLoad.d";
             break;
         case Opd_Type::INT:
-        case Opd_Type::STR:
             os << "iLoad";
+            break;
+        case Opd_Type::STR:
+            os << "load_addr";
             break;
         case Opd_Type::VAR:
             if (var_type == Type::FLOAT)
@@ -190,10 +192,13 @@ void TAC_Code::print_rtl(std::ostream &os) {
 }
 
 void Func_Ast::print_rtl(std::ostream &os) {
-    os << "**PROCEDURE: " << proc_table->get_name() << std::endl;
-    os << "**BEGIN: RTL Statements" << std::endl;
-    get_code()->print_rtl(os);
-    os << "**END: RTL Statements" << std::endl;
+    std::shared_ptr<TAC_Code> tacCode = get_code();
+    if (!tacCode->is_empty()) {
+        os << "**PROCEDURE: " << proc_table->get_name() << std::endl;
+        os << "**BEGIN: RTL Statements" << std::endl;
+        tacCode->print_rtl(os);
+        os << "**END: RTL Statements" << std::endl;
+    }
 }
 
 void Root_Ast::print_rtl(std::ostream &os) {
