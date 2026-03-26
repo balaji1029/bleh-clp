@@ -27,10 +27,9 @@ RTL_Register_Opd::RTL_Register_Opd(std::shared_ptr<Register> reg)
 std::shared_ptr<Register> RTL_Register_Opd::getReg() { return reg; }
 
 RTL_Stemp_Opd::RTL_Stemp_Opd(int stemp_index, Type stemp_type)
-    : RTL_Opd(Opd_Type::STEMP), stemp_index(stemp_index),
-      stemp_type(stemp_type) {}
+    : RTL_Var_Opd(nullptr, stemp_type), stemp_index(stemp_index) {}
 
-Type RTL_Stemp_Opd::getStempType() { return stemp_type; }
+// Type RTL_Stemp_Opd::getStempType() { return stemp_type; }
 
 RTL_Str_Const_Opd::RTL_Str_Const_Opd(std::string value)
     : RTL_Opd(Opd_Type::STR), value(value) {}
@@ -231,17 +230,18 @@ void Variable_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
 
 void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_code = std::make_shared<RTL_Code>();
-    if (std::shared_ptr<Variable_TAC_Opd> lVar =
-            std::dynamic_pointer_cast<Variable_TAC_Opd>(lOpd)) {
-        // lOpd = variable
-        lVar->build_rtl(reg_pool);
-        rtl_code->append(lVar->getRTLCode());
-        expr->build_rtl(reg_pool);
-        rtl_code->append(expr->getRTLCode());
-        std::shared_ptr<RTL_Var_Opd> lVarRtl =
-            std::dynamic_pointer_cast<RTL_Var_Opd>(lVar->getRTLPlace());
-        std::shared_ptr<RTL_Opd> rPlace = expr->getRTLPlace();
-        Opd_Type rType = rPlace->getType();
+    expr->build_rtl(reg_pool);
+    rtl_code->append(expr->getRTLCode());
+    lOpd->build_rtl(reg_pool);
+    rtl_code->append(lOpd->getRTLCode());
+    std::shared_ptr<RTL_Opd> lPlace = lOpd->getRTLPlace();
+    Opd_Type lType = lPlace->getType();
+    std::shared_ptr<RTL_Opd> rPlace = expr->getRTLPlace();
+    Opd_Type rType = rPlace->getType();
+    switch (lType) {
+    case Opd_Type::VAR: {
+        std::shared_ptr<RTL_Var_Opd> lVar =
+            std::dynamic_pointer_cast<RTL_Var_Opd>(lPlace);
         switch (rType) {
         case Opd_Type::INT:
         case Opd_Type::FLOAT:
@@ -254,7 +254,7 @@ void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
             std::shared_ptr<Load_RTL_Stmt> rLoad =
                 std::make_shared<Load_RTL_Stmt>(rTemp, rPlace, rType);
             std::shared_ptr<Store_RTL_Stmt> lStore =
-                std::make_shared<Store_RTL_Stmt>(lVarRtl, rTemp, rType);
+                std::make_shared<Store_RTL_Stmt>(lVar, rTemp, rType);
             rtl_code->append(rLoad, lStore);
             rTemp->getReg()->markFree();
             break;
@@ -263,8 +263,8 @@ void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
             std::shared_ptr<RTL_Register_Opd> rTemp =
                 std::dynamic_pointer_cast<RTL_Register_Opd>(rPlace);
             std::shared_ptr<Store_RTL_Stmt> lStore =
-                std::make_shared<Store_RTL_Stmt>(lVarRtl, rTemp, rType,
-                                                 lVarRtl->getVarType());
+                std::make_shared<Store_RTL_Stmt>(lVar, rTemp, rType,
+                                                 lVar->getVarType());
             rtl_code->append(lStore);
             rTemp->getReg()->markFree();
             break;
@@ -281,56 +281,7 @@ void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
                 std::make_shared<Load_RTL_Stmt>(rTemp, rPlace, rType,
                                                 rVar->getVarType());
             std::shared_ptr<Store_RTL_Stmt> lStore =
-                std::make_shared<Store_RTL_Stmt>(lVarRtl, rTemp, rType,
-                                                 rVar->getVarType());
-            rtl_code->append(rLoad, lStore);
-            rTemp->getReg()->markFree();
-            break;
-        }
-        case Opd_Type::STEMP: {
-            std::shared_ptr<RTL_Register_Opd> rTemp;
-            std::shared_ptr<RTL_Stemp_Opd> rVar =
-                std::dynamic_pointer_cast<RTL_Stemp_Opd>(rPlace);
-            if (rVar->getStempType() == Type::FLOAT)
-                rTemp = reg_pool->getFloatRegister();
-            else
-                rTemp = reg_pool->getRegister();
-            std::shared_ptr<Load_RTL_Stmt> rLoad =
-                std::make_shared<Load_RTL_Stmt>(rTemp, rPlace, rType);
-            std::shared_ptr<Store_RTL_Stmt> lStore =
-                std::make_shared<Store_RTL_Stmt>(lVarRtl, rTemp, rType);
-            rtl_code->append(rLoad, lStore);
-            rTemp->getReg()->markFree();
-            break;
-        }
-        default:
-            break;
-        }
-    } else if (std::shared_ptr<STemporary_TAC_Opd> lSTemp =
-                   std::dynamic_pointer_cast<STemporary_TAC_Opd>(lOpd)) {
-        // lOpd = stemp
-        lSTemp->build_rtl(reg_pool);
-        rtl_code->append(lSTemp->getRTLCode());
-        std::shared_ptr<RTL_Stemp_Opd> lSTempRtl =
-            std::dynamic_pointer_cast<RTL_Stemp_Opd>(lSTemp->getRTLPlace());
-        expr->build_rtl(reg_pool);
-        rtl_code->append(expr->getRTLCode());
-        std::shared_ptr<RTL_Opd> rPlace = expr->getRTLPlace();
-        Opd_Type rType = rPlace->getType();
-        switch (rType) {
-        case Opd_Type::VAR: {
-            std::shared_ptr<RTL_Register_Opd> rTemp;
-            std::shared_ptr<RTL_Var_Opd> rVar =
-                std::dynamic_pointer_cast<RTL_Var_Opd>(rPlace);
-            if (rVar->getVarType() == Type::FLOAT)
-                rTemp = reg_pool->getFloatRegister();
-            else
-                rTemp = reg_pool->getRegister();
-            std::shared_ptr<Load_RTL_Stmt> rLoad =
-                std::make_shared<Load_RTL_Stmt>(rTemp, rPlace, rType,
-                                                rVar->getVarType());
-            std::shared_ptr<Store_RTL_Stmt> lStore =
-                std::make_shared<Store_RTL_Stmt>(lSTempRtl, rTemp, rType,
+                std::make_shared<Store_RTL_Stmt>(lVar, rTemp, rType,
                                                  rVar->getVarType());
             rtl_code->append(rLoad, lStore);
             rTemp->getReg()->markFree();
@@ -339,9 +290,10 @@ void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
         default:
             break;
         }
-    } else { // lOpd = temp
-        expr->build_rtl(reg_pool);
-        rtl_code->append(expr->getRTLCode());
+        break;
+    }
+    default:
+        break;
     }
 }
 
