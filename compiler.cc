@@ -10,6 +10,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                                         {"show-tac", no_argument, 0, 0},
                                         {"sa-ast", no_argument, 0, 0},
                                         {"show-symtab", no_argument, 0, 0},
+                                        {"show-rtl", no_argument, 0, 0},
+                                        {"sa-tac", no_argument, 0, 0},
                                         {"demo", no_argument, 0, 'd'},
                                         {0, 0, 0, 0}};
 
@@ -27,6 +29,7 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                 flags.sa_scan = true;
                 flags.sa_parse = true;
                 flags.sa_ast = true;
+                flags.sa_tac = true;
                 Error::sa_scan = true;
                 Error::sa_parse = true;
                 Error::sa_ast = true;
@@ -35,15 +38,21 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
             else if (std::string(long_opts[opt_idx].name) == "sa-parse") {
                 flags.sa_parse = true;
                 flags.sa_ast = true;
+                flags.sa_tac = true;
                 Error::sa_parse = true;
                 Error::sa_ast = true;
             } else if (std::string(long_opts[opt_idx].name) == "show-tac")
                 flags.show_tac = true;
             else if (std::string(long_opts[opt_idx].name) == "sa-ast") {
                 flags.sa_ast = true;
+                flags.sa_tac = true;
                 Error::sa_ast = true;
             } else if (std::string(long_opts[opt_idx].name) == "show-symtab")
                 flags.show_symtab = true;
+            else if (std::string(long_opts[opt_idx].name) == "show-rtl")
+                flags.show_rtl = true;
+            else if (std::string(long_opts[opt_idx].name) == "sa-tac")
+                flags.sa_tac = true;
             break;
         default:
             std::cerr << ERROR << std::endl;
@@ -64,7 +73,7 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     output_ast_filename = input_filename + ".ast";
     output_tac_filename = input_filename + ".tac";
     output_symtab_filename = input_filename + ".sym";
-
+    output_rtl_filename = input_filename + ".rtl";
 
     input_file.open(input_filename);
     if (flags.show_tokens && !flags.demo)
@@ -78,6 +87,9 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
 
     if (flags.show_symtab && !flags.demo && !flags.sa_ast)
         output_symtab_file.open(output_symtab_filename);
+
+    if (flags.show_tac && !flags.demo && !flags.sa_tac)
+        output_tac_file.open(output_rtl_filename);
 }
 
 int Compiler::run() {
@@ -98,11 +110,21 @@ int Compiler::run() {
     if (!flags.sa_ast)
         root_ast->build_tac(nullptr);
 
+    if (!flags.sa_tac)
+        root_ast->build_rtl();
+
     if (flags.show_tac && !flags.sa_ast) {
         if (flags.demo)
             root_ast->print_tac(std::cout);
         else
             root_ast->print_tac(output_tac_file);
+    }
+
+    if (flags.show_rtl && !flags.sa_tac) {
+        if (flags.demo)
+            root_ast->print_rtl(std::cout);
+        else
+            root_ast->print_tac(output_rtl_file);
     }
 
     std::string level = "";
