@@ -2,6 +2,8 @@
 #include "rtl.hh"
 #include "tac.hh"
 
+#define RTL_SPACE "        "
+
 void RTL_Double_Const_Opd::print(std::ostream &os) {
     os << std::fixed << std::setprecision(2);
     os << value;
@@ -14,7 +16,7 @@ void RTL_Label_Opd::print(std::ostream &os) { os << "Label" << label_index; }
 void RTL_Register_Opd::print(std::ostream &os) { os << reg->get_name(); }
 
 void RTL_Stemp_Opd::print(std::ostream &os) {
-    os << "stemp" << stemp_index << std::endl;
+    os << "stemp" << stemp_index;
 }
 
 void RTL_Str_Const_Opd::print(std::ostream &os) { os << value; }
@@ -22,6 +24,7 @@ void RTL_Str_Const_Opd::print(std::ostream &os) { os << value; }
 void RTL_Var_Opd::print(std::ostream &os) { os << entry->get_name(); }
 
 void Compute_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
     switch (opd) {
     case Binary_Opd_Type::AND:
         os << "and";
@@ -76,41 +79,42 @@ void Compute_RTL_Stmt::print(std::ostream &os) {
         os << " , ";
         rOpd->print(os);
     }
-    os << std::endl;
 }
 
 void Goto_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
     os << "goto: ";
     label->print(os);
-    os << std::endl;
 }
 
 void If_Goto_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
     os << "bgtz: ";
     reg->print(os);
     os << ", ";
-    os << std::endl;
     label->print(os);
 }
 
 void Label_RTL_Stmt::print(std::ostream &os) {
+    os << std::endl;
     label->print(os);
-    os << ":" << std::endl;
+    os << ":";
 }
 
-void Move_RTL_Stmt::print(std::ostream &os) {}
+void Move_RTL_Stmt::print(std::ostream &os) { os << RTL_SPACE; }
 
 void Read_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
     os << "read: ";
-    os << std::endl;
 }
 
 void Write_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
     os << "write: ";
-    os << std::endl;
 }
 
 void Load_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
     switch (type) {
     case Opd_Type::FLOAT:
         os << "iLoad.d";
@@ -132,10 +136,10 @@ void Load_RTL_Stmt::print(std::ostream &os) {
     reg->print(os);
     os << " <- ";
     opd->print(os);
-    os << std::endl;
 }
 
 void Store_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
     switch (type) {
     case Opd_Type::FLOAT:
         os << "store.d";
@@ -153,12 +157,13 @@ void Store_RTL_Stmt::print(std::ostream &os) {
     var->print(os);
     os << " <- ";
     reg->print(os);
-    os << std::endl;
 }
 
 void RTL_Code::print(std::ostream &os) {
-    for (auto rtlStmt : rtlStmts)
+    for (auto rtlStmt : rtlStmts) {
         rtlStmt->print(os);
+        os << std::endl;
+    }
 }
 
 void TAC_Code::print_rtl(std::ostream &os) {

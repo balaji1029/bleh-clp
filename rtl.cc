@@ -73,12 +73,12 @@ Load_RTL_Stmt::Load_RTL_Stmt(std::shared_ptr<RTL_Register_Opd> reg,
                              Type var_type)
     : reg(reg), opd(opd), type(type), var_type(var_type) {}
 
-Store_RTL_Stmt::Store_RTL_Stmt(std::shared_ptr<RTL_Var_Opd> var,
+Store_RTL_Stmt::Store_RTL_Stmt(std::shared_ptr<RTL_Opd> var,
                                std::shared_ptr<RTL_Register_Opd> reg,
                                Opd_Type type)
     : var(var), reg(reg), type(type) {}
 
-Store_RTL_Stmt::Store_RTL_Stmt(std::shared_ptr<RTL_Var_Opd> var,
+Store_RTL_Stmt::Store_RTL_Stmt(std::shared_ptr<RTL_Opd> var,
                                std::shared_ptr<RTL_Register_Opd> reg,
                                Opd_Type type, Type var_type)
     : var(var), reg(reg), type(type), var_type(var_type) {}
@@ -306,8 +306,40 @@ void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
         default:
             break;
         }
-    } else {
-        // lOpd = temp
+    } else if (std::shared_ptr<STemporary_TAC_Opd> lSTemp =
+                   std::dynamic_pointer_cast<STemporary_TAC_Opd>(lOpd)) {
+        // lOpd = stemp
+        lSTemp->build_rtl(reg_pool);
+        rtl_code->append(lSTemp->getRTLCode());
+        std::shared_ptr<RTL_Stemp_Opd> lSTempRtl =
+            std::dynamic_pointer_cast<RTL_Stemp_Opd>(lSTemp->getRTLPlace());
+        expr->build_rtl(reg_pool);
+        rtl_code->append(expr->getRTLCode());
+        std::shared_ptr<RTL_Opd> rPlace = expr->getRTLPlace();
+        Opd_Type rType = rPlace->getType();
+        switch (rType) {
+        case Opd_Type::VAR: {
+            std::shared_ptr<RTL_Register_Opd> rTemp;
+            std::shared_ptr<RTL_Var_Opd> rVar =
+                std::dynamic_pointer_cast<RTL_Var_Opd>(rPlace);
+            if (rVar->getVarType() == Type::FLOAT)
+                rTemp = reg_pool->getFloatRegister();
+            else
+                rTemp = reg_pool->getRegister();
+            std::shared_ptr<Load_RTL_Stmt> rLoad =
+                std::make_shared<Load_RTL_Stmt>(rTemp, rPlace, rType,
+                                                rVar->getVarType());
+            std::shared_ptr<Store_RTL_Stmt> lStore =
+                std::make_shared<Store_RTL_Stmt>(lSTempRtl, rTemp, rType,
+                                                 rVar->getVarType());
+            rtl_code->append(rLoad, lStore);
+            rTemp->getReg()->markFree();
+            break;
+        }
+        default:
+            break;
+        }
+    } else { // lOpd = temp
         expr->build_rtl(reg_pool);
         rtl_code->append(expr->getRTLCode());
     }
