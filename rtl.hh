@@ -14,30 +14,44 @@ class RTL {
     virtual void print(std::ostream &) = 0;
 };
 
+class RTL_Register_Opd;
+class Load_RTL_Stmt;
+
 class RTL_Opd : public RTL {
   protected:
     Opd_Type type;
+    std::shared_ptr<RTL_Register_Opd> loadedReg;
 
   public:
     RTL_Opd(Opd_Type);
-
     Opd_Type getType();
+    virtual std::pair<std::shared_ptr<RTL_Register_Opd>,
+                      std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) = 0;
 };
 
-class RTL_Double_Const_Opd : public RTL_Opd {
+class RTL_Double_Const_Opd
+    : public RTL_Opd,
+      public std::enable_shared_from_this<RTL_Double_Const_Opd> {
     double value;
 
   public:
     RTL_Double_Const_Opd(double);
     void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
-class RTL_Int_Const_Opd : public RTL_Opd {
+class RTL_Int_Const_Opd
+    : public RTL_Opd,
+      public std::enable_shared_from_this<RTL_Int_Const_Opd> {
     int value;
 
   public:
     RTL_Int_Const_Opd(int);
     void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
 class RTL_Label_Opd : public RTL_Opd {
@@ -46,18 +60,24 @@ class RTL_Label_Opd : public RTL_Opd {
   public:
     RTL_Label_Opd(int);
     void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
-class RTL_Register_Opd : public RTL_Opd {
+class RTL_Register_Opd : public RTL_Opd,
+                         public std::enable_shared_from_this<RTL_Register_Opd> {
     std::shared_ptr<Register> reg;
 
   public:
     RTL_Register_Opd(std::shared_ptr<Register>);
     std::shared_ptr<Register> getReg();
     void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
-class RTL_Var_Opd : public RTL_Opd {
+class RTL_Var_Opd : public RTL_Opd,
+                    public std::enable_shared_from_this<RTL_Var_Opd> {
     std::shared_ptr<SymTabEntry> entry;
     Type var_type;
 
@@ -65,24 +85,30 @@ class RTL_Var_Opd : public RTL_Opd {
     RTL_Var_Opd(std::shared_ptr<SymTabEntry>, Type);
     Type getVarType();
     void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
 class RTL_Stemp_Opd : public RTL_Var_Opd {
     int stemp_index;
-    // Type stemp_type;
 
   public:
     RTL_Stemp_Opd(int, Type);
-    // Type getStempType();
     void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
-class RTL_Str_Const_Opd : public RTL_Opd {
+class RTL_Str_Const_Opd
+    : public RTL_Opd,
+      public std::enable_shared_from_this<RTL_Str_Const_Opd> {
     std::string value;
 
   public:
     RTL_Str_Const_Opd(std::string);
     void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
 class RTL_Stmt : public RTL {};

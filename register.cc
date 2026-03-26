@@ -21,10 +21,13 @@ void Register::setTemp(std::shared_ptr<Temporary_TAC_Opd> temp) {
 }
 
 RegisterPool::RegisterPool() {
-    std::vector<std::string> reg_names = {"v0", "t0", "t1", "t2", "t3",
-                                          "t4", "t5", "t6", "t7", "t8"};
-    std::vector<std::string> arg_reg_names = {"a0", "a1", "a2"};
-    std::vector<std::string> float_reg_names = {"f2", "f4", "f6", "f8"};
+    std::vector<std::string> reg_names = {
+        "v0", "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8",
+        "t9", "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7"};
+    std::vector<std::string> arg_reg_names = {"a0", "a1", "a2", "a3"};
+    std::vector<std::string> float_reg_names = {
+        "f2",  "f4",  "f6",  "f8",  "f10", "f12", "f14", "f16",
+        "f18", "f20", "f22", "f24", "f26", "f28", "f30"};
     for (const std::string &reg_name : reg_names) {
         regs.push_back(std::make_shared<RTL_Register_Opd>(
             std::make_shared<Register>(reg_name)));
