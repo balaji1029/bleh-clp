@@ -5,12 +5,17 @@ string e;
 void main(bool d) {
     int a;
     int b, c;
+    bool i;
     string f;
+    string j;
     float g,h;
     read a;
 
-    a = (1 + (2 + (3 + 4 + (5 + (6 + (7 + 8))))));
+    a = 1;
     
+    i = d;
+    f = j;
+    g = h;
     d = (a != b) && (g != h);
     d = !(a == b);
     a = a + 3;
@@ -41,6 +46,6 @@ void main(bool d) {
 
 
     e = "AAAA";
-    f = "VERFRF";
+    f = "AAAA";
     print e;
 }

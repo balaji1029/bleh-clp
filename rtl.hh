@@ -7,14 +7,22 @@
 
 enum class Binary_Opd_Type;
 
-enum class Loadable_Opd_Type { INT, DOUBLE, STR };
+enum class Opd_Type { INT, FLOAT, STR, LABEL, TEMP, STEMP, VAR };
 
 class RTL {
   public:
     virtual void print(std::ostream &) = 0;
 };
 
-class RTL_Opd : public RTL {};
+class RTL_Opd : public RTL {
+  protected:
+    Opd_Type type;
+
+  public:
+    RTL_Opd(Opd_Type);
+
+    Opd_Type getType();
+};
 
 class RTL_Double_Const_Opd : public RTL_Opd {
     double value;
@@ -51,9 +59,11 @@ class RTL_Register_Opd : public RTL_Opd {
 
 class RTL_Stemp_Opd : public RTL_Opd {
     int stemp_index;
+    Type stemp_type;
 
   public:
-    RTL_Stemp_Opd(int);
+    RTL_Stemp_Opd(int, Type);
+    Type getStempType();
     void print(std::ostream &) override;
 };
 
@@ -67,9 +77,11 @@ class RTL_Str_Const_Opd : public RTL_Opd {
 
 class RTL_Var_Opd : public RTL_Opd {
     std::shared_ptr<SymTabEntry> entry;
+    Type var_type;
 
   public:
-    RTL_Var_Opd(std::shared_ptr<SymTabEntry>);
+    RTL_Var_Opd(std::shared_ptr<SymTabEntry>, Type);
+    Type getVarType();
     void print(std::ostream &) override;
 };
 
@@ -80,11 +92,12 @@ class Compute_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Opd> lOpd;
     std::shared_ptr<RTL_Opd> rOpd;
     Binary_Opd_Type opd;
+    Type type;
 
   public:
     Compute_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>,
                      std::shared_ptr<RTL_Opd>, std::shared_ptr<RTL_Opd>,
-                     Binary_Opd_Type);
+                     Binary_Opd_Type, Type);
     void print(std::ostream &) override;
 };
 
@@ -147,21 +160,30 @@ class Read_RTL_Stmt : public RTL_Stmt {
 };
 
 class Write_RTL_Stmt : public RTL_Stmt {
-    std::shared_ptr<RTL_Var_Opd> var;
-
   public:
-    Write_RTL_Stmt(std::shared_ptr<RTL_Var_Opd>);
+    Write_RTL_Stmt();
     void print(std::ostream &) override;
 };
 
 class Load_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Register_Opd> reg;
     std::shared_ptr<RTL_Opd> opd;
-    Loadable_Opd_Type type;
+    Opd_Type type;
 
   public:
     Load_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Opd>,
-                  Loadable_Opd_Type);
+                  Opd_Type);
+    void print(std::ostream &) override;
+};
+
+class Store_RTL_Stmt : public RTL_Stmt {
+    std::shared_ptr<RTL_Var_Opd> var;
+    std::shared_ptr<RTL_Register_Opd> reg;
+    Opd_Type type;
+
+  public:
+    Store_RTL_Stmt(std::shared_ptr<RTL_Var_Opd>,
+                   std::shared_ptr<RTL_Register_Opd>, Opd_Type type);
     void print(std::ostream &) override;
 };
 
@@ -182,4 +204,6 @@ class RTL_Code {
     }
 
     void print(std::ostream &);
+
+    std::shared_ptr<RTL_Stmt> getFirst();
 };

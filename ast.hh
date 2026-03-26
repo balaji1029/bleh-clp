@@ -412,7 +412,8 @@ class Iteration_Stmt_Ast : public Statement_Ast {
 /* Class for while loop */
 class While_Loop_Ast : public Iteration_Stmt_Ast {
   public:
-    While_Loop_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Statement_Ast>);
+    While_Loop_Ast(std::shared_ptr<Expression_Ast>,
+                   std::shared_ptr<Statement_Ast>);
 
     void print(std::ostream &, std::string &) const override;
 
@@ -422,7 +423,8 @@ class While_Loop_Ast : public Iteration_Stmt_Ast {
 /* Class for do-while loop */
 class Do_While_Loop_Ast : public Iteration_Stmt_Ast {
   public:
-    Do_While_Loop_Ast(std::shared_ptr<Expression_Ast>, std::shared_ptr<Statement_Ast>);
+    Do_While_Loop_Ast(std::shared_ptr<Expression_Ast>,
+                      std::shared_ptr<Statement_Ast>);
 
     void print(std::ostream &, std::string &) const override;
 
@@ -473,6 +475,10 @@ class Func_Ast : public Ast {
 
     void build_tac(std::shared_ptr<ProcSymbolTable>);
 
+    void build_rtl();
+
+    void print_rtl(std::ostream &os);
+
     std::shared_ptr<ProcSymbolTable> get_symtab() { return proc_table; }
 };
 
@@ -494,4 +500,8 @@ class Root_Ast : public Ast {
     void build_tac(std::shared_ptr<ProcSymbolTable>);
 
     void print_tac(std::ostream &os);
+
+    void build_rtl();
+
+    void print_rtl(std::ostream &os);
 };

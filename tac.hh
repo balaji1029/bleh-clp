@@ -37,14 +37,21 @@ class TAC_Expr : public TAC_Opd {
     virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
 };
 
-class TAC_LOpd : public TAC_Expr {
+class TAC_LOpd : virtual public TAC_Expr {
+  protected:
+    Type type;
+
   public:
     virtual void print(std::ostream &os) = 0;
 
     virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+
+    void set_type(Type);
+
+    Type get_type();
 };
 
-class Printable_Opd : public TAC_Expr {
+class Printable_Opd : virtual public TAC_Expr {
   public:
     virtual void print(std::ostream &) = 0;
 
@@ -250,4 +257,8 @@ class TAC_Code {
     }
 
     void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>);
+
+    void print_rtl(std::ostream &);
 };
