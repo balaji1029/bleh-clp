@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Werror -std=c++20 -O3
+CXXFLAGS = -Wall -Werror -std=c++20 -O2
 TARGET = sclp
 
 all: sclp

@@ -28,6 +28,8 @@ RegisterPool::RegisterPool() {
     std::vector<std::string> float_reg_names = {
         "f2",  "f4",  "f6",  "f8",  "f10", "f12", "f14", "f16",
         "f18", "f20", "f22", "f24", "f26", "f28", "f30"};
+    std::vector<std::string> float_arg_reg_names = {
+        "f12", "f14", "f16", "f18", "f20", "f22", "f24", "f26", "f28", "f30"};
     for (const std::string &reg_name : reg_names) {
         regs.push_back(std::make_shared<RTL_Register_Opd>(
             std::make_shared<Register>(reg_name)));
@@ -38,6 +40,10 @@ RegisterPool::RegisterPool() {
     }
     for (const std::string &reg_name : float_reg_names) {
         float_regs.push_back(std::make_shared<RTL_Register_Opd>(
+            std::make_shared<Register>(reg_name)));
+    }
+    for (const std::string &reg_name : float_arg_reg_names) {
+        float_arg_regs.push_back(std::make_shared<RTL_Register_Opd>(
             std::make_shared<Register>(reg_name)));
     }
 }
@@ -54,6 +60,10 @@ RegisterPool::getTempRegister(std::shared_ptr<Temporary_TAC_Opd> temp) {
             return reg;
     }
     for (auto reg : float_regs) {
+        if (!reg->getReg()->isFree() && reg->getReg()->getTemp() == temp)
+            return reg;
+    }
+    for (auto reg : float_arg_regs) {
         if (!reg->getReg()->isFree() && reg->getReg()->getTemp() == temp)
             return reg;
     }
@@ -87,6 +97,25 @@ std::shared_ptr<RTL_Register_Opd> RegisterPool::getArgRegister() {
 std::shared_ptr<RTL_Register_Opd> RegisterPool::getFloatRegister() {
     for (auto reg : float_regs)
         if (reg->getReg()->isFree()) {
+            reg->getReg()->setTemp(nullptr);
+            return reg;
+        }
+    return nullptr;
+}
+
+std::shared_ptr<RTL_Register_Opd> RegisterPool::getFloatArgRegister() {
+    for (auto reg : float_arg_regs)
+        if (reg->getReg()->isFree()) {
+            reg->getReg()->setTemp(nullptr);
+            return reg;
+        }
+    return nullptr;
+}
+
+std::shared_ptr<RTL_Register_Opd> RegisterPool::getV0() {
+    for (auto reg : regs)
+        if (reg->getReg()->get_name() == "v0") {
+            // TODO: handle properly
             reg->getReg()->setTemp(nullptr);
             return reg;
         }

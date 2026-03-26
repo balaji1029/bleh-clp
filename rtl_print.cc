@@ -15,9 +15,7 @@ void RTL_Label_Opd::print(std::ostream &os) { os << "Label" << label_index; }
 
 void RTL_Register_Opd::print(std::ostream &os) { os << reg->get_name(); }
 
-void RTL_Stemp_Opd::print(std::ostream &os) {
-    os << "stemp" << stemp_index;
-}
+void RTL_Stemp_Opd::print(std::ostream &os) { os << "stemp" << stemp_index; }
 
 void RTL_Str_Const_Opd::print(std::ostream &os) { os << value; }
 
@@ -128,6 +126,12 @@ void Load_RTL_Stmt::print(std::ostream &os) {
             os << "load.d";
         else
             os << "load";
+        break;
+    case Opd_Type::TEMP:
+        if (var_type == Type::FLOAT)
+            os << "move.d";
+        else
+            os << "move";
         break;
     default:
         os << "load";
