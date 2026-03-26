@@ -17,6 +17,8 @@ void RTL_Register_Opd::print(std::ostream &os) { os << reg->get_name(); }
 
 void RTL_Stemp_Opd::print(std::ostream &os) { os << "stemp" << stemp_index; }
 
+void RTL_Zero_Opd::print(std::ostream &os) { os << "zero"; }
+
 void RTL_Str_Const_Opd::print(std::ostream &os) { os << value; }
 
 void RTL_Var_Opd::print(std::ostream &os) { os << entry->get_name(); }
@@ -70,8 +72,10 @@ void Compute_RTL_Stmt::print(std::ostream &os) {
     if (type == Type::FLOAT)
         os << ".d";
     os << ": ";
-    reg->print(os);
-    os << " <- ";
+    if (reg) {
+        reg->print(os);
+        os << " <- ";
+    }
     lOpd->print(os);
     if (rOpd) {
         os << " , ";
@@ -113,33 +117,43 @@ void Write_RTL_Stmt::print(std::ostream &os) {
 
 void Load_RTL_Stmt::print(std::ostream &os) {
     os << RTL_SPACE;
-    switch (type) {
-    case Opd_Type::FLOAT:
-        os << "iLoad.d";
-        break;
-    case Opd_Type::INT:
-    case Opd_Type::STR:
-        os << "iLoad";
-        break;
-    case Opd_Type::VAR:
-        if (var_type == Type::FLOAT)
-            os << "load.d";
-        else
-            os << "load";
-        break;
-    case Opd_Type::TEMP:
-        if (var_type == Type::FLOAT)
-            os << "move.d";
-        else
+    if (movf)
+        os << "movf";
+    else if (movt)
+        os << "movt";
+    else
+        switch (type) {
+        case Opd_Type::FLOAT:
+            os << "iLoad.d";
+            break;
+        case Opd_Type::INT:
+        case Opd_Type::STR:
+            os << "iLoad";
+            break;
+        case Opd_Type::VAR:
+            if (var_type == Type::FLOAT)
+                os << "load.d";
+            else
+                os << "load";
+            break;
+        case Opd_Type::TEMP:
+            if (var_type == Type::FLOAT)
+                os << "move.d";
+            else
+                os << "move";
+            break;
+        case Opd_Type::ZERO:
             os << "move";
-        break;
-    default:
-        os << "load";
-    };
+            break;
+        default:
+            os << "load";
+        };
     os << ": ";
     reg->print(os);
     os << " <- ";
     opd->print(os);
+    if (movf || movt)
+        os << " , 0";
 }
 
 void Store_RTL_Stmt::print(std::ostream &os) {

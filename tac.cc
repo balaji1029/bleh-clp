@@ -161,7 +161,9 @@ void Conditional_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
     condition->build_tac(symtab);
 
-    place = symtab->getNewSTemp();
+    std::shared_ptr<STemporary_TAC_Opd> stemp = symtab->getNewSTemp();
+    stemp->set_type(get_type());
+    place = stemp;
 
     std::shared_ptr<Label_TAC_Opd> false_label =
         std::make_shared<Label_TAC_Opd>();

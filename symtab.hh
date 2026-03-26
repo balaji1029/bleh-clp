@@ -10,6 +10,7 @@
 #include "register.hh"
 
 class Temporary_TAC_Opd;
+class STemporary_TAC_Opd;
 
 /* Type of variable */
 enum class Type { INT, BOOL, FLOAT, STRING, VOID };
@@ -41,7 +42,7 @@ class SymTabEntry {
     std::string get_name();
     Type get_type();
 
-    void print(std::ostream&, const std::string&);
+    void print(std::ostream &, const std::string &);
 };
 
 /* Class for Function entries in the Global Symbol Table */
@@ -125,11 +126,11 @@ class ProcSymbolTable {
 
     std::shared_ptr<Temporary_TAC_Opd> getNewTemp();
 
-    std::shared_ptr<Temporary_TAC_Opd> getNewSTemp();
+    std::shared_ptr<STemporary_TAC_Opd> getNewSTemp();
 
     std::shared_ptr<RegisterPool> getRegisterPool();
-    
-    void print(std::ostream&, std::string&);
+
+    void print(std::ostream &, std::string &);
 };
 
 /* Class for Global Symbol Table */
@@ -188,5 +189,5 @@ class GlobalSymbolTable {
      * given name only in the current scope */
     std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
 
-    void print(std::ostream&, std::string&);
+    void print(std::ostream &, std::string &);
 };
