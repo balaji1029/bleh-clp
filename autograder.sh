@@ -2,7 +2,8 @@
 DIR="example-programs"
 
 flags=(
-    "--show-tokens --show-ast --show-symtab --show-ast --show-symtab"
+    "--show-rtl"
+    # "--show-tokens --show-ast --show-symtab --show-ast --show-symtab"
     # "--show-tokens --sa-scan",
     # "--show-tokens --sa-parse",
     # "--show-tokens --sa-ast"
@@ -28,6 +29,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
     rm -f "$tac_file" "$ref_tac_file"
+    rm -f "$rtl_file" "$ref_rtl_file"
     rm -f "$sym_file" "$ref_sym_file"
     rm -f "$spim_file" "$ref_spim_file"
 
@@ -38,6 +40,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         mv "$toks_file" "$ref_toks_file" 2>/dev/null
         mv "$ast_file" "$ref_ast_file" 2>/dev/null
         mv "$tac_file" "$ref_tac_file" 2>/dev/null
+        mv "$rtl_file" "$ref_rtl_file" 2>/dev/null
         mv "$sym_file" "$ref_sym_file" 2>/dev/null
         mv "$spim_file" "$ref_spim_file" 2>/dev/null
 
@@ -76,6 +79,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\e[31mERROR:\e[0m .rtl file not generated for $file by our sclp"
             continue
         elif [[ -f "$rtl_file" && -f "$ref_rtl_file" ]]; then
+            sed -i 's/;;.*//' "$ref_rtl_file"
             diff -Bw "$rtl_file" "$ref_rtl_file"
             if [[ $? -ne 0 ]]; then
                 echo "in the $file"
