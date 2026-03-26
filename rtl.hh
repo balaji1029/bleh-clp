@@ -57,13 +57,23 @@ class RTL_Register_Opd : public RTL_Opd {
     void print(std::ostream &) override;
 };
 
-class RTL_Stemp_Opd : public RTL_Opd {
+class RTL_Var_Opd : public RTL_Opd {
+    std::shared_ptr<SymTabEntry> entry;
+    Type var_type;
+
+  public:
+    RTL_Var_Opd(std::shared_ptr<SymTabEntry>, Type);
+    Type getVarType();
+    void print(std::ostream &) override;
+};
+
+class RTL_Stemp_Opd : public RTL_Var_Opd {
     int stemp_index;
-    Type stemp_type;
+    // Type stemp_type;
 
   public:
     RTL_Stemp_Opd(int, Type);
-    Type getStempType();
+    // Type getStempType();
     void print(std::ostream &) override;
 };
 
@@ -72,16 +82,6 @@ class RTL_Str_Const_Opd : public RTL_Opd {
 
   public:
     RTL_Str_Const_Opd(std::string);
-    void print(std::ostream &) override;
-};
-
-class RTL_Var_Opd : public RTL_Opd {
-    std::shared_ptr<SymTabEntry> entry;
-    Type var_type;
-
-  public:
-    RTL_Var_Opd(std::shared_ptr<SymTabEntry>, Type);
-    Type getVarType();
     void print(std::ostream &) override;
 };
 
