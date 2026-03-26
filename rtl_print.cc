@@ -140,6 +140,7 @@ void Store_RTL_Stmt::print(std::ostream &os) {
     case Opd_Type::FLOAT:
         os << "store.d";
         break;
+    case Opd_Type::TEMP:
     case Opd_Type::VAR:
         if (var_type == Type::FLOAT) {
             os << "store.d";
@@ -165,7 +166,12 @@ void TAC_Code::print_rtl(std::ostream &os) {
         tacStmt->getRTLCode()->print(os);
 }
 
-void Func_Ast::print_rtl(std::ostream &os) { get_code()->print_rtl(os); }
+void Func_Ast::print_rtl(std::ostream &os) {
+    os << "**PROCEDURE: " << proc_table->get_name() << std::endl;
+    os << "**BEGIN: RTL Statements" << std::endl;
+    get_code()->print_rtl(os);
+    os << "**END: RTL Statements" << std::endl;
+}
 
 void Root_Ast::print_rtl(std::ostream &os) {
     for (auto func : funcs)

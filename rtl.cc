@@ -262,10 +262,9 @@ void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
         case Opd_Type::TEMP: {
             std::shared_ptr<RTL_Register_Opd> rTemp =
                 std::dynamic_pointer_cast<RTL_Register_Opd>(rPlace);
-            std::shared_ptr<Temporary_TAC_Opd> rt =
-                std::dynamic_pointer_cast<Temporary_TAC_Opd>(expr);
             std::shared_ptr<Store_RTL_Stmt> lStore =
-                std::make_shared<Store_RTL_Stmt>(lVarRtl, rTemp, rType);
+                std::make_shared<Store_RTL_Stmt>(lVarRtl, rTemp, rType,
+                                                 lVarRtl->getVarType());
             rtl_code->append(lStore);
             rTemp->getReg()->markFree();
             break;
