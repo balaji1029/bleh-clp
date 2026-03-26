@@ -189,10 +189,8 @@ class Move_RTL_Stmt : public RTL_Stmt {
 };
 
 class Read_RTL_Stmt : public RTL_Stmt {
-    std::shared_ptr<RTL_Var_Opd> var;
-
   public:
-    Read_RTL_Stmt(std::shared_ptr<RTL_Var_Opd>);
+    Read_RTL_Stmt();
     void print(std::ostream &) override;
 };
 
