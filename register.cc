@@ -32,19 +32,19 @@ RegisterPool::RegisterPool() {
         "f12", "f14", "f16", "f18", "f20", "f22", "f24", "f26", "f28", "f30"};
     for (const std::string &reg_name : reg_names) {
         regs.push_back(std::make_shared<RTL_Register_Opd>(
-            std::make_shared<Register>(reg_name)));
+            std::make_shared<Register>(reg_name), Type::INT));
     }
     for (const std::string &reg_name : arg_reg_names) {
         arg_regs.push_back(std::make_shared<RTL_Register_Opd>(
-            std::make_shared<Register>(reg_name)));
+            std::make_shared<Register>(reg_name), Type::INT));
     }
     for (const std::string &reg_name : float_reg_names) {
         float_regs.push_back(std::make_shared<RTL_Register_Opd>(
-            std::make_shared<Register>(reg_name)));
+            std::make_shared<Register>(reg_name), Type::FLOAT));
     }
     for (const std::string &reg_name : float_arg_reg_names) {
         float_arg_regs.push_back(std::make_shared<RTL_Register_Opd>(
-            std::make_shared<Register>(reg_name)));
+            std::make_shared<Register>(reg_name), Type::FLOAT));
     }
 }
 

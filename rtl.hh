@@ -7,7 +7,7 @@
 
 enum class Binary_Opd_Type;
 
-enum class Opd_Type { INT, FLOAT, STR, LABEL, TEMP, STEMP, VAR };
+enum class Opd_Type { INT, FLOAT, STR, LABEL, TEMP, ZERO, VAR };
 
 class RTL {
   public:
@@ -70,8 +70,7 @@ class RTL_Register_Opd : public RTL_Opd,
     Type var_type;
 
   public:
-    RTL_Register_Opd(std::shared_ptr<Register>);
-    void setVarType(Type);
+    RTL_Register_Opd(std::shared_ptr<Register>, Type);
     Type getVarType();
     std::shared_ptr<Register> getReg();
     void print(std::ostream &) override;
@@ -97,6 +96,15 @@ class RTL_Stemp_Opd : public RTL_Var_Opd {
 
   public:
     RTL_Stemp_Opd(int, Type);
+    void print(std::ostream &) override;
+    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
+        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+};
+
+class RTL_Zero_Opd : public RTL_Opd,
+                     public std::enable_shared_from_this<RTL_Zero_Opd> {
+  public:
+    RTL_Zero_Opd();
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
         getLoadedReg(std::shared_ptr<RegisterPool>) override;
@@ -199,12 +207,16 @@ class Load_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Opd> opd;
     Opd_Type type;
     Type var_type;
+    bool movf;
+    bool movt;
 
   public:
     Load_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Opd>,
                   Opd_Type);
     Load_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Opd>,
                   Opd_Type, Type);
+    void setMovf();
+    void setMovt();
     void print(std::ostream &) override;
 };
 
