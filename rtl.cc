@@ -346,11 +346,10 @@ void If_Goto_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     label->build_rtl(reg_pool);
     std::shared_ptr<RTL_Label_Opd> labelRtl =
         std::dynamic_pointer_cast<RTL_Label_Opd>(label->getRTLPlace());
-    std::shared_ptr<RTL_Register_Opd> reg =
-        std::dynamic_pointer_cast<RTL_Register_Opd>(cond->getRTLPlace());
+    auto [reg, load] = cond->getRTLPlace()->getLoadedReg(reg_pool);
     std::shared_ptr<If_Goto_RTL_Stmt> bgtz =
         std::make_shared<If_Goto_RTL_Stmt>(reg, labelRtl);
-    rtl_code->append(cond->getRTLCode(), label->getRTLCode(), bgtz);
+    rtl_code->append(cond->getRTLCode(), label->getRTLCode(), load, bgtz);
     reg->getReg()->markFree();
 }
 
