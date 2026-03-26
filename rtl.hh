@@ -4,6 +4,7 @@
 #include "symtab.hh"
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 
 enum class Binary_Opd_Type;
 
@@ -113,7 +114,8 @@ class RTL_Zero_Opd : public RTL_Opd,
 class RTL_Str_Const_Opd
     : public RTL_Opd,
       public std::enable_shared_from_this<RTL_Str_Const_Opd> {
-    std::string value;
+    int id;
+    static std::unordered_map<std::string, int> string_map;
 
   public:
     RTL_Str_Const_Opd(std::string);
