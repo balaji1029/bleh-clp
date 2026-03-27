@@ -2,12 +2,16 @@
 DIR="example-programs"
 
 flags=(
-    "--show-rtl"
-    # "--show-tokens --show-ast --show-symtab --show-ast --show-symtab"
+    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl"
     # "--show-tokens --sa-scan",
     # "--show-tokens --sa-parse",
     # "--show-tokens --sa-ast"
 )
+
+if [[ ! -f sclp ]]; then
+    echo "sclp not made!!!"
+    exit
+fi
 
 find "$DIR" -type f -name "*.c" | while read -r file; do
     # echo "Processing $file"
@@ -89,7 +93,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\e[31mERROR:\e[0m .sym file not generated for $file by our sclp"
             continue
         elif [[ -f "$sym_file" && -f "$ref_sym_file" ]]; then
-            diff -Bw <(grep -vE '^\s*(;;|$)' "$sym_file") <(grep -vE '^\s*(;;|$)' "$ref_sym_file")
+            diff -Bw "$sym_file" "$ref_sym_file"
             if [[ $? -ne 0 ]]; then
                 echo "in the $file"
             fi

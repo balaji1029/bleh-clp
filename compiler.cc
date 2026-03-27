@@ -120,12 +120,18 @@ int Compiler::run() {
             root_ast->print_tac(output_tac_file);
     }
 
+    if (flags.sa_ast)
+        return status;
+
     if (flags.show_rtl && !flags.sa_tac) {
         if (flags.demo)
             root_ast->print_rtl(std::cout);
         else
             root_ast->print_rtl(output_rtl_file);
     }
+
+    if (flags.sa_tac)
+        return status;
 
     std::string level = "";
     if (flags.show_symtab)

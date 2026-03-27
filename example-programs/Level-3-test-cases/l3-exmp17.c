@@ -49,7 +49,7 @@ void main (int a)
 
     d = ((d && e)) ? (d && e) : 9;
 
-    // a = ((a > b) ? (d && e) : (d || e)) ? ((d || e) ? (9.0) : (c + b)) : (!d ?(b + c + c) : (c + b));
+    a = ((a > b) ? (d && e) : (d || e)) ? ((d || e) ? (9.0) : (c + b)) : (!d ?(b + c + c) : (c + b));
     print b;
     // return 3;
 }
