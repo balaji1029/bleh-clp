@@ -117,8 +117,7 @@ std::shared_ptr<RTL_Register_Opd> RegisterPool::getFloatArgRegister() {
 std::shared_ptr<RTL_Register_Opd> RegisterPool::getV0() {
     for (auto reg : regs)
         if (reg->getReg()->get_name() == "v0") {
-            // TODO: handle properly
-            reg->getReg()->setTemp(nullptr);
+            // reg->getReg()->setTemp(nullptr);
             return reg;
         }
     return nullptr;
