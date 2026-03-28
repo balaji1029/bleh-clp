@@ -429,8 +429,8 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
             syscallLoad =
                 std::make_shared<Load_RTL_Stmt>(v0, syscallInt, Opd_Type::INT);
             argReg = reg_pool->getFloatArgRegister();
-            argLoad = std::make_shared<Load_RTL_Stmt>(
-                argReg, varPlace, varPlace->getType(), type);
+            argLoad = std::make_shared<Load_RTL_Stmt>(argReg, varPlace, varType,
+                                                      type);
         } else {
             std::shared_ptr<RTL_Int_Const_Opd> syscallInt;
             if (type == Type::STRING)
@@ -441,11 +441,11 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
                 std::make_shared<Load_RTL_Stmt>(v0, syscallInt, Opd_Type::INT);
             argReg = reg_pool->getArgRegister();
             if (backupReg)
-                argLoad = std::make_shared<Load_RTL_Stmt>(
-                    argReg, backupReg, varPlace->getType(), type);
+                argLoad = std::make_shared<Load_RTL_Stmt>(argReg, backupReg,
+                                                          varType, type);
             else
-                argLoad = std::make_shared<Load_RTL_Stmt>(
-                    argReg, varPlace, varPlace->getType(), type);
+                argLoad = std::make_shared<Load_RTL_Stmt>(argReg, varPlace,
+                                                          varType, type);
         }
 
         std::shared_ptr<Write_RTL_Stmt> write =
@@ -456,6 +456,11 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
         argReg->getReg()->markFree();
         if (backupReg)
             backupReg->getReg()->markFree();
+        if (varType == Opd_Type::TEMP) {
+            std::shared_ptr<RTL_Register_Opd> varReg =
+                std::dynamic_pointer_cast<RTL_Register_Opd>(varPlace);
+            varReg->getReg()->markFree();
+        }
     }
 }
 
