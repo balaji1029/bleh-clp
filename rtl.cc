@@ -372,6 +372,7 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
         Type varType = varRtl->getVarType();
         std::shared_ptr<Load_RTL_Stmt> syscallLoad;
         std::shared_ptr<RTL_Register_Opd> v0 = reg_pool->getV0();
+        v0->getReg()->setTemp(nullptr);
         std::shared_ptr<Read_RTL_Stmt> readStmt =
             std::make_shared<Read_RTL_Stmt>();
         std::shared_ptr<Store_RTL_Stmt> storeStmt;
