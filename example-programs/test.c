@@ -9,6 +9,8 @@ void main(bool d) {
     string f;
     string j;
     float g,h;
+    int m, n, o, p, q, r, s, t, u, v;
+    bool w, x, y, z;
     read a;
 
     a = 1;
@@ -48,4 +50,24 @@ void main(bool d) {
     e = "AAAA";
     f = "AAAA";
     print e;
+
+    m = 1;
+    m = 3;
+    m = 3;
+
+    w = n == m;
+    w = n != m;
+    w = n < m;
+    w = n > m;
+    w = n <= m;
+    w = n >= m;
+
+    o = (((n == m) ? (m == n) : (m != n)) ? ((m != n) ? (m + n) : (m - n)) : (m != n) ? (m - n) : (m + n));
+    p = ((((m + n) + (o + p)) + ((q + r) + (s + t))) + (((u + v) + (m + n)) + ((o + p) + (q + r)))) + ((s + t) + (u + v));
+
+    print((b + c) + (a + m));
+
+    a = 1 + 1 + 1 + 1 + 1;
+
+    a = (1 + 1 + (1 + 1 + (1 + 1)));
 }
