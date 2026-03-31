@@ -59,6 +59,10 @@ STemporary_TAC_Opd::STemporary_TAC_Opd(int temp_num)
 Variable_TAC_Opd::Variable_TAC_Opd(std::shared_ptr<SymTabEntry> entry)
     : entry(entry) {}
 
+void Function_Call_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+    code = 
+}
+
 void Name_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<Variable_TAC_Opd> var_tac =
         std::make_shared<Variable_TAC_Opd>(name);
@@ -207,6 +211,14 @@ void Conditional_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     code->append(condition->get_code(), negation_stmt, if_goto,
                  true_part->get_code(), assign_true, goto_end, false_label_stmt,
                  false_part->get_code(), assign_false, end_label_stmt);
+}
+
+void Function_Call_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+
+}
+
+void Return_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+
 }
 
 void Assignment_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {

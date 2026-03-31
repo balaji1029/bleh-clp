@@ -18,8 +18,11 @@ int g()
     int b;
     h();
     b=1;
-    b = f1(b,b);
-    return b; 
+    b = f1(b,(b==b)?b:b);
+	// if (b != b) {
+
+		return b; 
+	// }
 }
 void main()
 {

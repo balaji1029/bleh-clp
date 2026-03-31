@@ -10,5 +10,6 @@ y.tab.*
 **/*.tac
 **/*.sym
 **/*.rtl
+**/*.spim
 *.py
 .gdb_history

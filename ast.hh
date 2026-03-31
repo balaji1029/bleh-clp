@@ -117,6 +117,20 @@ class Base_Expr_Ast : public Expression_Ast {
     virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
+class Function_Call_Ast : public Base_Expr_Ast {
+    std::shared_ptr<FuncEntry> func;
+
+    std::vector<std::shared_ptr<Expression_Ast>> exprs;
+
+  public:
+    Function_Call_Ast(std::shared_ptr<FuncEntry>,
+                      std::vector<std::shared_ptr<Expression_Ast>>);
+
+    void print(std::ostream &, std::string &) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
+};
+
 /* Class for identifiers */
 class Name_Expr_Ast : public Base_Expr_Ast {
     /* Pointer to the Symbol Table Entry of the identifier */
@@ -323,6 +337,28 @@ class Statement_Ast : public Ast {
     virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
+class Function_Call_Stmt_Ast : public Statement_Ast {
+    std::shared_ptr<Function_Call_Ast> func_call;
+
+  public:
+    Function_Call_Stmt_Ast(std::shared_ptr<Function_Call_Ast>);
+
+    void print(std::ostream &, std::string &) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
+};
+
+class Return_Stmt_Ast : public Statement_Ast {
+    std::shared_ptr<Expression_Ast> expr;
+
+  public:
+    Return_Stmt_Ast(std::shared_ptr<Expression_Ast>);
+
+    void print(std::ostream &, std::string& ) const;
+
+    void build_tac(std::shared_ptr<ProcSymbolTable>);
+};
+
 /* Class for Assignment Statements */
 class Assignment_Stmt_Ast : public Statement_Ast {
     /* The LHS of the assignment, has to be a Name Expression */
@@ -467,6 +503,8 @@ class Func_Ast : public Ast {
      * node */
     Func_Ast(std::shared_ptr<ProcSymbolTable>,
              std::shared_ptr<Sequence_Stmt_Ast>);
+
+    std::string get_name() const;
 
     /* Print to the given output stream */
     void print(std::ostream &, std::string &) const;

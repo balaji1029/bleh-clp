@@ -59,6 +59,8 @@ class FuncEntry {
     /* The bool to check if the function is implemented */
     bool implemented;
 
+    bool call_made;
+
   public:
     /* Creates a FuncEntry from the return type, the function name, and a vector
      * of pair of type and the parameter name, should also check if there exists
@@ -75,7 +77,9 @@ class FuncEntry {
     /* Gets the vector of parameter types of the function */
     const std::vector<Type> &get_param_types() const;
     void set_implemented();
+    void set_call_made();
     bool is_implemented() const;
+    bool is_call_made() const;
 };
 
 /* Class for Process Symbol Table */
@@ -97,6 +101,8 @@ class ProcSymbolTable {
 
     int num_stemps = 0;
 
+    bool return_stmt = false;
+
   public:
     /* Creates a Process Symbol Table from the pointer to the Symbol Table Entry
      * for the function */
@@ -109,6 +115,10 @@ class ProcSymbolTable {
     /* Adds a local variable to the Process Symbol Table from the type and the
      * name of the parameter name */
     void add_local(Type, const std::string &);
+
+    void add_return_stmt();
+
+    bool has_return_stmt() const;
 
     /* Gets the name of the function related to the Process Symbol Table */
     const std::string &get_name();
@@ -188,6 +198,8 @@ class GlobalSymbolTable {
     /* Finds and returns an `std::optional` if there exists a variable of the
      * given name only in the current scope */
     std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
+
+    void func_check();
 
     void print(std::ostream &, std::string &);
 };

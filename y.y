@@ -101,7 +101,7 @@
 %type <std::shared_ptr<Sequence_Stmt_Ast>> statement_list compound_statement
 %type <std::shared_ptr<Statement_Ast>> statement assignment_statement print_statement read_statement
 
-%type <std::shared_ptr<Expression_Ast>> expression if_condition
+%type <std::shared_ptr<Expression_Ast>> expression if_condition actual_arg
 %type <std::shared_ptr<Relational_Expr_Ast>> rel_expression
 %type <std::shared_ptr<Base_Expr_Ast>> constant_as_operand
 %type <std::shared_ptr<Name_Expr_Ast>> variable_as_operand
@@ -118,6 +118,14 @@
 %type <std::shared_ptr<Do_While_Loop_Ast>> do_while_statement
 
 %type <std::shared_ptr<Selection_Stmt_Ast>> if_statement
+
+%type <std::vector<std::shared_ptr<Expression_Ast>>> non_empty_arg_list actual_arg_list
+
+%type <std::shared_ptr<Function_Call_Ast>> func_call
+
+%type <std::shared_ptr<Function_Call_Stmt_Ast>> call_statement
+
+%type <std::shared_ptr<Return_Stmt_Ast>> return_statement
 
 %right QUESTION_MARK COLON
 %left OR
@@ -141,20 +149,8 @@ program
 global_decl_statement_list
     : global_decl_statement_list var_decl_stmt
     | global_decl_statement_list func_decl
-        {
-            if (seen_func_decl) {
-                Error::syntactic_error("only one func_decl allowed\n");
-            }
-            seen_func_decl = 1;
-        }
     | var_decl_stmt
     | func_decl
-        {
-            if (seen_func_decl) {
-                Error::syntactic_error("only one func_decl allowed\n");
-            }
-            seen_func_decl = 1;
-        }
 
 func_decl
     : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET SEMICOLON {
@@ -168,7 +164,11 @@ func_decl
     ;
 
 func_def_list
-    : func_def {
+    : func_def_list func_def {
+        if (!Error::get_sa_parse()) 
+            root_ast->add_func($2);
+    }
+    | func_def {
         if (!Error::get_sa_parse())
             root_ast->add_func($1);
     }
@@ -176,8 +176,7 @@ func_def_list
 
 func_header
     : named_type NAME {
-        Error::semantic_check($2 == "main", "func is not main");
-        Error::semantic_check($1 == Type::VOID, "main is not void");
+        // Error::semantic_check(($2 != "main") || ($1 == Type::VOID), "main is not void");
         if ($2 == "main_") $2.pop_back();
         $$ = std::make_pair($1, $2);
     }
@@ -281,15 +280,20 @@ statement
     }
     | print_statement {
         if (!Error::get_sa_parse())
-        
             $$ = std::move($1);
     }
     | read_statement {
         if (!Error::get_sa_parse())
             $$ = std::move($1);
     }
-    | call_statement
-    | return_statement
+    | call_statement {
+        if (!Error::get_sa_parse())
+            $$ = std::move($1);
+    }
+    | return_statement {
+        if (!Error::get_sa_parse())
+            $$ = std::move($1);
+    }
     ;
 
 optional_local_var_decl_stmt_list
@@ -326,29 +330,67 @@ var_decl_item_list
     ;
 
 call_statement
-    : func_call SEMICOLON
+    : func_call SEMICOLON {
+        $$ = std::make_shared<Function_Call_Stmt_Ast>($1);
+    }
     ;
 
 func_call
-    : NAME LEFT_ROUND_BRACKET actual_arg_list RIGHT_ROUND_BRACKET
+    : NAME LEFT_ROUND_BRACKET actual_arg_list RIGHT_ROUND_BRACKET {
+        if (!Error::get_sa_parse()) {
+            auto func = symtab->find_func($1);
+            if (func)
+                $$ = std::make_shared<Function_Call_Ast>(*func, $3);
+            else
+                Error::semantic_error("Function " + $1 + " does not exist");
+        }
+    }
     ;
 
 actual_arg_list
-    : non_empty_arg_list
-    | %empty
+    : non_empty_arg_list {
+        if (!Error::get_sa_parse())
+            $$ = std::move($1);
+    }
+    | %empty {
+        if (!Error::get_sa_parse())
+            $$ = std::vector<std::shared_ptr<Expression_Ast>>();
+    }
     ;
 
 non_empty_arg_list
-    : non_empty_arg_list COMMA actual_arg
-    | actual_arg
+    : non_empty_arg_list COMMA actual_arg {
+        if (!Error::get_sa_parse()) {
+            $$ = std::move($1);
+            $$.push_back(std::move($3));
+        }
+    }
+    | actual_arg {
+        if (!Error::get_sa_parse()) {
+            $$ = std::vector<std::shared_ptr<Expression_Ast>>();
+            $$.push_back(std::move($1));
+        }
+    }
     ;
 
 actual_arg
-    : expression
+    : expression {
+        if (!Error::get_sa_parse()) {
+            $$ = std::move($1);
+        }
+    }
     ;
 
 return_statement
-    : RETURN expression SEMICOLON
+    : RETURN expression SEMICOLON {
+        if (!Error::get_sa_parse()) {
+            Type return_type = symtab->get_curr_proc_symtab()->get_return_type();
+            Error::semantic_check(return_type != Type::VOID, "Returning an expression from VOID function");
+            Error::semantic_check(return_type == $2->get_type(), "Return type doesn't match");
+            symtab->get_curr_proc_symtab()->add_return_stmt();
+            $$ = std::make_shared<Return_Stmt_Ast>($2);
+        }
+    }
     ;
 
 var_decl_item
@@ -380,6 +422,10 @@ named_type
 
 assignment_statement
     : variable_as_operand ASSIGN expression SEMICOLON {
+        if (!Error::get_sa_parse())
+            $$ = std::make_shared<Assignment_Stmt_Ast>(std::move($1), std::move($3));
+    }
+    | variable_as_operand ASSIGN func_call SEMICOLON {
         if (!Error::get_sa_parse())
             $$ = std::make_shared<Assignment_Stmt_Ast>(std::move($1), std::move($3));
     }

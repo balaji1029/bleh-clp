@@ -2,7 +2,43 @@
 #include "symtab.hh"
 #include "utils.hh"
 
-// ------------------------------ Name_Expr_Ast ------------------------------
+#include <algorithm>
+
+// ------------------------------ Function_Call_Ast
+// ------------------------------
+
+Function_Call_Ast::Function_Call_Ast(
+    std::shared_ptr<FuncEntry> func,
+    std::vector<std::shared_ptr<Expression_Ast>> exprs)
+    : func(func), exprs(exprs) {
+    std::vector<Type> param_types = func->get_param_types();
+
+    Error::semantic_check(exprs.size() == param_types.size(),
+                          "Number of parameters in the function call does "
+                          "not match with declaration");
+
+    for (size_t idx = 0; idx < exprs.size() && idx < param_types.size(); idx++)
+        Error::semantic_check(exprs[idx]->get_type() == param_types[idx],
+                              "Types of parameter and argument do not match");
+
+    type = func->get_return_type();
+    func->set_call_made();
+}
+
+void Function_Call_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n";
+    os << level << "FN CALL: " << func->get_name() << "(";
+    level.push_back(SPACE);
+    for (std::shared_ptr<Expression_Ast> expr : exprs) {
+        os << "\n" << level;
+        expr->print(os, level);
+    }
+    level.pop_back();
+    os << ")";
+}
+
+// ------------------------------ Name_Expr_Ast
+// ------------------------------
 
 Name_Expr_Ast::Name_Expr_Ast(std::shared_ptr<SymTabEntry> name) : name(name) {
     type = name->get_type();
@@ -223,8 +259,6 @@ std::string Relational_Expr_Ast::get_binary_op_str() const {
     return relational_expr_type_str;
 }
 
-// Ternary_Expr_Ast::~Ternary_Expr_Ast() = default;
-
 // ------------------------------ Conditional_Expr_Ast
 // ------------------------------
 
@@ -256,6 +290,32 @@ void Conditional_Expr_Ast::print(std::ostream &os, std::string &level) const {
     false_part->print(os, level);
     level.pop_back();
     os << ")";
+}
+
+// ------------------------------ Function_Call_Stmt_Ast
+// ------------------------------
+
+Function_Call_Stmt_Ast::Function_Call_Stmt_Ast(
+    std::shared_ptr<Function_Call_Ast> func_call)
+    : func_call(func_call) {
+    Error::semantic_check(func_call->get_type() == Type::VOID,
+                          "Return value of a procedure ignored");
+}
+
+void Function_Call_Stmt_Ast::print(std::ostream &os, std::string &level) const {
+    func_call->print(os, level);
+}
+
+// ------------------------------ Return_Stmt_Ast ------------------------------
+
+Return_Stmt_Ast::Return_Stmt_Ast(std::shared_ptr<Expression_Ast> expr)
+    : expr(expr) {}
+
+void Return_Stmt_Ast::print(std::ostream &os, std::string &level) const {
+    os << "\n" << level << "Return: ";
+    level.push_back(SPACE);
+    expr->print(os, level);
+    level.pop_back();
 }
 
 // ------------------------------ Assignment_Stmt_Ast
@@ -434,6 +494,10 @@ Func_Ast::Func_Ast(std::shared_ptr<ProcSymbolTable> proc_table,
                    std::shared_ptr<Sequence_Stmt_Ast> seq_ast)
     : proc_table(proc_table), seq_ast(seq_ast) {}
 
+std::string Func_Ast::get_name() const {
+    return proc_table->get_name();
+}
+
 void Func_Ast::print(std::ostream &os, std::string &level) const {
     os << "**PROCEDURE: " << this->proc_table->get_name() << "\n";
     level.push_back(SPACE);
@@ -451,7 +515,7 @@ void Func_Ast::print(std::ostream &os, std::string &level) const {
     os << "\n**BEGIN: Abstract Syntax Tree";
     // level.push_back(SPACE);
     seq_ast->print(os, level);
-    // level.pop_back();
+    level.pop_back();
     os << "\n**END: Abstract Syntax Tree\n";
 }
 
@@ -463,6 +527,9 @@ const std::vector<std::shared_ptr<Func_Ast>> &Root_Ast::get_funcs() const {
 
 void Root_Ast::add_func(std::shared_ptr<Func_Ast> func) {
     funcs.push_back(func);
+    sort(funcs.begin(), funcs.end(), [] (auto func1, auto func2) {
+        return func1->get_name() < func2->get_name();
+    });
 }
 
 void Root_Ast::print(std::ostream &os, std::string &level) const {

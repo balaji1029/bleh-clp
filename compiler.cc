@@ -110,11 +110,13 @@ int Compiler::run() {
     if (flags.sa_parse)
         return status;
 
-    if (!flags.sa_ast)
-        root_ast->build_tac(nullptr);
+    sym_tab->func_check();
 
     if (flags.sa_ast)
         return status;
+    
+    if (!flags.sa_ast)
+        root_ast->build_tac(nullptr);
 
     if (!flags.sa_tac)
         root_ast->build_rtl();

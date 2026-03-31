@@ -52,7 +52,8 @@ void SymTabEntry::print(std::ostream &os, const std::string &level) {
 FuncEntry::FuncEntry(Type return_type, const std::string &name,
                      const std::vector<std::pair<Type, std::string>> &params,
                      bool implemented)
-    : return_type(return_type), name(name), implemented(implemented) {
+    : return_type(return_type), name(name), implemented(implemented),
+      call_made(false) {
     // The set of names of the parameters
     std::set<std::string> param_names;
     for (const std::pair<Type, std::string> &param : params) {
@@ -79,7 +80,11 @@ void FuncEntry::set_implemented() {
     implemented = true;
 }
 
+void FuncEntry::set_call_made() { call_made = true; }
+
 bool FuncEntry::is_implemented() const { return implemented; }
+
+bool FuncEntry::is_call_made() const { return call_made; }
 
 // ------------------------------ ProcSymbolTable ------------------------------
 
@@ -93,6 +98,10 @@ void ProcSymbolTable::add_param(Type type, const std::string &name) {
 void ProcSymbolTable::add_local(Type type, const std::string &name) {
     locals.push_back(std::make_shared<SymTabEntry>(type, name));
 }
+
+void ProcSymbolTable::add_return_stmt() { return_stmt = true; }
+
+bool ProcSymbolTable::has_return_stmt() const { return return_stmt; }
 
 const std::string &ProcSymbolTable::get_name() {
     return func_entry->get_name();
@@ -272,6 +281,10 @@ void GlobalSymbolTable::new_proc_symtab(
     // Adds parameters to the Current Symbol Table
     for (const std::pair<Type, std::string> &param : params)
         add_param(param.first, param.second);
+
+    if (return_type != Type::VOID) {
+        curr_symtab->getNewSTemp();
+    }
 }
 
 void GlobalSymbolTable::go_global() { curr_symtab.reset(); }
@@ -329,6 +342,22 @@ GlobalSymbolTable::find_local(const std::string &name) {
             return *it;
     }
     return std::nullopt;
+}
+
+void GlobalSymbolTable::func_check() {
+    for (std::shared_ptr<FuncEntry> func : funcs) {
+        Error::semantic_check(func->is_implemented() || !func->is_call_made(),
+                              "Called function is not defined");
+    }
+
+    bool main_found = false;
+
+    for (std::shared_ptr<ProcSymbolTable> proc : procs) {
+        Error::semantic_check(proc->has_return_stmt() || (proc->get_return_type() == Type::VOID), "Non-void function has no return statement");
+        if (proc->get_name() == "main") 
+            main_found = true;
+    }
+    Error::semantic_check(main_found, "Procedure main does not exist");
 }
 
 void GlobalSymbolTable::print(std::ostream &os, std::string &level) {

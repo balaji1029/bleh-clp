@@ -2,7 +2,7 @@
 DIR="example-programs"
 
 flags=(
-    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl"
+    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-ast"
     # "--show-tokens --sa-scan",
     # "--show-tokens --sa-parse",
     # "--show-tokens --sa-ast"
@@ -22,12 +22,12 @@ if [[ "$1" == "test" ]]; then
     sym_file="${file}.sym"
     spim_file="${file}.spim"
 
-    ref_toks_file="${file}.A4.toks"
-    ref_ast_file="${file}.A4.ast"
-    ref_tac_file="${file}.A4.tac"
-    ref_rtl_file="${file}.A4.rtl"
-    ref_sym_file="${file}.A4.sym"
-    ref_spim_file="${file}.A4.spim"
+    ref_toks_file="${file}.A5.toks"
+    ref_ast_file="${file}.A5.ast"
+    ref_tac_file="${file}.A5.tac"
+    ref_rtl_file="${file}.A5.rtl"
+    ref_sym_file="${file}.A5.sym"
+    ref_spim_file="${file}.A5.spim"
 
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
@@ -37,7 +37,7 @@ if [[ "$1" == "test" ]]; then
     rm -f "$spim_file" "$ref_spim_file"
 
     for flag in "${flags[@]}"; do
-        reference-implementations/A4-sclp "$file" $flag 2>/dev/null
+        reference-implementations/A5-sclp "$file" $flags
         ref_rc=$?
 
         mv "$toks_file" "$ref_toks_file" 2>/dev/null
@@ -49,6 +49,14 @@ if [[ "$1" == "test" ]]; then
 
         ./sclp $flag "$file" 2>/dev/null
         our_rc=$?
+
+        if [[ ($ref_rc -ne 0 && $our_rc -eq 0) || ($ref_rc -eq 0 && $our_rc -ne 0) ]]; then
+            echo -e "\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
+        fi
+
+        if [[ $ref_rc -ne "0" ]]; then
+            continue
+        fi
 
         if [[ ! -f "$toks_file" && -f "$ref_toks_file" ]]; then
             echo -e "\e[31mERROR:\e[0m .toks file not generated for $file by our sclp"
@@ -105,10 +113,6 @@ if [[ "$1" == "test" ]]; then
             if [[ $? -ne 0 ]]; then
                 echo "in the $file"
             fi
-        fi
-
-        if [[ ($ref_rc -ne 0 && $our_rc -eq 0) || ($ref_rc -eq 0 && $our_rc -ne 0) ]]; then
-            echo -e "\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
         fi
     done
     echo "Test passed"
@@ -129,12 +133,12 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     sym_file="${file}.sym"
     spim_file="${file}.spim"
 
-    ref_toks_file="${file}.A4.toks"
-    ref_ast_file="${file}.A4.ast"
-    ref_tac_file="${file}.A4.tac"
-    ref_rtl_file="${file}.A4.rtl"
-    ref_sym_file="${file}.A4.sym"
-    ref_spim_file="${file}.A4.spim"
+    ref_toks_file="${file}.A5.toks"
+    ref_ast_file="${file}.A5.ast"
+    ref_tac_file="${file}.A5.tac"
+    ref_rtl_file="${file}.A5.rtl"
+    ref_sym_file="${file}.A5.sym"
+    ref_spim_file="${file}.A5.spim"
 
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
@@ -144,7 +148,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$spim_file" "$ref_spim_file"
 
     for flag in "${flags[@]}"; do
-        reference-implementations/A4-sclp "$file" $flag 2>/dev/null
+        reference-implementations/A5-sclp "$file" $flag 2>/dev/null
         ref_rc=$?
 
         mv "$toks_file" "$ref_toks_file" 2>/dev/null
@@ -218,12 +222,12 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
         fi
     done
-    rm -f "$toks_file" "$ref_toks_file"
-    rm -f "$ast_file" "$ref_ast_file"
-    rm -f "$tac_file" "$ref_tac_file"
-    rm -f "$sym_file" "$ref_sym_file"
-    rm -f "$rtl_file" "$ref_rtl_file"
-    rm -f "$spim_file" "$ref_spim_file"
+    # rm -f "$toks_file" "$ref_toks_file"
+    # rm -f "$ast_file" "$ref_ast_file"
+    # rm -f "$tac_file" "$ref_tac_file"
+    # rm -f "$sym_file" "$ref_sym_file"
+    # rm -f "$rtl_file" "$ref_rtl_file"
+    # rm -f "$spim_file" "$ref_spim_file"
 
 done
 printf "\rProcessing done...                                                                         \n"

@@ -147,8 +147,9 @@ class Temporary_TAC_Opd
 };
 
 class STemporary_TAC_Opd : public Temporary_TAC_Opd {
+    std::shared_ptr<SymTabEntry> var;
   public:
-    STemporary_TAC_Opd(int);
+    STemporary_TAC_Opd(int, std::shared_ptr<SymTabEntry>);
 
     virtual ~STemporary_TAC_Opd() {}
 
