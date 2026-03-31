@@ -57,7 +57,6 @@ bool {
 
 return	{
 	display_token_info("RETURN", YYText(), yylineno);
-	Error::syntactic_error(NOT_IMPLEMENTED);
 	return yy::parser::token::token_kind_type::RETURN;
 }
 

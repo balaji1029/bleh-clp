@@ -288,6 +288,8 @@ statement
         if (!Error::get_sa_parse())
             $$ = std::move($1);
     }
+    | call_statement
+    | return_statement
     ;
 
 optional_local_var_decl_stmt_list
@@ -321,6 +323,32 @@ var_decl_item_list
         if (!Error::get_sa_parse())
             $$.push_back($1);
     }
+    ;
+
+call_statement
+    : func_call SEMICOLON
+    ;
+
+func_call
+    : NAME LEFT_ROUND_BRACKET actual_arg_list RIGHT_ROUND_BRACKET
+    ;
+
+actual_arg_list
+    : non_empty_arg_list
+    | %empty
+    ;
+
+non_empty_arg_list
+    : non_empty_arg_list COMMA actual_arg
+    | actual_arg
+    ;
+
+actual_arg
+    : expression
+    ;
+
+return_statement
+    : RETURN expression SEMICOLON
     ;
 
 var_decl_item
