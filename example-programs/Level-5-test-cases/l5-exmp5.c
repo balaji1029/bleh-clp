@@ -17,7 +17,7 @@ void func1(){
 int func2(int a,float b,int i1){
 	a=a+10;
 	i1=5;
-	return a+i1+i2+2;
+	return (a > i1) ? a+i1+i2+2 : 0;
 }
 
 float func3(int a,float b,float c){

@@ -33,19 +33,39 @@ std::ostream &operator<<(std::ostream &os, Type type) {
     return os;
 }
 
+int get_type_size(Type type) {
+    switch (type) {
+    case Type::INT:
+        return 4;
+    case Type::BOOL:
+        return 4;
+    case Type::FLOAT:
+        return 8;
+    case Type::STRING:
+        return 4;
+    default:
+        return 0;
+    }
+}
+
 // ------------------------------ SymTabEntry ------------------------------
 
 SymTabEntry::SymTabEntry(Type type, const std::string &name)
-    : type(type), name(name), offset(std::nullopt) {}
+    : type(type), name(name), offset(std::nullopt), size(get_type_size(type)) {}
 
 std::string SymTabEntry::get_name() { return name; }
 
 Type SymTabEntry::get_type() { return type; }
 
+void SymTabEntry::set_offset(int offset) { this->offset = offset; }
+
 void SymTabEntry::print(std::ostream &os, const std::string &level) {
     os << level << "Name: " << name << "<" << get_type_str(type) << ">" << " ";
     if (offset == std::nullopt) {
         os << "Entity Type: VAR (No offset assigned yet)" << "\n";
+    } else {
+        os << "Entity Type: VAR Start Offset: " << *offset
+           << " End Offset: " << (*offset + size) << "\n";
     }
 }
 
@@ -173,6 +193,20 @@ std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::getNewSTemp(Type type) {
     return std::make_shared<Variable_TAC_Opd>(symtab_entry);
 }
 
+void ProcSymbolTable::set_offsets() {
+    int offset = 8;
+    for (std::shared_ptr<SymTabEntry> entry : params) {
+        entry->set_offset(offset);
+        offset += get_type_size(entry->get_type());
+    }
+
+    offset = 0;
+    for (std::shared_ptr<SymTabEntry> entry : locals) {
+        offset -= get_type_size(entry->get_type());
+        entry->set_offset(offset);
+    }
+}
+
 void ProcSymbolTable::print(std::ostream &os, std::string &level) {
     os << "**PROCEDURE: " << func_entry->get_name() << ", Return Type:<"
        << func_entry->get_return_type() << ">" << "\n";
@@ -180,11 +214,12 @@ void ProcSymbolTable::print(std::ostream &os, std::string &level) {
     os << level << "Formal Parameters\n";
     for (std::shared_ptr<SymTabEntry> entry : params)
         entry->print(os, level);
-
     os << level << "Local Declarartions\n";
     for (std::shared_ptr<SymTabEntry> entry : locals)
         entry->print(os, level);
     level.pop_back();
+
+    os << "\n";
 }
 
 std::shared_ptr<RegisterPool> ProcSymbolTable::getRegisterPool() {
@@ -379,6 +414,18 @@ GlobalSymbolTable::find_local(const std::string &name) {
     return std::nullopt;
 }
 
+void GlobalSymbolTable::set_offsets() {
+    int offset = 0;
+    for (std::shared_ptr<SymTabEntry> entry : globals) {
+        offset -= get_type_size(entry->get_type());
+        entry->set_offset(offset);
+    }
+
+    for (std::shared_ptr<ProcSymbolTable> proc : procs) {
+        proc->set_offsets();
+    }
+}
+
 void GlobalSymbolTable::func_check() {
     for (std::shared_ptr<FuncEntry> func : funcs) {
         Error::semantic_check(func->is_implemented() || !func->is_call_made(),
@@ -403,6 +450,8 @@ void GlobalSymbolTable::print(std::ostream &os, std::string &level) {
     for (std::shared_ptr<SymTabEntry> entry : globals)
         entry->print(os, level);
     level.pop_back();
+
+    os << "\n";
 
     sort(procs.begin(), procs.end(), [](auto proc1, auto proc2) {
         return proc1->get_name() < proc2->get_name();

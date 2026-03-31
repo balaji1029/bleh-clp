@@ -26,6 +26,7 @@ struct flags_t {
     bool sa_parse = false;
     bool sa_ast = false;
     bool sa_tac = false;
+    bool sa_rtl = false;
 
     bool demo = false;
 };

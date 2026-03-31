@@ -3,17 +3,13 @@
 Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     int opt;
 
-    static struct option long_opts[] = {{"show-tokens", no_argument, 0, 0},
-                                        {"show-ast", no_argument, 0, 0},
-                                        {"show-tac", no_argument, 0, 0},
-                                        {"show-symtab", no_argument, 0, 0},
-                                        {"show-rtl", no_argument, 0, 0},
-                                        {"sa-scan", no_argument, 0, 0},
-                                        {"sa-parse", no_argument, 0, 0},
-                                        {"sa-ast", no_argument, 0, 0},
-                                        {"sa-tac", no_argument, 0, 0},
-                                        {"demo", no_argument, 0, 'd'},
-                                        {0, 0, 0, 0}};
+    static struct option long_opts[] = {
+        {"show-tokens", no_argument, 0, 0}, {"show-ast", no_argument, 0, 0},
+        {"show-tac", no_argument, 0, 0},    {"show-symtab", no_argument, 0, 0},
+        {"show-rtl", no_argument, 0, 0},    {"sa-scan", no_argument, 0, 0},
+        {"sa-parse", no_argument, 0, 0},    {"sa-ast", no_argument, 0, 0},
+        {"sa-tac", no_argument, 0, 0},      {"sa-rtl", no_argument, 0, 0},
+        {"demo", no_argument, 0, 'd'},      {0, 0, 0, 0}};
 
     int opt_idx = 0;
 
@@ -30,6 +26,7 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                 flags.sa_parse = true;
                 flags.sa_ast = true;
                 flags.sa_tac = true;
+                flags.sa_rtl = true;
                 Error::sa_scan = true;
                 Error::sa_parse = true;
                 Error::sa_ast = true;
@@ -39,6 +36,7 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                 flags.sa_parse = true;
                 flags.sa_ast = true;
                 flags.sa_tac = true;
+                flags.sa_rtl = true;
                 Error::sa_parse = true;
                 Error::sa_ast = true;
             } else if (std::string(long_opts[opt_idx].name) == "show-tac")
@@ -46,13 +44,16 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
             else if (std::string(long_opts[opt_idx].name) == "sa-ast") {
                 flags.sa_ast = true;
                 flags.sa_tac = true;
+                flags.sa_rtl = true;
                 Error::sa_ast = true;
             } else if (std::string(long_opts[opt_idx].name) == "show-symtab")
                 flags.show_symtab = true;
             else if (std::string(long_opts[opt_idx].name) == "show-rtl")
                 flags.show_rtl = true;
-            else if (std::string(long_opts[opt_idx].name) == "sa-tac")
+            else if (std::string(long_opts[opt_idx].name) == "sa-tac") {
                 flags.sa_tac = true;
+                flags.sa_rtl = true;
+            }
             break;
         default:
             std::cerr << ERROR << std::endl;
@@ -104,7 +105,7 @@ int Compiler::run() {
     else
         status = parse();
 
-    if (flags.show_tokens)
+    if (flags.show_tokens && flags.sa_parse)
         output(lexer.token_output);
 
     if (flags.sa_parse)
@@ -114,6 +115,9 @@ int Compiler::run() {
 
     if (flags.sa_ast)
         return status;
+    
+    if (flags.show_tokens)
+        output(lexer.token_output);
 
     std::string level = "";
     if (flags.show_symtab) {
@@ -139,11 +143,25 @@ int Compiler::run() {
     if (flags.sa_tac)
         return status;
 
-    if (flags.show_rtl && !flags.sa_tac) {
+    sym_tab->set_offsets();
+
+    // std::string level = "";
+
+    // if (flags.show_rtl && !flags.sa_tac) {
+    //     if (flags.demo)
+    //         root_ast->print_rtl(std::cout);
+    //     else
+    //         root_ast->print_rtl(output_rtl_file);
+    // }
+
+    if (flags.sa_rtl)
+        return status;
+    
+    if (flags.show_symtab) {
         if (flags.demo)
-            root_ast->print_rtl(std::cout);
+            sym_tab->print(std::cout, level);
         else
-            root_ast->print_rtl(output_rtl_file);
+            sym_tab->print(output_symtab_file, level);
     }
 
     return status;

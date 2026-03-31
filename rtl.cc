@@ -304,14 +304,17 @@ void Variable_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
 
 void Function_Call_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     // TODO
+    rtl_code = std::make_shared<RTL_Code>();
 }
 
 void Function_Call_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     // TODO
+    rtl_code = std::make_shared<RTL_Code>();
 }
 
 void Return_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     //TODO
+    rtl_code = std::make_shared<RTL_Code>();
 }
 
 void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {

@@ -23,6 +23,8 @@ std::ostream &operator<<(std::ostream &, Type);
 /* Entity type of a Symbol Table Entry */
 enum class EntityType { VAR, FUNC, TEMP };
 
+int get_type_size(Type type);
+
 /* Class for entries in Symbol Table */
 class SymTabEntry {
     /* The type of the variable  */
@@ -42,7 +44,10 @@ class SymTabEntry {
     std::string get_name();
     Type get_type();
 
+    void set_offset(int);
+
     void print(std::ostream &, const std::string &);
+
 };
 
 /* Class for Function entries in the Global Symbol Table */
@@ -151,6 +156,8 @@ class ProcSymbolTable {
     std::shared_ptr<Variable_TAC_Opd> getNewSTemp(Type);
 
     std::shared_ptr<RegisterPool> getRegisterPool();
+    
+    void set_offsets();
 
     void print(std::ostream &, std::string &);
 };
@@ -212,6 +219,8 @@ class GlobalSymbolTable {
     /* Finds and returns an `std::optional` if there exists a variable of the
      * given name only in the current scope */
     std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
+
+    void set_offsets();
 
     void func_check();
 

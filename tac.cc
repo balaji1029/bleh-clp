@@ -435,7 +435,7 @@ void Root_Ast::build_tac(std::shared_ptr<GlobalSymbolTable> symtab) {
     }
     std::vector<std::shared_ptr<Func_Ast>> funcs_copy = this->get_funcs();
     sort(funcs_copy.begin(), funcs_copy.end(), [](auto func1, auto func2) {
-        return func1->get_name().substr(0, func1->get_name().length() - 1) < func2->get_name().substr(0, func2->get_name().length() - 1);
+        return func1->get_name() < func2->get_name();
     });
     for (const std::shared_ptr<Func_Ast> &func : funcs_copy){
         func->build_tac(func->get_symtab());
