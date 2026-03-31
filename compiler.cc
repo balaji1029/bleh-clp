@@ -114,9 +114,17 @@ int Compiler::run() {
 
     if (flags.sa_ast)
         return status;
-    
+
+    std::string level = "";
+    if (flags.show_symtab) {
+        if (flags.demo)
+            sym_tab->print(std::cout, level);
+        else
+            sym_tab->print(output_symtab_file, level);
+    }
+
     if (!flags.sa_ast)
-        root_ast->build_tac(nullptr);
+        root_ast->build_tac(sym_tab);
 
     if (!flags.sa_tac)
         root_ast->build_rtl();
@@ -137,10 +145,6 @@ int Compiler::run() {
         else
             root_ast->print_rtl(output_rtl_file);
     }
-
-    std::string level = "";
-    if (flags.show_symtab)
-        sym_tab->print(output_symtab_file, level);
 
     return status;
 }

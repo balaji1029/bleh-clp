@@ -1,3 +1,4 @@
+
 #include "tac.hh"
 
 #include "ast.hh"
@@ -26,9 +27,31 @@ void Label_TAC_Opd::print(std::ostream &os) { os << "Label" << label_index; }
 
 void Temporary_TAC_Opd::print(std::ostream &os) { os << "temp" << temp_num; }
 
-void STemporary_TAC_Opd::print(std::ostream &os) { os << "stemp" << temp_num; }
-
 void Variable_TAC_Opd::print(std::ostream &os) { os << entry->get_name(); }
+
+void Function_Call_TAC_Opd::print(std::ostream &os) {
+    os << entry->get_name() << "(";
+    for (size_t i = 0; i + 1 < args.size(); i++) {
+        args[i]->print(os);
+        os << ", ";
+    }
+    if (args.size() > 0)
+        args[args.size() - 1]->print(os);
+    os << ")";
+}
+
+void Function_Call_TAC_Stmt::print(std::ostream &os) {
+    os << SPACE;
+    opd->print(os);
+    os << "\n";
+}
+
+void Return_TAC_Stmt::print(std::ostream &os) {
+    os << SPACE;
+    os << "return ";
+    opd->print(os);
+    os << "\n";
+}
 
 void Assign_TAC_Stmt::print(std::ostream &os) {
     os << SPACE;
@@ -81,7 +104,11 @@ void TAC_Code::print(std::ostream &os) {
 }
 
 void Root_Ast::print_tac(std::ostream &os) {
-    for (const std::shared_ptr<Func_Ast> &func : funcs) {
+    std::vector<std::shared_ptr<Func_Ast>> funcs_copy = this->get_funcs();
+    sort(funcs_copy.begin(), funcs_copy.end(), [](auto func1, auto func2) {
+        return func1->get_name() < func2->get_name();
+    });
+    for (const std::shared_ptr<Func_Ast> &func : funcs_copy) {
         func->print_tac(os);
     }
 }

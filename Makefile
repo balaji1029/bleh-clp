@@ -66,3 +66,12 @@ clean:
 	-find . -type f -name "*.sym" -delete
 	-find . -type f -name "*.rtl" -delete
 	-find . -type f -name "*.spim" -delete
+
+clean_outputs:
+	-rm -f *.log
+	-find . -type f -name "*.toks" -delete
+	-find . -type f -name "*.ast" -delete
+	-find . -type f -name "*.tac" -delete
+	-find . -type f -name "*.sym" -delete
+	-find . -type f -name "*.rtl" -delete
+	-find . -type f -name "*.spim" -delete

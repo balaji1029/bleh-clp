@@ -292,6 +292,13 @@ void Conditional_Expr_Ast::print(std::ostream &os, std::string &level) const {
     os << ")";
 }
 
+// ------------------------------ Statement_Ast ------------------------------
+
+void Statement_Ast::set_return_label(
+    std::shared_ptr<Label_TAC_Opd> return_label) {
+    this->return_label = return_label;
+}
+
 // ------------------------------ Function_Call_Stmt_Ast
 // ------------------------------
 
@@ -494,9 +501,7 @@ Func_Ast::Func_Ast(std::shared_ptr<ProcSymbolTable> proc_table,
                    std::shared_ptr<Sequence_Stmt_Ast> seq_ast)
     : proc_table(proc_table), seq_ast(seq_ast) {}
 
-std::string Func_Ast::get_name() const {
-    return proc_table->get_name();
-}
+std::string Func_Ast::get_name() const { return proc_table->get_name(); }
 
 void Func_Ast::print(std::ostream &os, std::string &level) const {
     os << "**PROCEDURE: " << this->proc_table->get_name() << "\n";
@@ -527,14 +532,14 @@ const std::vector<std::shared_ptr<Func_Ast>> &Root_Ast::get_funcs() const {
 
 void Root_Ast::add_func(std::shared_ptr<Func_Ast> func) {
     funcs.push_back(func);
-    sort(funcs.begin(), funcs.end(), [] (auto func1, auto func2) {
-        return func1->get_name() < func2->get_name();
-    });
 }
 
 void Root_Ast::print(std::ostream &os, std::string &level) const {
-    std::vector<std::shared_ptr<Func_Ast>> funcs = this->get_funcs();
-    for (const std::shared_ptr<Func_Ast> &child : funcs) {
+    std::vector<std::shared_ptr<Func_Ast>> funcs_copy = this->get_funcs();
+    sort(funcs_copy.begin(), funcs_copy.end(), [](auto func1, auto func2) {
+        return func1->get_name() < func2->get_name();
+    });
+    for (const std::shared_ptr<Func_Ast> &child : funcs_copy) {
         child->print(os, level);
     }
 }

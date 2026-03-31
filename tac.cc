@@ -2,6 +2,7 @@
 #include "ast.hh"
 
 #include <cassert>
+#include <algorithm>
 
 int Label_TAC_Opd::index = 0;
 
@@ -15,6 +16,13 @@ void TAC_Code::append(std::shared_ptr<TAC_Code> code) {
 }
 
 bool TAC_Code::is_empty() { return tacStmts.size() == 0; }
+
+Function_Call_TAC_Stmt::Function_Call_TAC_Stmt(
+    std::shared_ptr<Function_Call_TAC_Opd> opd)
+    : opd(opd) {}
+
+Return_TAC_Stmt::Return_TAC_Stmt(std::shared_ptr<Variable_TAC_Opd> opd)
+    : opd(opd) {}
 
 Assign_TAC_Stmt::Assign_TAC_Stmt(std::shared_ptr<TAC_LOpd> lOpd,
                                  std::shared_ptr<TAC_Expr> expr)
@@ -53,14 +61,41 @@ Label_TAC_Opd::Label_TAC_Opd() { label_index = index++; }
 
 Temporary_TAC_Opd::Temporary_TAC_Opd(int temp_num) : temp_num(temp_num) {}
 
-STemporary_TAC_Opd::STemporary_TAC_Opd(int temp_num)
-    : Temporary_TAC_Opd(temp_num) {}
-
 Variable_TAC_Opd::Variable_TAC_Opd(std::shared_ptr<SymTabEntry> entry)
     : entry(entry) {}
 
+Function_Call_TAC_Opd::Function_Call_TAC_Opd(
+    std::shared_ptr<FuncEntry> entry,
+    std::vector<std::shared_ptr<Printable_Opd>> args)
+    : entry(entry), args(args) {}
+
 void Function_Call_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
-    code = 
+    if (func->get_return_type() != Type::VOID) {
+        place = symtab->getNewTemp();
+    }
+    std::vector<std::shared_ptr<Printable_Opd>> args;
+
+    code = std::make_shared<TAC_Code>();
+    for (std::shared_ptr<Expression_Ast> expr : exprs) {
+        expr->build_tac(symtab);
+        args.push_back(expr->get_place());
+        code->append(expr->get_code());
+    }
+
+    std::shared_ptr<Function_Call_TAC_Opd> func_call_opd =
+        std::make_shared<Function_Call_TAC_Opd>(func, args);
+
+    std::shared_ptr<TAC_Stmt> func_call_stmt;
+
+    if (func->get_return_type() != Type::VOID) {
+        func_call_stmt = std::make_shared<Assign_TAC_Stmt>(
+            std::dynamic_pointer_cast<TAC_LOpd>(place), func_call_opd);
+    } else {
+        func_call_stmt =
+            std::make_shared<Function_Call_TAC_Stmt>(func_call_opd);
+    }
+
+    code->append(func_call_stmt);
 }
 
 void Name_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
@@ -165,7 +200,7 @@ void Conditional_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
     condition->build_tac(symtab);
 
-    std::shared_ptr<STemporary_TAC_Opd> stemp = symtab->getNewSTemp();
+    std::shared_ptr<Variable_TAC_Opd> stemp = symtab->getNewSTemp(get_type());
     stemp->set_type(get_type());
     place = stemp;
 
@@ -213,12 +248,26 @@ void Conditional_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
                  false_part->get_code(), assign_false, end_label_stmt);
 }
 
-void Function_Call_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
-
+void Function_Call_Stmt_Ast::build_tac(
+    std::shared_ptr<ProcSymbolTable> symtab) {
+    func_call->build_tac(symtab);
+    code = std::make_shared<TAC_Code>();
+    code->append(func_call->get_code());
 }
 
 void Return_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<Variable_TAC_Opd> return_tac_opd =
+        symtab->get_return_tac_opd();
+    expr->build_tac(symtab);
 
+    std::shared_ptr<Assign_TAC_Stmt> assign_stmt =
+        std::make_shared<Assign_TAC_Stmt>(return_tac_opd, expr->get_place());
+
+    std::shared_ptr<Goto_TAC_Stmt> goto_ret =
+        std::make_shared<Goto_TAC_Stmt>(return_label);
+
+    code = std::make_shared<TAC_Code>();
+    code->append(expr->get_code(), assign_stmt, goto_ret);
 }
 
 void Assignment_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
@@ -251,6 +300,7 @@ void Write_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 void Sequence_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     code = std::make_shared<TAC_Code>();
     for (const std::shared_ptr<Statement_Ast> &child : children) {
+        child->set_return_label(return_label);
         child->build_tac(symtab);
         code->append(child->get_code());
     }
@@ -258,6 +308,7 @@ void Sequence_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
 void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     condition->build_tac(symtab);
+    body->set_return_label(return_label);
     body->build_tac(symtab);
 
     std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
@@ -293,6 +344,7 @@ void While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 }
 
 void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+    body->set_return_label(return_label);
     body->build_tac(symtab);
     condition->build_tac(symtab);
 
@@ -312,6 +364,7 @@ void Do_While_Loop_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
 void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     condition->build_tac(symtab);
+    true_body->set_return_label(return_label);
     true_body->build_tac(symtab);
 
     std::shared_ptr<Temporary_TAC_Opd> temp1 = symtab->getNewTemp();
@@ -342,6 +395,7 @@ void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
         if_goto = std::make_shared<If_Goto_TAC_Stmt>(temp1, false_label);
         std::shared_ptr<Label_TAC_Stmt> false_label_stmt =
             std::make_shared<Label_TAC_Stmt>(false_label);
+        (*false_body)->set_return_label(return_label);
         (*false_body)->build_tac(symtab);
         code->append(condition->get_code(), negation_stmt, if_goto,
                      true_body->get_code(), goto_end);
@@ -355,11 +409,35 @@ void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 }
 
 void Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
-    seq_ast->build_tac(symtab);
-    code = seq_ast->get_code();
+
+    if (proc_table->get_return_type() != Type::VOID) {
+        std::shared_ptr<Label_TAC_Opd> return_label = *(symtab->get_return_label());
+        std::shared_ptr<Variable_TAC_Opd> return_opd = symtab->get_return_tac_opd();
+    
+        std::shared_ptr<Label_TAC_Stmt> end_label =
+            std::make_shared<Label_TAC_Stmt>(return_label);
+        std::shared_ptr<Return_TAC_Stmt> return_stmt =
+            std::make_shared<Return_TAC_Stmt>(return_opd);
+        code = std::make_shared<TAC_Code>();
+    
+        seq_ast->set_return_label(return_label);
+        seq_ast->build_tac(symtab);
+        code->append(seq_ast->get_code(), end_label, return_stmt);
+    } else {
+        seq_ast->build_tac(symtab);
+        code = seq_ast->get_code();
+    }
 }
 
-void Root_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
-    for (const std::shared_ptr<Func_Ast> &func : funcs)
+void Root_Ast::build_tac(std::shared_ptr<GlobalSymbolTable> symtab) {
+    for (std::shared_ptr<FuncEntry> func : symtab->get_funcs()) {
+        func->set_return_label();
+    }
+    std::vector<std::shared_ptr<Func_Ast>> funcs_copy = this->get_funcs();
+    sort(funcs_copy.begin(), funcs_copy.end(), [](auto func1, auto func2) {
+        return func1->get_name().substr(0, func1->get_name().length() - 1) < func2->get_name().substr(0, func2->get_name().length() - 1);
+    });
+    for (const std::shared_ptr<Func_Ast> &func : funcs_copy){
         func->build_tac(func->get_symtab());
+    }
 }

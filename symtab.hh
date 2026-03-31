@@ -9,8 +9,8 @@
 
 #include "register.hh"
 
-class Temporary_TAC_Opd;
-class STemporary_TAC_Opd;
+class Label_TAC_Opd;
+class Variable_TAC_Opd;
 
 /* Type of variable */
 enum class Type { INT, BOOL, FLOAT, STRING, VOID };
@@ -61,6 +61,8 @@ class FuncEntry {
 
     bool call_made;
 
+    std::optional<std::shared_ptr<Label_TAC_Opd>> return_label;
+
   public:
     /* Creates a FuncEntry from the return type, the function name, and a vector
      * of pair of type and the parameter name, should also check if there exists
@@ -80,6 +82,8 @@ class FuncEntry {
     void set_call_made();
     bool is_implemented() const;
     bool is_call_made() const;
+    void set_return_label();
+    std::optional<std::shared_ptr<Label_TAC_Opd>> get_return_label() const;
 };
 
 /* Class for Process Symbol Table */
@@ -96,6 +100,8 @@ class ProcSymbolTable {
     std::vector<std::shared_ptr<SymTabEntry>> locals;
 
     std::shared_ptr<RegisterPool> register_pool;
+
+    std::shared_ptr<Variable_TAC_Opd> return_tac_opd;
 
     int num_temps = 0;
 
@@ -120,12 +126,18 @@ class ProcSymbolTable {
 
     bool has_return_stmt() const;
 
+    std::shared_ptr<Variable_TAC_Opd> get_return_tac_opd();
+
+    void set_return_tac_opd(std::shared_ptr<Variable_TAC_Opd>);
+
     /* Gets the name of the function related to the Process Symbol Table */
     const std::string &get_name();
 
     /* Gets the return type of the function related to the Process Symbol Table
      */
     Type get_return_type();
+
+    std::optional<std::shared_ptr<Label_TAC_Opd>> get_return_label();
 
     /* Gets the vector of pointers to the parameters' entries in the Process
      * Symbol Table */
@@ -136,7 +148,7 @@ class ProcSymbolTable {
 
     std::shared_ptr<Temporary_TAC_Opd> getNewTemp();
 
-    std::shared_ptr<STemporary_TAC_Opd> getNewSTemp();
+    std::shared_ptr<Variable_TAC_Opd> getNewSTemp(Type);
 
     std::shared_ptr<RegisterPool> getRegisterPool();
 
@@ -186,6 +198,8 @@ class GlobalSymbolTable {
 
     /* Gets the pointer to the current scope */
     std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();
+
+    std::vector<std::shared_ptr<FuncEntry>> get_funcs() const;
 
     /* Finds and returns an `std::optional` if there exists a function of the
      * given name in the Function Symbol Table Entries */

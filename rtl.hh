@@ -92,16 +92,6 @@ class RTL_Var_Opd : public RTL_Opd,
         getLoadedReg(std::shared_ptr<RegisterPool>) override;
 };
 
-class RTL_Stemp_Opd : public RTL_Var_Opd {
-    int stemp_index;
-
-  public:
-    RTL_Stemp_Opd(int, Type);
-    void print(std::ostream &) override;
-    std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
-};
-
 class RTL_Zero_Opd : public RTL_Opd,
                      public std::enable_shared_from_this<RTL_Zero_Opd> {
   public:

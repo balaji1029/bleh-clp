@@ -54,21 +54,6 @@ RTL_Register_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
 
 std::shared_ptr<Register> RTL_Register_Opd::getReg() { return reg; }
 
-RTL_Stemp_Opd::RTL_Stemp_Opd(int stemp_index, Type stemp_type)
-    : RTL_Var_Opd(nullptr, stemp_type), stemp_index(stemp_index) {}
-
-std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
-RTL_Stemp_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
-    std::shared_ptr<RTL_Register_Opd> reg;
-    if (getVarType() == Type::FLOAT)
-        reg = reg_pool->getFloatRegister();
-    else
-        reg = reg_pool->getRegister();
-    std::shared_ptr<Load_RTL_Stmt> load = std::make_shared<Load_RTL_Stmt>(
-        reg, shared_from_this(), getType(), getVarType());
-    return std::make_pair(reg, load);
-}
-
 RTL_Zero_Opd::RTL_Zero_Opd() : RTL_Opd(Opd_Type::ZERO) {}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<Load_RTL_Stmt>>
@@ -307,14 +292,26 @@ void Temporary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_place = reg;
 }
 
-void STemporary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
-    rtl_code = std::make_shared<RTL_Code>();
-    rtl_place = std::make_shared<RTL_Stemp_Opd>(temp_num, get_type());
-}
+// void STemporary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+//     rtl_code = std::make_shared<RTL_Code>();
+//     rtl_place = std::make_shared<RTL_Var_Opd>(this->entry, this->entry->get_type());
+// }
 
 void Variable_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_code = std::make_shared<RTL_Code>();
     rtl_place = std::make_shared<RTL_Var_Opd>(entry, get_type());
+}
+
+void Function_Call_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+    // TODO
+}
+
+void Function_Call_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+    // TODO
+}
+
+void Return_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+    //TODO
 }
 
 void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {

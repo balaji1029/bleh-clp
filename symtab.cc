@@ -2,6 +2,8 @@
 #include "utils.hh"
 #include <iostream>
 
+#include <algorithm>
+
 std::string get_type_str(Type type) {
     std::string binary_expr_type;
     switch (type) {
@@ -86,6 +88,16 @@ bool FuncEntry::is_implemented() const { return implemented; }
 
 bool FuncEntry::is_call_made() const { return call_made; }
 
+void FuncEntry::set_return_label() {
+    if (return_type != Type::VOID)
+        return_label = std::make_shared<Label_TAC_Opd>();
+}
+
+std::optional<std::shared_ptr<Label_TAC_Opd>>
+FuncEntry::get_return_label() const {
+    return return_label;
+}
+
 // ------------------------------ ProcSymbolTable ------------------------------
 
 ProcSymbolTable::ProcSymbolTable(std::shared_ptr<FuncEntry> func_entry)
@@ -102,6 +114,15 @@ void ProcSymbolTable::add_local(Type type, const std::string &name) {
 void ProcSymbolTable::add_return_stmt() { return_stmt = true; }
 
 bool ProcSymbolTable::has_return_stmt() const { return return_stmt; }
+
+std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::get_return_tac_opd() {
+    return return_tac_opd;
+}
+
+void ProcSymbolTable::set_return_tac_opd(
+    std::shared_ptr<Variable_TAC_Opd> opd) {
+    return_tac_opd = opd;
+}
 
 const std::string &ProcSymbolTable::get_name() {
     return func_entry->get_name();
@@ -136,12 +157,20 @@ ProcSymbolTable::find_var(const std::string &name) {
     return std::nullopt;
 }
 
+std::optional<std::shared_ptr<Label_TAC_Opd>>
+ProcSymbolTable::get_return_label() {
+    return func_entry->get_return_label();
+}
+
 std::shared_ptr<Temporary_TAC_Opd> ProcSymbolTable::getNewTemp() {
     return std::make_shared<Temporary_TAC_Opd>(num_temps++);
 }
 
-std::shared_ptr<STemporary_TAC_Opd> ProcSymbolTable::getNewSTemp() {
-    return std::make_shared<STemporary_TAC_Opd>(num_stemps++);
+std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::getNewSTemp(Type type) {
+    std::shared_ptr<SymTabEntry> symtab_entry = std::make_shared<SymTabEntry>(
+        type, "stemp" + std::to_string(num_stemps++));
+    locals.push_back(symtab_entry);
+    return std::make_shared<Variable_TAC_Opd>(symtab_entry);
 }
 
 void ProcSymbolTable::print(std::ostream &os, std::string &level) {
@@ -238,6 +267,10 @@ void GlobalSymbolTable::add_func(
     funcs.push_back(std::make_shared<FuncEntry>(return_type, name, params));
 }
 
+std::vector<std::shared_ptr<FuncEntry>> GlobalSymbolTable::get_funcs() const {
+    return funcs;
+}
+
 void GlobalSymbolTable::new_proc_symtab(
     Type return_type, const std::string &name,
     const std::vector<std::pair<Type, std::string>> &params) {
@@ -283,7 +316,9 @@ void GlobalSymbolTable::new_proc_symtab(
         add_param(param.first, param.second);
 
     if (return_type != Type::VOID) {
-        curr_symtab->getNewSTemp();
+        std::shared_ptr<Variable_TAC_Opd> return_tac_opd =
+            curr_symtab->getNewSTemp(return_type);
+        curr_symtab->set_return_tac_opd(return_tac_opd);
     }
 }
 
@@ -353,8 +388,10 @@ void GlobalSymbolTable::func_check() {
     bool main_found = false;
 
     for (std::shared_ptr<ProcSymbolTable> proc : procs) {
-        Error::semantic_check(proc->has_return_stmt() || (proc->get_return_type() == Type::VOID), "Non-void function has no return statement");
-        if (proc->get_name() == "main") 
+        Error::semantic_check(proc->has_return_stmt() ||
+                                  (proc->get_return_type() == Type::VOID),
+                              "Non-void function has no return statement");
+        if (proc->get_name() == "main")
             main_found = true;
     }
     Error::semantic_check(main_found, "Procedure main does not exist");
@@ -366,6 +403,10 @@ void GlobalSymbolTable::print(std::ostream &os, std::string &level) {
     for (std::shared_ptr<SymTabEntry> entry : globals)
         entry->print(os, level);
     level.pop_back();
+
+    sort(procs.begin(), procs.end(), [](auto proc1, auto proc2) {
+        return proc1->get_name() < proc2->get_name();
+    });
 
     for (std::shared_ptr<ProcSymbolTable> symtab : procs)
         symtab->print(os, level);

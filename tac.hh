@@ -146,18 +146,6 @@ class Temporary_TAC_Opd
     void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
-class STemporary_TAC_Opd : public Temporary_TAC_Opd {
-    std::shared_ptr<SymTabEntry> var;
-  public:
-    STemporary_TAC_Opd(int, std::shared_ptr<SymTabEntry>);
-
-    virtual ~STemporary_TAC_Opd() {}
-
-    void print(std::ostream &);
-
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
-};
-
 class Variable_TAC_Opd : public TAC_LOpd, public Printable_Opd {
     std::shared_ptr<SymTabEntry> entry;
 
@@ -168,7 +156,22 @@ class Variable_TAC_Opd : public TAC_LOpd, public Printable_Opd {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    virtual void build_rtl(std::shared_ptr<RegisterPool>) override;
+};
+
+class Function_Call_TAC_Opd : public TAC_Expr {
+    std::shared_ptr<FuncEntry> entry;
+    std::vector<std::shared_ptr<Printable_Opd>> args;
+
+  public:
+    Function_Call_TAC_Opd(std::shared_ptr<FuncEntry>,
+                          std::vector<std::shared_ptr<Printable_Opd>>);
+
+    virtual ~Function_Call_TAC_Opd() {}
+
+    void print(std::ostream &);
+
+    virtual void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class TAC_Stmt {
@@ -181,6 +184,28 @@ class TAC_Stmt {
     virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
 
     std::shared_ptr<RTL_Code> getRTLCode();
+};
+
+class Function_Call_TAC_Stmt : public TAC_Stmt {
+    std::shared_ptr<Function_Call_TAC_Opd> opd;
+
+  public:
+    Function_Call_TAC_Stmt(std::shared_ptr<Function_Call_TAC_Opd>);
+
+    void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
+};
+
+class Return_TAC_Stmt : public TAC_Stmt {
+    std::shared_ptr<Variable_TAC_Opd> opd;
+
+  public:
+    Return_TAC_Stmt(std::shared_ptr<Variable_TAC_Opd>);
+
+    void print(std::ostream &);
+
+    void build_rtl(std::shared_ptr<RegisterPool>) override;
 };
 
 class Assign_TAC_Stmt : public TAC_Stmt {

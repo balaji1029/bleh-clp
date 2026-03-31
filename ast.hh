@@ -330,11 +330,16 @@ class Conditional_Expr_Ast : public Ternary_Expr_Ast {
 
 /* Abstract class for all the statements */
 class Statement_Ast : public Ast {
+  protected:
+    std::shared_ptr<Label_TAC_Opd> return_label;
+  
   public:
     /* Deleted function to print to the given output stream */
     virtual void print(std::ostream &os, std::string &level) const = 0;
 
     virtual void build_tac(std::shared_ptr<ProcSymbolTable>) = 0;
+
+    void set_return_label(std::shared_ptr<Label_TAC_Opd>);
 };
 
 class Function_Call_Stmt_Ast : public Statement_Ast {
@@ -354,7 +359,7 @@ class Return_Stmt_Ast : public Statement_Ast {
   public:
     Return_Stmt_Ast(std::shared_ptr<Expression_Ast>);
 
-    void print(std::ostream &, std::string& ) const;
+    void print(std::ostream &, std::string &) const;
 
     void build_tac(std::shared_ptr<ProcSymbolTable>);
 };
@@ -535,7 +540,7 @@ class Root_Ast : public Ast {
     /* Print to the given output stream */
     void print(std::ostream &os, std::string &level) const;
 
-    void build_tac(std::shared_ptr<ProcSymbolTable>);
+    void build_tac(std::shared_ptr<GlobalSymbolTable>);
 
     void print_tac(std::ostream &os);
 
