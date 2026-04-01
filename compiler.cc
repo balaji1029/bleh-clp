@@ -75,6 +75,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     output_tac_filename = input_filename + ".tac";
     output_symtab_filename = input_filename + ".sym";
     output_rtl_filename = input_filename + ".rtl";
+    output_spim_filename = input_filename + ".spim";
+
 
     input_file.open(input_filename);
     if (flags.show_tokens && !flags.demo)
@@ -91,6 +93,9 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
 
     if (flags.show_rtl && !flags.demo && !flags.sa_tac)
         output_rtl_file.open(output_rtl_filename);
+
+    if (!flags.demo && !flags.sa_rtl)
+        output_spim_file.open(output_spim_filename);
 }
 
 int Compiler::run() {
@@ -115,7 +120,7 @@ int Compiler::run() {
 
     if (flags.sa_ast)
         return status;
-    
+
     if (flags.show_tokens)
         output(lexer.token_output);
 
@@ -145,8 +150,6 @@ int Compiler::run() {
 
     sym_tab->set_offsets();
 
-    // std::string level = "";
-
     // if (flags.show_rtl && !flags.sa_tac) {
     //     if (flags.demo)
     //         root_ast->print_rtl(std::cout);
@@ -156,7 +159,7 @@ int Compiler::run() {
 
     if (flags.sa_rtl)
         return status;
-    
+
     if (flags.show_symtab) {
         if (flags.demo)
             sym_tab->print(std::cout, level);

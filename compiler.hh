@@ -41,6 +41,7 @@ class Compiler {
     std::string output_tac_filename;
     std::string output_symtab_filename;
     std::string output_rtl_filename;
+    std::string output_spim_filename;
 
     std::ifstream input_file;
     std::ofstream output_token_file;
@@ -48,6 +49,7 @@ class Compiler {
     std::ofstream output_tac_file;
     std::ofstream output_symtab_file;
     std::ofstream output_rtl_file;
+    std::ofstream output_spim_file;
     std::shared_ptr<GlobalSymbolTable> sym_tab;
     std::shared_ptr<Root_Ast> root_ast;
 
