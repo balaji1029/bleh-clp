@@ -104,7 +104,8 @@ void Label_RTL_Stmt::print(std::ostream &os) {
 }
 
 void Return_RTL_Stmt::print(std::ostream &os) {
-    os << RTL_SPACE << "return v1";
+    os << RTL_SPACE << "return ";
+    reg->print(os);
 }
 
 void Move_RTL_Stmt::print(std::ostream &os) { os << RTL_SPACE; }
@@ -185,8 +186,11 @@ void Store_RTL_Stmt::print(std::ostream &os) {
 
 void Function_Call_RTL_Stmt::print(std::ostream &os) {
     os << RTL_SPACE;
-    if (!func->isVoid())
-        os << "v1 = ";
+    std::shared_ptr<RTL_Register_Opd> reg = func->getReg();
+    if (reg) {
+        reg->print(os);
+        os << " = ";
+    }
     os << "call ";
     func->print(os);
 }
@@ -230,6 +234,10 @@ void Func_Ast::print_rtl(std::ostream &os) {
 }
 
 void Root_Ast::print_rtl(std::ostream &os) {
-    for (auto func : funcs)
+    std::vector<std::shared_ptr<Func_Ast>> funcs_copy = this->get_funcs();
+    sort(funcs_copy.begin(), funcs_copy.end(), [](auto func1, auto func2) {
+        return func1->get_name() < func2->get_name();
+    });
+    for (auto func : funcs_copy)
         func->print_rtl(os);
 }

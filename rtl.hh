@@ -106,6 +106,7 @@ class RTL_Function_Call_Opd
       public std::enable_shared_from_this<RTL_Function_Call_Opd> {
     std::shared_ptr<FuncEntry> entry;
     std::vector<std::shared_ptr<RTL_Opd>> args;
+    std::shared_ptr<RTL_Register_Opd> reg;
 
   public:
     RTL_Function_Call_Opd(std::shared_ptr<FuncEntry>,
@@ -114,7 +115,7 @@ class RTL_Function_Call_Opd
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
         getLoadedReg(std::shared_ptr<RegisterPool>) override;
     std::shared_ptr<RTL_Code> unloadArgs();
-    bool isVoid();
+    std::shared_ptr<RTL_Register_Opd> getReg();
 };
 
 class RTL_Str_Const_Opd
@@ -167,8 +168,10 @@ class If_Goto_RTL_Stmt : public Control_Flow_RTL_Stmt {
 };
 
 class Return_RTL_Stmt : public Control_Flow_RTL_Stmt {
+    std::shared_ptr<RTL_Register_Opd> reg;
+
   public:
-    Return_RTL_Stmt();
+    Return_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>);
     void print(std::ostream &) override;
 };
 

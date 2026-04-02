@@ -353,6 +353,7 @@ void GlobalSymbolTable::new_proc_symtab(
     if (return_type != Type::VOID) {
         std::shared_ptr<Variable_TAC_Opd> return_tac_opd =
             curr_symtab->getNewSTemp(return_type);
+        return_tac_opd->set_type(return_type);
         curr_symtab->set_return_tac_opd(return_tac_opd);
     }
 }

@@ -88,8 +88,10 @@ void Function_Call_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<TAC_Stmt> func_call_stmt;
 
     if (func->get_return_type() != Type::VOID) {
-        func_call_stmt = std::make_shared<Assign_TAC_Stmt>(
-            std::dynamic_pointer_cast<TAC_LOpd>(place), func_call_opd);
+        std::shared_ptr<TAC_LOpd> lOpd =
+            std::dynamic_pointer_cast<TAC_LOpd>(place);
+        lOpd->set_type(func->get_return_type());
+        func_call_stmt = std::make_shared<Assign_TAC_Stmt>(lOpd, func_call_opd);
     } else {
         func_call_stmt =
             std::make_shared<Function_Call_TAC_Stmt>(func_call_opd);
