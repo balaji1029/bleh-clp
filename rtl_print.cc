@@ -17,6 +17,8 @@ void RTL_Register_Opd::print(std::ostream &os) { os << reg->get_name(); }
 
 void RTL_Zero_Opd::print(std::ostream &os) { os << "zero"; }
 
+void RTL_Function_Call_Opd::print(std::ostream &os) { os << entry->get_name(); }
+
 void RTL_Str_Const_Opd::print(std::ostream &os) { os << "_str_" << id; }
 
 void RTL_Var_Opd::print(std::ostream &os) { os << entry->get_name(); }
@@ -101,6 +103,10 @@ void Label_RTL_Stmt::print(std::ostream &os) {
     os << ":";
 }
 
+void Return_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE << "return v1";
+}
+
 void Move_RTL_Stmt::print(std::ostream &os) { os << RTL_SPACE; }
 
 void Read_RTL_Stmt::print(std::ostream &os) {
@@ -177,6 +183,23 @@ void Store_RTL_Stmt::print(std::ostream &os) {
     reg->print(os);
 }
 
+void Function_Call_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
+    if (!func->isVoid())
+        os << "v1 = ";
+    os << "call ";
+    func->print(os);
+}
+
+void Stack_RTL_Stmt::print(std::ostream &os) {
+    os << RTL_SPACE;
+    if (reg) {
+        os << "push: ";
+        reg->print(os);
+    } else
+        os << "pop";
+}
+
 void RTL_Code::print(std::ostream &os) {
     for (auto rtlStmt : rtlStmts) {
         rtlStmt->print(os);
@@ -186,7 +209,14 @@ void RTL_Code::print(std::ostream &os) {
 
 void TAC_Code::print_rtl(std::ostream &os) {
     for (auto tacStmt : tacStmts)
-        tacStmt->getRTLCode()->print(os);
+        if (tacStmt->getRTLCode())
+            tacStmt->getRTLCode()->print(os);
+        else if (auto tacRet =
+                     std::dynamic_pointer_cast<Return_TAC_Stmt>(tacStmt))
+            std::cout << "ret" << std::endl;
+        else if (auto tacLab =
+                     std::dynamic_pointer_cast<Label_TAC_Stmt>(tacStmt))
+            std::cout << "lab" << std::endl;
 }
 
 void Func_Ast::print_rtl(std::ostream &os) {

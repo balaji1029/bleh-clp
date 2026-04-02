@@ -1,8 +1,8 @@
 #include "tac.hh"
 #include "ast.hh"
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 int Label_TAC_Opd::index = 0;
 
@@ -411,15 +411,17 @@ void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 void Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 
     if (proc_table->get_return_type() != Type::VOID) {
-        std::shared_ptr<Label_TAC_Opd> return_label = *(symtab->get_return_label());
-        std::shared_ptr<Variable_TAC_Opd> return_opd = symtab->get_return_tac_opd();
-    
+        std::shared_ptr<Label_TAC_Opd> return_label =
+            *(symtab->get_return_label());
+        std::shared_ptr<Variable_TAC_Opd> return_opd =
+            symtab->get_return_tac_opd();
+
         std::shared_ptr<Label_TAC_Stmt> end_label =
             std::make_shared<Label_TAC_Stmt>(return_label);
         std::shared_ptr<Return_TAC_Stmt> return_stmt =
             std::make_shared<Return_TAC_Stmt>(return_opd);
         code = std::make_shared<TAC_Code>();
-    
+
         seq_ast->set_return_label(return_label);
         seq_ast->build_tac(symtab);
         code->append(seq_ast->get_code(), end_label, return_stmt);
@@ -437,7 +439,7 @@ void Root_Ast::build_tac(std::shared_ptr<GlobalSymbolTable> symtab) {
     sort(funcs_copy.begin(), funcs_copy.end(), [](auto func1, auto func2) {
         return func1->get_name() < func2->get_name();
     });
-    for (const std::shared_ptr<Func_Ast> &func : funcs_copy){
+    for (const std::shared_ptr<Func_Ast> &func : funcs_copy) {
         func->build_tac(func->get_symtab());
     }
 }

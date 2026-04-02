@@ -77,7 +77,6 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     output_rtl_filename = input_filename + ".rtl";
     output_spim_filename = input_filename + ".spim";
 
-
     input_file.open(input_filename);
     if (flags.show_tokens && !flags.demo)
         output_token_file.open(output_token_filename);
@@ -135,9 +134,6 @@ int Compiler::run() {
     if (!flags.sa_ast)
         root_ast->build_tac(sym_tab);
 
-    if (!flags.sa_tac)
-        root_ast->build_rtl();
-
     if (flags.show_tac && !flags.sa_ast) {
         if (flags.demo)
             root_ast->print_tac(std::cout);
@@ -150,12 +146,14 @@ int Compiler::run() {
 
     sym_tab->set_offsets();
 
-    // if (flags.show_rtl && !flags.sa_tac) {
-    //     if (flags.demo)
-    //         root_ast->print_rtl(std::cout);
-    //     else
-    //         root_ast->print_rtl(output_rtl_file);
-    // }
+    root_ast->build_rtl();
+
+    if (flags.show_rtl) {
+        if (flags.demo)
+            root_ast->print_rtl(std::cout);
+        else
+            root_ast->print_rtl(output_rtl_file);
+    }
 
     if (flags.sa_rtl)
         return status;

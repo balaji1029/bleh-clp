@@ -24,6 +24,7 @@ class Register {
 
 class RegisterPool {
     std::shared_ptr<RTL_Register_Opd> f0;
+    std::shared_ptr<RTL_Register_Opd> v1;
     std::vector<std::shared_ptr<RTL_Register_Opd>> regs;
     std::vector<std::shared_ptr<RTL_Register_Opd>> arg_regs;
     std::vector<std::shared_ptr<RTL_Register_Opd>> float_regs;
@@ -39,5 +40,6 @@ class RegisterPool {
     std::shared_ptr<RTL_Register_Opd> getFloatRegister();
     std::shared_ptr<RTL_Register_Opd> getFloatArgRegister();
     std::shared_ptr<RTL_Register_Opd> getV0();
+    std::shared_ptr<RTL_Register_Opd> getV1();
     std::shared_ptr<RTL_Register_Opd> getF0();
 };
