@@ -4,6 +4,7 @@ string p(string y)
 {
     a = 2;
     y="Hello";
+    z = "idk";
     print b;
     if(a>c)
     {
@@ -19,6 +20,8 @@ string p(string y)
 void main()
 {
     a=b+c;
+    z = "Hello";
+    z = "Balaji";
     while(a>d)
     {
         a=a+2;

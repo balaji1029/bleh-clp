@@ -50,6 +50,7 @@ class Compiler {
     std::ofstream output_symtab_file;
     std::ofstream output_rtl_file;
     std::ofstream output_spim_file;
+
     std::shared_ptr<GlobalSymbolTable> sym_tab;
     std::shared_ptr<Root_Ast> root_ast;
 

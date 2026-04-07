@@ -2,7 +2,7 @@
 DIR="example-programs"
 
 flags=(
-    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-tac"
+    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-rtl"
     # "--show-tokens --sa-scan",
     # "--show-tokens --sa-parse",
     # "--show-tokens --sa-ast"
@@ -120,7 +120,7 @@ count=0
 find "$DIR" -type f -name "*.c" | while read -r file; do
     ((count++))
     # echo "Processing $file"
-    printf "\r Processed %d files... Processing $file                                    " "$count"
+    printf "\r %d files done... Processing $file                 " "$count"
 
     toks_file="${file}.toks"
     ast_file="${file}.ast"
@@ -230,4 +230,4 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     # rm -f "$spim_file" "$ref_spim_file"
 
 done
-printf "\rProcessing done...                                                                         \n"
+printf "\rProcessing done...                                                          \n"

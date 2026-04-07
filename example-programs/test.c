@@ -13,7 +13,9 @@ void main(bool d) {
     bool w, x, y, z;
     read a;
 
-    a = 1;
+    a = 2147483647;
+
+    a = a + 2147483647;
     
     i = d;
     f = j;

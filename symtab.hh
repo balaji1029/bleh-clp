@@ -177,6 +177,8 @@ class GlobalSymbolTable {
     /* The vector of Process Symbol Tables */
     std::vector<std::shared_ptr<ProcSymbolTable>> procs;
 
+    std::vector<std::string> strings;
+
   public:
     /* Adds parameter to the current Process Symbol Table after checking if the
      * parameter name exists in the function names or the previously defined
@@ -201,7 +203,13 @@ class GlobalSymbolTable {
 
     /* Sets the curr_symtab to `std::nullopt` to indicate the current scop to be
      * global */
-    void go_global();
+     void go_global();
+
+    // TODO: Strings in Global Symbol Table
+
+    // void add_string(std::string);
+
+    // std::optional<int> find_string() const;
 
     /* Gets the pointer to the current scope */
     std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();

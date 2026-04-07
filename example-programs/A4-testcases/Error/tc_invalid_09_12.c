@@ -1,0 +1,15 @@
+// Empty condition
+
+void main() {
+    int x;
+
+    read x;
+
+    if(x > 10) {
+        print x;
+    } else if() {
+        print "sorry";
+    } else {
+        
+    }
+}

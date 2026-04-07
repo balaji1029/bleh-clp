@@ -53,6 +53,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
             else if (std::string(long_opts[opt_idx].name) == "sa-tac") {
                 flags.sa_tac = true;
                 flags.sa_rtl = true;
+            } else if (std::string(long_opts[opt_idx].name) == "sa-rtl") {
+                flags.sa_rtl = true;
             }
             break;
         default:
@@ -144,8 +146,6 @@ int Compiler::run() {
     if (flags.sa_tac)
         return status;
 
-    sym_tab->set_offsets();
-
     root_ast->build_rtl();
 
     if (flags.show_rtl) {
@@ -158,6 +158,7 @@ int Compiler::run() {
     if (flags.sa_rtl)
         return status;
 
+    sym_tab->set_offsets();
     if (flags.show_symtab) {
         if (flags.demo)
             sym_tab->print(std::cout, level);
