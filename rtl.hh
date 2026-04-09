@@ -2,6 +2,7 @@
 
 #include "register.hh"
 #include "symtab.hh"
+#include "asm.hh"
 #include <iostream>
 #include <memory>
 #include <unordered_map>
@@ -13,6 +14,7 @@ enum class Opd_Type { INT, FLOAT, STR, LABEL, TEMP, ZERO, VAR, FUNC };
 class RTL {
   public:
     virtual void print(std::ostream &) = 0;
+    virtual void build_ASM(std::shared_ptr<);
 };
 
 class RTL_Register_Opd;
@@ -150,9 +152,7 @@ class Compute_RTL_Stmt : public RTL_Stmt {
     void print(std::ostream &) override;
 };
 
-class Control_Flow_RTL_Stmt : public RTL_Stmt {};
-
-class Goto_RTL_Stmt : public Control_Flow_RTL_Stmt {
+class Goto_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Label_Opd> label;
 
   public:
@@ -160,7 +160,7 @@ class Goto_RTL_Stmt : public Control_Flow_RTL_Stmt {
     void print(std::ostream &) override;
 };
 
-class If_Goto_RTL_Stmt : public Control_Flow_RTL_Stmt {
+class If_Goto_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Register_Opd> reg;
     std::shared_ptr<RTL_Label_Opd> label;
 
@@ -170,7 +170,7 @@ class If_Goto_RTL_Stmt : public Control_Flow_RTL_Stmt {
     void print(std::ostream &) override;
 };
 
-class Return_RTL_Stmt : public Control_Flow_RTL_Stmt {
+class Return_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Register_Opd> reg;
 
   public:
