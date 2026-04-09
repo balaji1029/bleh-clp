@@ -120,8 +120,11 @@ FuncEntry::get_return_label() const {
 
 // ------------------------------ ProcSymbolTable ------------------------------
 
-ProcSymbolTable::ProcSymbolTable(std::shared_ptr<FuncEntry> func_entry)
-    : func_entry(func_entry), register_pool(std::make_shared<RegisterPool>()) {}
+ProcSymbolTable::ProcSymbolTable(
+    std::shared_ptr<FuncEntry> func_entry,
+    std::shared_ptr<GlobalSymbolTable> global_symtab)
+    : func_entry(func_entry), register_pool(std::make_shared<RegisterPool>()),
+      global_symtab(global_symtab) {}
 
 void ProcSymbolTable::add_param(Type type, const std::string &name) {
     params.push_back(std::make_shared<SymTabEntry>(type, name));
@@ -224,6 +227,14 @@ void ProcSymbolTable::print(std::ostream &os, std::string &level) {
 
 std::shared_ptr<RegisterPool> ProcSymbolTable::getRegisterPool() {
     return register_pool;
+}
+
+int ProcSymbolTable::addString(std::string str) {
+    return getGlobalSymtab()->addString(str);
+}
+
+std::shared_ptr<GlobalSymbolTable> ProcSymbolTable::getGlobalSymtab() {
+    return global_symtab.lock();
 }
 
 // ------------------------------ GlobalSymbolTable
@@ -343,7 +354,8 @@ void GlobalSymbolTable::new_proc_symtab(
 
     // Add the Process Symbol Table to the vector of Symbol Tables and set it to
     // be the Current Symbol Table
-    procs.push_back(std::make_shared<ProcSymbolTable>(*func_ptr));
+    procs.push_back(
+        std::make_shared<ProcSymbolTable>(*func_ptr, shared_from_this()));
     curr_symtab = procs.back();
 
     // Adds parameters to the Current Symbol Table
@@ -460,4 +472,12 @@ void GlobalSymbolTable::print(std::ostream &os, std::string &level) {
 
     for (std::shared_ptr<ProcSymbolTable> symtab : procs)
         symtab->print(os, level);
+}
+
+int GlobalSymbolTable::addString(std::string str) {
+    if (string_map.find(str) != string_map.end())
+        return string_map.at(str);
+    int id = string_map.size();
+    string_map.emplace(str, id);
+    return id;
 }

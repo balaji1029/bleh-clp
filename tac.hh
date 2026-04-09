@@ -23,7 +23,7 @@ class TAC_Opd {
   public:
     virtual void print(std::ostream &) = 0;
 
-    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+    virtual void build_rtl(std::shared_ptr<ProcSymbolTable>) = 0;
 
     std::shared_ptr<RTL_Opd> getRTLPlace();
 
@@ -34,7 +34,7 @@ class TAC_Expr : public TAC_Opd {
   public:
     virtual void print(std::ostream &) = 0;
 
-    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+    virtual void build_rtl(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
 class TAC_LOpd : virtual public TAC_Expr {
@@ -44,7 +44,7 @@ class TAC_LOpd : virtual public TAC_Expr {
   public:
     virtual void print(std::ostream &os) = 0;
 
-    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+    virtual void build_rtl(std::shared_ptr<ProcSymbolTable>) = 0;
 
     void set_type(Type);
 
@@ -55,7 +55,7 @@ class Printable_Opd : virtual public TAC_Expr {
   public:
     virtual void print(std::ostream &) = 0;
 
-    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+    virtual void build_rtl(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
 class Binary_TAC_Opd : public TAC_Expr {
@@ -73,7 +73,7 @@ class Binary_TAC_Opd : public TAC_Expr {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Float_Const_TAC_Opd : public Printable_Opd {
@@ -86,7 +86,7 @@ class Float_Const_TAC_Opd : public Printable_Opd {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Int_Const_TAC_Opd : public Printable_Opd {
@@ -99,7 +99,7 @@ class Int_Const_TAC_Opd : public Printable_Opd {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Str_Const_TAC_Opd : public Printable_Opd {
@@ -112,7 +112,7 @@ class Str_Const_TAC_Opd : public Printable_Opd {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Label_TAC_Opd : public TAC_Opd {
@@ -126,7 +126,7 @@ class Label_TAC_Opd : public TAC_Opd {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Temporary_TAC_Opd
@@ -143,7 +143,7 @@ class Temporary_TAC_Opd
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Variable_TAC_Opd : public TAC_LOpd, public Printable_Opd {
@@ -156,7 +156,7 @@ class Variable_TAC_Opd : public TAC_LOpd, public Printable_Opd {
 
     void print(std::ostream &);
 
-    virtual void build_rtl(std::shared_ptr<RegisterPool>) override;
+    virtual void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Function_Call_TAC_Opd : public TAC_Expr {
@@ -171,7 +171,7 @@ class Function_Call_TAC_Opd : public TAC_Expr {
 
     void print(std::ostream &);
 
-    virtual void build_rtl(std::shared_ptr<RegisterPool>) override;
+    virtual void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class TAC_Stmt {
@@ -181,7 +181,7 @@ class TAC_Stmt {
   public:
     virtual void print(std::ostream &os) = 0;
 
-    virtual void build_rtl(std::shared_ptr<RegisterPool>) = 0;
+    virtual void build_rtl(std::shared_ptr<ProcSymbolTable>) = 0;
 
     std::shared_ptr<RTL_Code> getRTLCode();
 };
@@ -194,7 +194,7 @@ class Function_Call_TAC_Stmt : public TAC_Stmt {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Return_TAC_Stmt : public TAC_Stmt {
@@ -205,7 +205,7 @@ class Return_TAC_Stmt : public TAC_Stmt {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Assign_TAC_Stmt : public TAC_Stmt {
@@ -217,7 +217,7 @@ class Assign_TAC_Stmt : public TAC_Stmt {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Goto_TAC_Stmt : public TAC_Stmt {
@@ -228,7 +228,7 @@ class Goto_TAC_Stmt : public TAC_Stmt {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class If_Goto_TAC_Stmt : public TAC_Stmt {
@@ -241,7 +241,7 @@ class If_Goto_TAC_Stmt : public TAC_Stmt {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class IO_TAC_Stmt : public TAC_Stmt {
@@ -253,7 +253,7 @@ class IO_TAC_Stmt : public TAC_Stmt {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Label_TAC_Stmt : public TAC_Stmt {
@@ -264,7 +264,7 @@ class Label_TAC_Stmt : public TAC_Stmt {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>) override;
+    void build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class TAC_Code {
@@ -284,7 +284,7 @@ class TAC_Code {
 
     void print(std::ostream &);
 
-    void build_rtl(std::shared_ptr<RegisterPool>);
+    void build_rtl(std::shared_ptr<ProcSymbolTable>);
 
     void print_rtl(std::ostream &);
 };

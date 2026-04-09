@@ -1,3 +1,8 @@
 #pragma once
 
-// Aaaaaaaaaaaaaaaah I give up
+#include <iostream>
+
+class Asm {
+  public:
+    virtual void print(std::ostream &) = 0;
+};

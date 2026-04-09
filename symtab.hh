@@ -5,12 +5,14 @@
 #include <optional>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "register.hh"
 
 class Label_TAC_Opd;
 class Variable_TAC_Opd;
+class GlobalSymbolTable;
 
 /* Type of variable */
 enum class Type { INT, BOOL, FLOAT, STRING, VOID };
@@ -47,7 +49,6 @@ class SymTabEntry {
     void set_offset(int);
 
     void print(std::ostream &, const std::string &);
-
 };
 
 /* Class for Function entries in the Global Symbol Table */
@@ -108,6 +109,10 @@ class ProcSymbolTable {
 
     std::shared_ptr<Variable_TAC_Opd> return_tac_opd;
 
+    std::weak_ptr<GlobalSymbolTable> global_symtab;
+
+    std::unordered_map<std::string, int> string_map;
+
     int num_temps = 0;
 
     int num_stemps = 0;
@@ -117,7 +122,8 @@ class ProcSymbolTable {
   public:
     /* Creates a Process Symbol Table from the pointer to the Symbol Table Entry
      * for the function */
-    ProcSymbolTable(std::shared_ptr<FuncEntry>);
+    ProcSymbolTable(std::shared_ptr<FuncEntry>,
+                    std::shared_ptr<GlobalSymbolTable>);
 
     /* Adds a parameter to the Process Symbol Table from the type and the name
      * of the parameter name */
@@ -156,14 +162,19 @@ class ProcSymbolTable {
     std::shared_ptr<Variable_TAC_Opd> getNewSTemp(Type);
 
     std::shared_ptr<RegisterPool> getRegisterPool();
-    
+
     void set_offsets();
 
+    int addString(std::string);
+
     void print(std::ostream &, std::string &);
+
+    std::shared_ptr<GlobalSymbolTable> getGlobalSymtab();
 };
 
 /* Class for Global Symbol Table */
-class GlobalSymbolTable {
+class GlobalSymbolTable
+    : public std::enable_shared_from_this<GlobalSymbolTable> {
     /* The pointer to the current Symbol Table, the one being filled right now
      */
     std::shared_ptr<ProcSymbolTable> curr_symtab;
@@ -177,12 +188,12 @@ class GlobalSymbolTable {
     /* The vector of Process Symbol Tables */
     std::vector<std::shared_ptr<ProcSymbolTable>> procs;
 
-    std::vector<std::string> strings;
+    std::unordered_map<std::string, int> string_map;
 
   public:
-    /* Adds parameter to the current Process Symbol Table after checking if the
-     * parameter name exists in the function names or the previously defined
-     * parameter names */
+    /* Adds parameter to the current Process Symbol Table after checking if
+     * the parameter name exists in the function names or the previously
+     * defined parameter names */
     void add_param(Type, const std::string &);
 
     /* Adds variable to the current Process Symbol Table (or the Global
@@ -203,7 +214,7 @@ class GlobalSymbolTable {
 
     /* Sets the curr_symtab to `std::nullopt` to indicate the current scop to be
      * global */
-     void go_global();
+    void go_global();
 
     // TODO: Strings in Global Symbol Table
 
@@ -233,4 +244,6 @@ class GlobalSymbolTable {
     void func_check();
 
     void print(std::ostream &, std::string &);
+
+    int addString(std::string);
 };

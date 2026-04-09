@@ -28,7 +28,7 @@ class RTL_Opd : public RTL {
     Opd_Type getType();
     virtual std::pair<std::shared_ptr<RTL_Register_Opd>,
                       std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) = 0;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) = 0;
 };
 
 class RTL_Double_Const_Opd
@@ -40,7 +40,7 @@ class RTL_Double_Const_Opd
     RTL_Double_Const_Opd(double);
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
 };
 
 class RTL_Int_Const_Opd
@@ -52,7 +52,7 @@ class RTL_Int_Const_Opd
     RTL_Int_Const_Opd(int);
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
 };
 
 class RTL_Label_Opd : public RTL_Opd {
@@ -62,7 +62,7 @@ class RTL_Label_Opd : public RTL_Opd {
     RTL_Label_Opd(int);
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
 };
 
 class RTL_Register_Opd : public RTL_Opd,
@@ -76,7 +76,7 @@ class RTL_Register_Opd : public RTL_Opd,
     std::shared_ptr<Register> getReg();
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
 };
 
 class RTL_Var_Opd : public RTL_Opd,
@@ -89,7 +89,7 @@ class RTL_Var_Opd : public RTL_Opd,
     Type getVarType();
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
 };
 
 class RTL_Zero_Opd : public RTL_Opd,
@@ -98,7 +98,7 @@ class RTL_Zero_Opd : public RTL_Opd,
     RTL_Zero_Opd();
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
 };
 
 class RTL_Function_Call_Opd
@@ -113,7 +113,7 @@ class RTL_Function_Call_Opd
                           std::vector<std::shared_ptr<RTL_Opd>>);
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
     std::shared_ptr<RTL_Code> unloadArgs();
     std::shared_ptr<RTL_Register_Opd> getReg();
 };
@@ -121,14 +121,17 @@ class RTL_Function_Call_Opd
 class RTL_Str_Const_Opd
     : public RTL_Opd,
       public std::enable_shared_from_this<RTL_Str_Const_Opd> {
+    std::string str;
     int id;
     static std::unordered_map<std::string, int> string_map;
 
   public:
-    RTL_Str_Const_Opd(std::string);
+    RTL_Str_Const_Opd(std::string, std::shared_ptr<ProcSymbolTable>);
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-        getLoadedReg(std::shared_ptr<RegisterPool>) override;
+    getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
+    std::string getStr() const;
+    int getId() const;
 };
 
 class RTL_Stmt : public RTL {};

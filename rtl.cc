@@ -16,7 +16,8 @@ RTL_Double_Const_Opd::RTL_Double_Const_Opd(double value)
     : RTL_Opd(Opd_Type::FLOAT), value(value) {}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Double_Const_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Double_Const_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     std::shared_ptr<RTL_Register_Opd> reg = reg_pool->getFloatRegister();
     std::shared_ptr<Load_RTL_Stmt> load =
         std::make_shared<Load_RTL_Stmt>(reg, shared_from_this(), getType());
@@ -29,7 +30,8 @@ RTL_Int_Const_Opd::RTL_Int_Const_Opd(int value)
     : RTL_Opd(Opd_Type::INT), value(value) {}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Int_Const_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Int_Const_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     std::shared_ptr<RTL_Register_Opd> reg = reg_pool->getRegister();
     std::shared_ptr<Load_RTL_Stmt> load =
         std::make_shared<Load_RTL_Stmt>(reg, shared_from_this(), getType());
@@ -42,7 +44,7 @@ RTL_Label_Opd::RTL_Label_Opd(int label_index)
     : RTL_Opd(Opd_Type::LABEL), label_index(label_index) {}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Label_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Label_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
     return std::make_pair(nullptr, nullptr);
 }
 
@@ -52,7 +54,7 @@ RTL_Register_Opd::RTL_Register_Opd(std::shared_ptr<Register> reg, Type var_type)
 Type RTL_Register_Opd::getVarType() { return var_type; }
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Register_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Register_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
     return std::make_pair(shared_from_this(), nullptr);
 }
 
@@ -61,7 +63,8 @@ std::shared_ptr<Register> RTL_Register_Opd::getReg() { return reg; }
 RTL_Zero_Opd::RTL_Zero_Opd() : RTL_Opd(Opd_Type::ZERO) {}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Zero_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Zero_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     std::shared_ptr<RTL_Register_Opd> reg = reg_pool->getRegister();
     std::shared_ptr<Load_RTL_Stmt> load = std::make_shared<Load_RTL_Stmt>(
         reg, shared_from_this(), getType(), Type::INT);
@@ -76,13 +79,14 @@ RTL_Function_Call_Opd::RTL_Function_Call_Opd(
     : RTL_Opd(Opd_Type::FUNC), entry(entry), args(args) {}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Function_Call_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Function_Call_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     reg = nullptr;
     std::shared_ptr<RTL_Code> code = std::make_shared<RTL_Code>();
     std::vector<std::shared_ptr<RTL_Opd>> reverseArgs(args.rbegin(),
                                                       args.rend());
     for (auto arg : reverseArgs) {
-        auto [argReg, argCode] = arg->getLoadedReg(reg_pool);
+        auto [argReg, argCode] = arg->getLoadedReg(symtab);
         std::shared_ptr<Stack_RTL_Stmt> pushReg =
             std::make_shared<Stack_RTL_Stmt>(argReg);
         code->append(argCode, pushReg);
@@ -115,18 +119,13 @@ std::shared_ptr<RTL_Code> RTL_Function_Call_Opd::unloadArgs() {
 std::unordered_map<std::string, int> RTL_Str_Const_Opd::string_map =
     std::unordered_map<std::string, int>();
 
-RTL_Str_Const_Opd::RTL_Str_Const_Opd(std::string value)
-    : RTL_Opd(Opd_Type::STR) {
-    if (string_map.find(value) != string_map.end())
-        id = string_map[value];
-    else {
-        id = string_map.size();
-        string_map[value] = id;
-    }
-}
+RTL_Str_Const_Opd::RTL_Str_Const_Opd(std::string str,
+                                     std::shared_ptr<ProcSymbolTable> symtab)
+    : RTL_Opd(Opd_Type::STR), str(str), id(symtab->addString(str)) {}
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Str_Const_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Str_Const_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     std::shared_ptr<RTL_Register_Opd> reg = reg_pool->getRegister();
     std::shared_ptr<Load_RTL_Stmt> load =
         std::make_shared<Load_RTL_Stmt>(reg, shared_from_this(), getType());
@@ -135,13 +134,18 @@ RTL_Str_Const_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
     return std::make_pair(reg, code);
 }
 
+std::string RTL_Str_Const_Opd::getStr() const { return str; }
+
+int RTL_Str_Const_Opd::getId() const { return id; }
+
 RTL_Var_Opd::RTL_Var_Opd(std::shared_ptr<SymTabEntry> entry, Type var_type)
     : RTL_Opd(Opd_Type::VAR), entry(entry), var_type(var_type) {}
 
 Type RTL_Var_Opd::getVarType() { return var_type; }
 
 std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
-RTL_Var_Opd::getLoadedReg(std::shared_ptr<RegisterPool> reg_pool) {
+RTL_Var_Opd::getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     std::shared_ptr<RTL_Register_Opd> reg;
     if (getVarType() == Type::FLOAT)
         reg = reg_pool->getFloatRegister();
@@ -236,10 +240,11 @@ bool RTL_Code::is_empty() { return rtlStmts.size() == 0; }
 
 std::shared_ptr<RTL_Stmt> RTL_Code::getFirst() { return rtlStmts.at(0); }
 
-void Binary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Binary_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     rtl_code = std::make_shared<RTL_Code>();
-    lOpd->build_rtl(reg_pool);
-    auto [lReg, lLoad] = lOpd->getRTLPlace()->getLoadedReg(reg_pool);
+    lOpd->build_rtl(symtab);
+    auto [lReg, lLoad] = lOpd->getRTLPlace()->getLoadedReg(symtab);
     rtl_code->append(lOpd->getRTLCode(), lLoad);
     Type type = lReg->getVarType();
     Type tempType = temp->get_type();
@@ -248,15 +253,15 @@ void Binary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     if (!simpleCase)
         oneReg = reg_pool->getRegister();
 
-    temp->build_rtl(reg_pool);
+    temp->build_rtl(symtab);
     std::shared_ptr<RTL_Register_Opd> reg =
         std::dynamic_pointer_cast<RTL_Register_Opd>(temp->getRTLPlace());
     rtl_place = reg;
     rtl_code->append(temp->getRTLCode());
     std::shared_ptr<RTL_Register_Opd> rReg;
     if (rOpd) {
-        rOpd->build_rtl(reg_pool);
-        auto rRegLoad = rOpd->getRTLPlace()->getLoadedReg(reg_pool);
+        rOpd->build_rtl(symtab);
+        auto rRegLoad = rOpd->getRTLPlace()->getLoadedReg(symtab);
         rReg = rRegLoad.first;
         auto rLoad = rRegLoad.second;
         rtl_code->append(rOpd->getRTLCode(), rLoad);
@@ -324,27 +329,28 @@ void Binary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
         rReg->getReg()->markFree();
 }
 
-void Float_Const_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Float_Const_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
     rtl_place = std::make_shared<RTL_Double_Const_Opd>(value);
 }
 
-void Int_Const_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Int_Const_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
     rtl_place = std::make_shared<RTL_Int_Const_Opd>(value);
 }
 
-void Str_Const_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Str_Const_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
-    rtl_place = std::make_shared<RTL_Str_Const_Opd>(value);
+    rtl_place = std::make_shared<RTL_Str_Const_Opd>(value, symtab);
 }
 
-void Label_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Label_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
     rtl_place = std::make_shared<RTL_Label_Opd>(label_index);
 }
 
-void Temporary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Temporary_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     if (rtl_place)
         return;
     rtl_code = std::make_shared<RTL_Code>();
@@ -357,34 +363,37 @@ void Temporary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_place = reg;
 }
 
-// void STemporary_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+// void STemporary_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
 //     rtl_code = std::make_shared<RTL_Code>();
 //     rtl_place = std::make_shared<RTL_Var_Opd>(this->entry,
 //     this->entry->get_type());
 // }
 
-void Variable_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Variable_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
     rtl_place = std::make_shared<RTL_Var_Opd>(entry, get_type());
 }
 
-void Function_Call_TAC_Opd::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Function_Call_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     rtl_code = std::make_shared<RTL_Code>();
     std::vector<std::shared_ptr<RTL_Opd>> rtlArgs{};
     for (auto arg : args) {
-        arg->build_rtl(reg_pool);
+        arg->build_rtl(symtab);
         rtl_code->append(arg->getRTLCode());
         rtlArgs.push_back(arg->getRTLPlace());
     }
     rtl_place = std::make_shared<RTL_Function_Call_Opd>(entry, rtlArgs);
 }
 
-void Function_Call_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Function_Call_TAC_Stmt::build_rtl(
+    std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     rtl_code = std::make_shared<RTL_Code>();
-    opd->build_rtl(reg_pool);
+    opd->build_rtl(symtab);
     std::shared_ptr<RTL_Function_Call_Opd> funcOpd =
         std::dynamic_pointer_cast<RTL_Function_Call_Opd>(opd->getRTLPlace());
-    auto [funcReg, argCode] = funcOpd->getLoadedReg(reg_pool);
+    auto [funcReg, argCode] = funcOpd->getLoadedReg(symtab);
     std::shared_ptr<Function_Call_RTL_Stmt> funcStmt =
         std::make_shared<Function_Call_RTL_Stmt>(funcOpd);
     std::shared_ptr<RTL_Code> argPopCode = funcOpd->unloadArgs();
@@ -393,9 +402,10 @@ void Function_Call_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
         funcReg->getReg()->markFree();
 }
 
-void Return_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Return_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     rtl_code = std::make_shared<RTL_Code>();
-    opd->build_rtl(reg_pool);
+    opd->build_rtl(symtab);
     std::shared_ptr<RTL_Opd> opdPlace = opd->getRTLPlace();
     std::shared_ptr<RTL_Register_Opd> reg;
     if (opd->get_type() == Type::FLOAT)
@@ -409,12 +419,13 @@ void Return_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_code->append(retLoad, returnStmt);
 }
 
-void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Assign_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     rtl_code = std::make_shared<RTL_Code>();
-    expr->build_rtl(reg_pool);
-    auto [rReg, rCode] = expr->getRTLPlace()->getLoadedReg(reg_pool);
+    expr->build_rtl(symtab);
+    auto [rReg, rCode] = expr->getRTLPlace()->getLoadedReg(symtab);
     rtl_code->append(expr->getRTLCode(), rCode);
-    lOpd->build_rtl(reg_pool);
+    lOpd->build_rtl(symtab);
     rtl_code->append(lOpd->getRTLCode());
     std::shared_ptr<RTL_Opd> lPlace = lOpd->getRTLPlace();
     Opd_Type lType = lPlace->getType();
@@ -445,9 +456,9 @@ void Assign_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     }
 }
 
-void Goto_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Goto_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
-    label->build_rtl(reg_pool);
+    label->build_rtl(symtab);
     std::shared_ptr<RTL_Label_Opd> labelRtl =
         std::dynamic_pointer_cast<RTL_Label_Opd>(label->getRTLPlace());
     std::shared_ptr<Goto_RTL_Stmt> gotoStmt =
@@ -455,22 +466,23 @@ void Goto_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_code->append(label->getRTLCode(), gotoStmt);
 }
 
-void If_Goto_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void If_Goto_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
-    cond->build_rtl(reg_pool);
-    label->build_rtl(reg_pool);
+    cond->build_rtl(symtab);
+    label->build_rtl(symtab);
     std::shared_ptr<RTL_Label_Opd> labelRtl =
         std::dynamic_pointer_cast<RTL_Label_Opd>(label->getRTLPlace());
-    auto [reg, load] = cond->getRTLPlace()->getLoadedReg(reg_pool);
+    auto [reg, load] = cond->getRTLPlace()->getLoadedReg(symtab);
     std::shared_ptr<If_Goto_RTL_Stmt> bgtz =
         std::make_shared<If_Goto_RTL_Stmt>(reg, labelRtl);
     rtl_code->append(cond->getRTLCode(), label->getRTLCode(), load, bgtz);
     reg->getReg()->markFree();
 }
 
-void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void IO_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
+    std::shared_ptr<RegisterPool> reg_pool = symtab->getRegisterPool();
     rtl_code = std::make_shared<RTL_Code>();
-    var->build_rtl(reg_pool);
+    var->build_rtl(symtab);
     if (opd == IO_Opd::READ) {
         std::shared_ptr<RTL_Var_Opd> varRtl =
             std::dynamic_pointer_cast<RTL_Var_Opd>(var->getRTLPlace());
@@ -570,9 +582,9 @@ void IO_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     }
 }
 
-void Label_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void Label_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     rtl_code = std::make_shared<RTL_Code>();
-    label->build_rtl(reg_pool);
+    label->build_rtl(symtab);
     std::shared_ptr<RTL_Label_Opd> labelRtl =
         std::dynamic_pointer_cast<RTL_Label_Opd>(label->getRTLPlace());
     std::shared_ptr<Label_RTL_Stmt> labelStmt =
@@ -580,12 +592,12 @@ void Label_TAC_Stmt::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
     rtl_code->append(label->getRTLCode(), labelStmt);
 }
 
-void TAC_Code::build_rtl(std::shared_ptr<RegisterPool> reg_pool) {
+void TAC_Code::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
     for (auto tacStmt : tacStmts)
-        tacStmt->build_rtl(reg_pool);
+        tacStmt->build_rtl(symtab);
 }
 
-void Func_Ast::build_rtl() { code->build_rtl(proc_table->getRegisterPool()); }
+void Func_Ast::build_rtl() { code->build_rtl(proc_table); }
 
 void Root_Ast::build_rtl() {
     for (const std::shared_ptr<Func_Ast> &func : funcs)
