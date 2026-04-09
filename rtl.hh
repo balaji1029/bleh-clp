@@ -2,7 +2,6 @@
 
 #include "register.hh"
 #include "symtab.hh"
-#include "asm.hh"
 #include <iostream>
 #include <memory>
 #include <unordered_map>
@@ -14,7 +13,7 @@ enum class Opd_Type { INT, FLOAT, STR, LABEL, TEMP, ZERO, VAR, FUNC };
 class RTL {
   public:
     virtual void print(std::ostream &) = 0;
-    virtual void build_ASM(std::shared_ptr<);
+    virtual void build_ASM(std::shared_ptr<ProcSymbolTable>) = 0;
 };
 
 class RTL_Register_Opd;
@@ -43,6 +42,7 @@ class RTL_Double_Const_Opd
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Int_Const_Opd
@@ -55,6 +55,7 @@ class RTL_Int_Const_Opd
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Label_Opd : public RTL_Opd {
@@ -65,6 +66,7 @@ class RTL_Label_Opd : public RTL_Opd {
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Register_Opd : public RTL_Opd,
@@ -79,6 +81,7 @@ class RTL_Register_Opd : public RTL_Opd,
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Var_Opd : public RTL_Opd,
@@ -92,6 +95,7 @@ class RTL_Var_Opd : public RTL_Opd,
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Zero_Opd : public RTL_Opd,
@@ -101,6 +105,7 @@ class RTL_Zero_Opd : public RTL_Opd,
     void print(std::ostream &) override;
     std::pair<std::shared_ptr<RTL_Register_Opd>, std::shared_ptr<RTL_Code>>
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Function_Call_Opd
@@ -118,6 +123,7 @@ class RTL_Function_Call_Opd
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
     std::shared_ptr<RTL_Code> unloadArgs();
     std::shared_ptr<RTL_Register_Opd> getReg();
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Str_Const_Opd
@@ -134,6 +140,7 @@ class RTL_Str_Const_Opd
     getLoadedReg(std::shared_ptr<ProcSymbolTable> symtab) override;
     std::string getStr() const;
     int getId() const;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Stmt : public RTL {};
@@ -150,6 +157,7 @@ class Compute_RTL_Stmt : public RTL_Stmt {
                      std::shared_ptr<RTL_Opd>, std::shared_ptr<RTL_Opd>,
                      Binary_Opd_Type, Type);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Goto_RTL_Stmt : public RTL_Stmt {
@@ -158,6 +166,7 @@ class Goto_RTL_Stmt : public RTL_Stmt {
   public:
     Goto_RTL_Stmt(std::shared_ptr<RTL_Label_Opd>);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class If_Goto_RTL_Stmt : public RTL_Stmt {
@@ -168,6 +177,7 @@ class If_Goto_RTL_Stmt : public RTL_Stmt {
     If_Goto_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>,
                      std::shared_ptr<RTL_Label_Opd>);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Return_RTL_Stmt : public RTL_Stmt {
@@ -176,6 +186,7 @@ class Return_RTL_Stmt : public RTL_Stmt {
   public:
     Return_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Label_RTL_Stmt : public RTL_Stmt {
@@ -184,6 +195,7 @@ class Label_RTL_Stmt : public RTL_Stmt {
   public:
     Label_RTL_Stmt(std::shared_ptr<RTL_Label_Opd>);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Move_RTL_Stmt : public RTL_Stmt {
@@ -194,18 +206,21 @@ class Move_RTL_Stmt : public RTL_Stmt {
     Move_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>,
                   std::shared_ptr<RTL_Register_Opd>);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Read_RTL_Stmt : public RTL_Stmt {
   public:
     Read_RTL_Stmt();
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Write_RTL_Stmt : public RTL_Stmt {
   public:
     Write_RTL_Stmt();
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Load_RTL_Stmt : public RTL_Stmt {
@@ -224,6 +239,7 @@ class Load_RTL_Stmt : public RTL_Stmt {
     void setMovf();
     void setMovt();
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Store_RTL_Stmt : public RTL_Stmt {
@@ -238,6 +254,7 @@ class Store_RTL_Stmt : public RTL_Stmt {
     Store_RTL_Stmt(std::shared_ptr<RTL_Opd>, std::shared_ptr<RTL_Register_Opd>,
                    Opd_Type, Type);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Function_Call_RTL_Stmt : public RTL_Stmt {
@@ -246,6 +263,7 @@ class Function_Call_RTL_Stmt : public RTL_Stmt {
   public:
     Function_Call_RTL_Stmt(std::shared_ptr<RTL_Function_Call_Opd>);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class Stack_RTL_Stmt : public RTL_Stmt {
@@ -255,6 +273,7 @@ class Stack_RTL_Stmt : public RTL_Stmt {
     Stack_RTL_Stmt();
     Stack_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>);
     void print(std::ostream &) override;
+    void build_ASM(std::shared_ptr<ProcSymbolTable>) override;
 };
 
 class RTL_Code {
