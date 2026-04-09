@@ -168,6 +168,9 @@ int Compiler::run() {
             root_ast->print_tac(output_tac_file);
     }
 
+    if (flags.optimize)
+        root_ast->optimize();
+
     if (flags.sa_tac)
         return status;
 
