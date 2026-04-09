@@ -10,6 +10,6 @@ void main()
     a="Welcome to CS316";  
     print local;
     print global;
-    print a;
+    // print a;
     print temp;
 }

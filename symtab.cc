@@ -50,8 +50,9 @@ int get_type_size(Type type) {
 
 // ------------------------------ SymTabEntry ------------------------------
 
-SymTabEntry::SymTabEntry(Type type, const std::string &name)
-    : type(type), name(name), offset(std::nullopt), size(get_type_size(type)) {}
+SymTabEntry::SymTabEntry(Type type, const std::string &name, bool global)
+    : type(type), name(name), offset(std::nullopt), size(get_type_size(type)),
+      global(global) {}
 
 std::string SymTabEntry::get_name() { return name; }
 
@@ -139,8 +140,7 @@ std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::get_return_tac_opd() {
     return return_tac_opd;
 }
 
-void ProcSymbolTable::set_return_tac_opd(
-    std::shared_ptr<Variable_TAC_Opd> opd) {
+void ProcSymbolTable::set_return_tac_opd(std::shared_ptr<Variable_TAC_Opd> opd) {
     return_tac_opd = opd;
 }
 
@@ -274,7 +274,7 @@ void GlobalSymbolTable::add_var(Type type, const std::string &name) {
     if (this->curr_symtab) {
         this->curr_symtab->add_local(type, name);
     } else {
-        globals.push_back(std::make_shared<SymTabEntry>(type, name));
+        globals.push_back(std::make_shared<SymTabEntry>(type, name, true));
     }
 }
 

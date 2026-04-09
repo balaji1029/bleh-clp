@@ -1,8 +1,8 @@
 #pragma once
 
+#include "asm.hh"
 #include "register.hh"
 #include "symtab.hh"
-#include "asm.hh"
 #include <iostream>
 #include <memory>
 #include <unordered_map>
@@ -14,7 +14,7 @@ enum class Opd_Type { INT, FLOAT, STR, LABEL, TEMP, ZERO, VAR, FUNC };
 class RTL {
   public:
     virtual void print(std::ostream &) = 0;
-    virtual void build_ASM(std::shared_ptr<);
+    // virtual void build_ASM(std::shared_ptr<);
 };
 
 class RTL_Register_Opd;

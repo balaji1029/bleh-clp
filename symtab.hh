@@ -38,16 +38,19 @@ class SymTabEntry {
     int size;
     EntityType entity_type;
 
+    bool global;
+
   public:
-    SymTabEntry(Type, const std::string &);
+    SymTabEntry(Type, const std::string &, bool = false);
 
     std::string get_name();
     Type get_type();
 
     void set_offset(int);
 
-    void print(std::ostream &, const std::string &);
+    bool is_global() { return global; }
 
+    void print(std::ostream &, const std::string &);
 };
 
 /* Class for Function entries in the Global Symbol Table */
@@ -156,7 +159,7 @@ class ProcSymbolTable {
     std::shared_ptr<Variable_TAC_Opd> getNewSTemp(Type);
 
     std::shared_ptr<RegisterPool> getRegisterPool();
-    
+
     void set_offsets();
 
     void print(std::ostream &, std::string &);
@@ -203,7 +206,7 @@ class GlobalSymbolTable {
 
     /* Sets the curr_symtab to `std::nullopt` to indicate the current scop to be
      * global */
-     void go_global();
+    void go_global();
 
     // TODO: Strings in Global Symbol Table
 

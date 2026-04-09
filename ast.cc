@@ -1,8 +1,11 @@
 #include "ast.hh"
 #include "symtab.hh"
+#include "tac.hh"
 #include "utils.hh"
+#include "backward_flow.hh"
 
 #include <algorithm>
+#include <map>
 
 // ------------------------------ Function_Call_Ast
 // ------------------------------
@@ -524,6 +527,59 @@ void Func_Ast::print(std::ostream &os, std::string &level) const {
     os << "\n**END: Abstract Syntax Tree\n";
 }
 
+void Func_Ast::build_cfg() {
+    std::map<std::shared_ptr<Label_TAC_Opd>, std::shared_ptr<Label_TAC_Stmt>>
+        label_map;
+
+    std::vector<std::shared_ptr<TAC_Stmt>> curr_code = code->get_code();
+
+    for (std::shared_ptr<TAC_Stmt> line : curr_code) {
+        if (line->get_stmt_type() == TAC_Stmt_Type::LABEL) {
+            std::shared_ptr<Label_TAC_Stmt> label_line =
+                std::dynamic_pointer_cast<Label_TAC_Stmt>(line);
+            label_map.insert({label_line->get_label(), label_line});
+        }
+    }
+
+    std::shared_ptr<Goto_TAC_Stmt> goto_line;
+    std::shared_ptr<If_Goto_TAC_Stmt> if_goto_line;
+
+
+    for (std::vector<std::shared_ptr<TAC_Stmt>>::iterator iter =
+             curr_code.begin();
+         ; iter++) {
+        switch ((*iter)->get_stmt_type()) {
+        case TAC_Stmt_Type::GOTO:
+            goto_line = std::dynamic_pointer_cast<Goto_TAC_Stmt>(*iter);
+            goto_line->add_successor(label_map.at(goto_line->get_label()));
+            label_map.at(goto_line->get_label())->add_predecessor(goto_line);
+            break;
+
+        case TAC_Stmt_Type::IF_GOTO:
+            if_goto_line = std::dynamic_pointer_cast<If_Goto_TAC_Stmt>(*iter);
+            if_goto_line->add_successor(
+                label_map.at(if_goto_line->get_label()));
+            label_map.at(if_goto_line->get_label())
+                ->add_predecessor(if_goto_line);
+            break;
+
+        default:
+            break;
+        }
+
+        if (iter != curr_code.end()) {
+            (*iter)->add_successor(*(iter + 1));
+            (*(iter + 1))->add_predecessor(*iter);
+        } else {
+            break;
+        }
+    }
+}
+
+void Func_Ast::optimize() {
+    BackwardFlowAnalysis back(code);
+}
+
 // ------------------------------ Root_Ast ------------------------------
 
 const std::vector<std::shared_ptr<Func_Ast>> &Root_Ast::get_funcs() const {
@@ -532,6 +588,18 @@ const std::vector<std::shared_ptr<Func_Ast>> &Root_Ast::get_funcs() const {
 
 void Root_Ast::add_func(std::shared_ptr<Func_Ast> func) {
     funcs.push_back(func);
+}
+
+void Root_Ast::build_cfg() {
+    for (const std::shared_ptr<Func_Ast> &child : funcs) {
+        child->build_cfg();
+    }
+}
+
+void Root_Ast::optimize() {
+    for (const std::shared_ptr<Func_Ast> &child : funcs) {
+        child->optimize();
+    }
 }
 
 void Root_Ast::print(std::ostream &os, std::string &level) const {

@@ -518,9 +518,13 @@ class Func_Ast : public Ast {
 
     void build_tac(std::shared_ptr<ProcSymbolTable>);
 
+    void optimize();
+
     void build_rtl();
 
     void print_rtl(std::ostream &os);
+
+    void build_cfg();
 
     std::shared_ptr<ProcSymbolTable> get_symtab() { return proc_table; }
 };
@@ -539,6 +543,10 @@ class Root_Ast : public Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &os, std::string &level) const;
+
+    void build_cfg();
+
+    void optimize();
 
     void build_tac(std::shared_ptr<GlobalSymbolTable>);
 
