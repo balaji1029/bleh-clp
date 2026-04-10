@@ -1,7 +1,5 @@
 #include "asm.hh"
 
-#define SPACE "\t"
-
 #include <iostream>
 void ASM_Double_Const_Opd::print(std::ostream &os) {
     os << std::fixed << std::setprecision(2);
@@ -171,6 +169,19 @@ void ASM_Code::print(std::ostream &os) {
     }
 }
 
-void RTL_Code::print(std::ostream &os) {
-    
+void Func_Ast::print_asm(std::ostream &os) {
+    if (!asm_code->is_empty()) {
+        // os << "**PROCEDURE: " << proc_table->get_name() << std::endl;
+        // os << "**BEGIN: RTL Statements" << std::endl;
+        // tacCode->print_rtl(os);
+        asm_code->print(os);
+        // os << "**END: RTL Statements" << std::endl;
+    }
 }
+
+void Root_Ast::print_asm(std::ostream &os) {
+    for (auto func : funcs) {
+        func->print_asm(os);
+    }
+}
+

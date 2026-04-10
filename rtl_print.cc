@@ -213,20 +213,20 @@ void TAC_Code::print_rtl(std::ostream &os) {
     for (auto tacStmt : tacStmts)
         if (tacStmt->getRTLCode())
             tacStmt->getRTLCode()->print(os);
-        else if (auto tacRet =
-                     std::dynamic_pointer_cast<Return_TAC_Stmt>(tacStmt))
-            std::cout << "ret" << std::endl;
-        else if (auto tacLab =
-                     std::dynamic_pointer_cast<Label_TAC_Stmt>(tacStmt))
-            std::cout << "lab" << std::endl;
+        // else if (auto tacRet =
+        //              std::dynamic_pointer_cast<Return_TAC_Stmt>(tacStmt))
+        //     std::cout << "ret" << std::endl;
+        // else if (auto tacLab =
+        //              std::dynamic_pointer_cast<Label_TAC_Stmt>(tacStmt))
+        //     std::cout << "lab" << std::endl;
 }
 
 void Func_Ast::print_rtl(std::ostream &os) {
-    std::shared_ptr<TAC_Code> tacCode = get_code();
-    if (!tacCode->is_empty()) {
+    if (!rtl_code->is_empty()) {
         os << "**PROCEDURE: " << proc_table->get_name() << std::endl;
         os << "**BEGIN: RTL Statements" << std::endl;
-        tacCode->print_rtl(os);
+        // tacCode->print_rtl(os);
+        rtl_code->print(os);
         os << "**END: RTL Statements" << std::endl;
     }
 }

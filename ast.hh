@@ -503,6 +503,10 @@ class Func_Ast : public Ast {
     /* Pointer to the `Sequence_Stmt_Ast` node */
     const std::shared_ptr<Sequence_Stmt_Ast> seq_ast;
 
+    std::shared_ptr<RTL_Code> rtl_code;
+
+    std::shared_ptr<ASM_Code> asm_code;
+
   public:
     /* Constructor with the Process Symbol Table and the `Sequence_Stmt_Ast`
      * node */
@@ -522,7 +526,11 @@ class Func_Ast : public Ast {
 
     void print_rtl(std::ostream &os);
 
+    void build_asm();
+
     std::shared_ptr<ProcSymbolTable> get_symtab() { return proc_table; }
+
+    void print_asm(std::ostream &os);
 };
 
 /* Class for the Root of the AST */
@@ -547,4 +555,8 @@ class Root_Ast : public Ast {
     void build_rtl();
 
     void print_rtl(std::ostream &os);
+
+    void build_asm(std::shared_ptr<GlobalSymbolTable>);
+
+    void print_asm(std::ostream &os);
 };
