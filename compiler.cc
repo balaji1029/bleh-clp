@@ -160,16 +160,17 @@ int Compiler::run() {
 
     if (flags.optimize)
         root_ast->optimize();
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 41d5619 (idk)
     if (flags.show_tac && !flags.sa_ast) {
         if (flags.demo)
             root_ast->print_tac(std::cout);
         else
             root_ast->print_tac(output_tac_file);
     }
-
-    if (flags.optimize)
-        root_ast->optimize();
 
     if (flags.sa_tac)
         return status;
