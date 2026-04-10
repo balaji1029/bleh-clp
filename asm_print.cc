@@ -180,6 +180,7 @@ void Func_Ast::print_asm(std::ostream &os) {
 }
 
 void Root_Ast::print_asm(std::ostream &os) {
+    os << "HEllo" << std::endl;
     for (auto func : funcs) {
         func->print_asm(os);
     }
