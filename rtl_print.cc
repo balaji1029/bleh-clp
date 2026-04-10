@@ -108,8 +108,6 @@ void Return_RTL_Stmt::print(std::ostream &os) {
     reg->print(os);
 }
 
-void Move_RTL_Stmt::print(std::ostream &os) { os << RTL_SPACE; }
-
 void Read_RTL_Stmt::print(std::ostream &os) {
     os << RTL_SPACE;
     os << "read";
@@ -120,7 +118,7 @@ void Write_RTL_Stmt::print(std::ostream &os) {
     os << "write";
 }
 
-void Load_RTL_Stmt::print(std::ostream &os) {
+void Move_RTL_Stmt::print(std::ostream &os) {
     os << RTL_SPACE;
     if (movf)
         os << "movf";

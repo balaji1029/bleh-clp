@@ -8,7 +8,7 @@ all: sclp
 debug: CXXFLAGS = -Wall -std=c++20 -g -fsanitize=address
 debug: sclp
 
-sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o tac.o tac_print.o rtl.o rtl_print.o register.o asm.o
+sclp: main.o compiler.o y.tab.o lex.yy.o ast.o symtab.o utils.o tac.o tac_print.o rtl.o rtl_print.o register.o asm.o asm_print.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 main.o: main.cc compiler.hh lexer.hh y.tab.h ast.hh symtab.hh
@@ -35,7 +35,10 @@ rtl.o: rtl.cc rtl.hh ast.hh tac.hh register.hh symtab.hh
 rtl_print.o: rtl_print.cc ast.hh rtl.hh tac.hh register.hh symtab.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-asm.o: asm.cc asm.hh rtl.hh register.hh symtab.hh
+asm.o: asm.cc asm.hh tac.hh rtl.hh ast.hh symtab.hh register.hh
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+asm_print.o: asm_print.cc asm.hh tac.hh rtl.hh ast.hh symtab.hh register.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 register.o: register.cc register.hh rtl.hh symtab.hh
