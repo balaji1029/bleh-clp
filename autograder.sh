@@ -2,7 +2,7 @@
 DIR="example-programs"
 
 flags=(
-    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-rtl"
+    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl"
     # "--show-tokens --sa-scan",
     # "--show-tokens --sa-parse",
     # "--show-tokens --sa-ast"
