@@ -47,7 +47,7 @@ if [[ "$1" == "test" ]]; then
         mv "$sym_file" "$ref_sym_file" 2>/dev/null
         mv "$spim_file" "$ref_spim_file" 2>/dev/null
 
-        ./sclp $flag "$file" 2>/dev/null
+        ./sclp $flag --optimize "$file" 2>/dev/null
         our_rc=$?
 
         if [[ ($ref_rc -ne 0 && $our_rc -eq 0) || ($ref_rc -eq 0 && $our_rc -ne 0) ]]; then
@@ -154,7 +154,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         mv "$sym_file" "$ref_sym_file" 2>/dev/null
         mv "$spim_file" "$ref_spim_file" 2>/dev/null
 
-        ./sclp $flag "$file" 2>/dev/null
+        ./sclp $flag --optimize "$file" 2>/dev/null
         our_rc=$?
 
         if [[ ($ref_rc -ne 0 && $our_rc -eq 0) || ($ref_rc -eq 0 && $our_rc -ne 0) ]]; then

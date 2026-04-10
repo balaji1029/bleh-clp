@@ -4,20 +4,14 @@
 Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     int opt;
 
-    static struct option long_opts[] = {{"show-tokens", no_argument, 0, 0},
-                                        {"show-ast", no_argument, 0, 0},
-                                        {"show-tac", no_argument, 0, 0},
-                                        {"show-symtab", no_argument, 0, 0},
-                                        {"show-rtl", no_argument, 0, 0},
-                                        {"show-asm", no_argument, 0, 0},
-                                        {"sa-scan", no_argument, 0, 0},
-                                        {"sa-parse", no_argument, 0, 0},
-                                        {"sa-ast", no_argument, 0, 0},
-                                        {"sa-tac", no_argument, 0, 0},
-                                        {"sa-rtl", no_argument, 0, 0},
-                                        {"optimize", no_argument, 0, 0},
-                                        {"demo", no_argument, 0, 'd'},
-                                        {0, 0, 0, 0}};
+    static struct option long_opts[] = {
+        {"show-tokens", no_argument, 0, 0}, {"show-ast", no_argument, 0, 0},
+        {"show-tac", no_argument, 0, 0},    {"show-symtab", no_argument, 0, 0},
+        {"show-rtl", no_argument, 0, 0},    {"show-asm", no_argument, 0, 0},
+        {"sa-scan", no_argument, 0, 0},     {"sa-parse", no_argument, 0, 0},
+        {"sa-ast", no_argument, 0, 0},      {"sa-tac", no_argument, 0, 0},
+        {"sa-rtl", no_argument, 0, 0},      {"optimize", no_argument, 0, 0},
+        {"demo", no_argument, 0, 'd'},      {0, 0, 0, 0}};
 
     int opt_idx = 0;
 
@@ -146,15 +140,15 @@ int Compiler::run() {
     if (!flags.sa_ast)
         root_ast->build_tac(sym_tab);
 
+    if (flags.optimize)
+        root_ast->optimize();
+    
     if (flags.show_tac && !flags.sa_ast) {
         if (flags.demo)
             root_ast->print_tac(std::cout);
         else
             root_ast->print_tac(output_tac_file);
     }
-
-    if (flags.optimize)
-        root_ast->optimize();
 
     if (flags.sa_tac)
         return status;
