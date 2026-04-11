@@ -123,6 +123,7 @@ std::shared_ptr<RTL_Code> RTL_Function_Call_Opd::unloadArgs() {
             std::shared_ptr<RTL_Register_Opd> argReg =
                 std::dynamic_pointer_cast<RTL_Register_Opd>(arg);
             argType = argReg->getVarType();
+            break;
         }
         case Opd_Type::FLOAT: {
             argType = Type::FLOAT;
