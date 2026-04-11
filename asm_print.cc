@@ -116,6 +116,8 @@ void Jump_Reg_ASM_Stmt::print(std::ostream &os) {
 void Label_ASM_Stmt::print(std::ostream &os) { label->print(os); }
 
 void Move_ASM_Stmt::print(std::ostream &os) {
+    if (store || stack)
+        return;
     if (movf)
         os << "movf";
     else if (movt)
@@ -180,9 +182,7 @@ void Func_Ast::print_asm(std::ostream &os) {
 }
 
 void Root_Ast::print_asm(std::ostream &os) {
-    os << "HEllo" << std::endl;
     for (auto func : funcs) {
         func->print_asm(os);
     }
 }
-
