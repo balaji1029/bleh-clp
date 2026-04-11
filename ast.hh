@@ -332,7 +332,7 @@ class Conditional_Expr_Ast : public Ternary_Expr_Ast {
 class Statement_Ast : public Ast {
   protected:
     std::shared_ptr<Label_TAC_Opd> return_label;
-  
+
   public:
     /* Deleted function to print to the given output stream */
     virtual void print(std::ostream &os, std::string &level) const = 0;
@@ -558,5 +558,5 @@ class Root_Ast : public Ast {
 
     void build_asm(std::shared_ptr<GlobalSymbolTable>);
 
-    void print_asm(std::ostream &os);
+    void print_asm(std::ostream &os, std::shared_ptr<GlobalSymbolTable>);
 };

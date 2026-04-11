@@ -216,7 +216,9 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\n\e[31mERROR:\e[0m .spim file not generated for $file by our sclp with flag $flag"
             continue
         elif [[ -f "$spim_file" && -f "$ref_spim_file" ]]; then
-            diff -Bw <(grep -vE '^\s*(#|$)' "$spim_file") <(grep -vE '^\s*(#|$)' "$ref_spim_file")
+            # diff -Bw <(grep -vE '^\s*(#|$)' "$spim_file") <(grep -vE '^\s*(#|$)' "$ref_spim_file")
+            sed -i 's/#.*//' "$ref_spim_file"
+            diff -Bw "$spim_file" "$ref_spim_file"
             if [[ $? -ne 0 ]]; then
                 echo "in the $file"
             fi

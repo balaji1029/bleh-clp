@@ -11,6 +11,9 @@ ASM_Int_Const_Opd::ASM_Int_Const_Opd(int value) : value(value) {}
 
 ASM_Label_Opd::ASM_Label_Opd(int label_index) : label_index(label_index) {}
 
+ASM_Label_Opd::ASM_Label_Opd(std::string label_index)
+    : label_index(label_index) {}
+
 ASM_Mem_Opd::ASM_Mem_Opd(std::shared_ptr<SymTabEntry> entry, Type var_type)
     : entry(entry), var_type(var_type) {}
 
@@ -53,10 +56,9 @@ Label_ASM_Stmt::Label_ASM_Stmt(std::shared_ptr<ASM_Label_Opd> label)
 
 Move_ASM_Stmt::Move_ASM_Stmt(std::shared_ptr<ASM_Register_Opd> reg,
                              std::shared_ptr<ASM_Opd> opd, Opd_Type type,
-                             Type var_type, bool movf, bool movt, bool store,
-                             std::shared_ptr<ASM_Register_Opd> sp)
+                             Type var_type, bool movf, bool movt, bool store)
     : reg(reg), opd(opd), type(type), var_type(var_type), movf(movf),
-      movt(movt), store(store), sp(sp) {}
+      movt(movt), store(store) {}
 
 Syscall_ASM_Stmt::Syscall_ASM_Stmt() {}
 
@@ -173,9 +175,11 @@ Return_RTL_Stmt::build_asm(std::shared_ptr<ProcSymbolTable> symtab) {
     reg->build_asm(symtab);
     std::shared_ptr<ASM_Register_Opd> regAsm =
         std::dynamic_pointer_cast<ASM_Register_Opd>(reg->getAsmPlace());
-    std::shared_ptr<Jump_Reg_ASM_Stmt> jrStmt =
-        std::make_shared<Jump_Reg_ASM_Stmt>(regAsm);
-    asmCode->append(jrStmt);
+    // std::shared_ptr<Jump_Reg_ASM_Stmt> jrStmt =
+    // std::make_shared<Jump_Reg_ASM_Stmt>(regAsm);
+    std::shared_ptr<Goto_ASM_Stmt> goto_epilogue =
+        std::make_shared<Goto_ASM_Stmt>(symtab->get_epilogue_label());
+    asmCode->append(goto_epilogue);
     return asmCode;
 }
 
@@ -217,8 +221,7 @@ Move_RTL_Stmt::build_asm(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<ASM_Register_Opd> regAsm =
         std::dynamic_pointer_cast<ASM_Register_Opd>(reg->getAsmPlace());
     std::shared_ptr<Move_ASM_Stmt> moveStmt = std::make_shared<Move_ASM_Stmt>(
-        regAsm, opd->getAsmPlace(), type, var_type, movf, movt, false,
-        symtab->getRegisterPool()->getAsmSp());
+        regAsm, opd->getAsmPlace(), type, var_type, movf, movt, false);
     asmCode->append(moveStmt);
     return asmCode;
 }
@@ -231,8 +234,7 @@ Store_RTL_Stmt::build_asm(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<ASM_Register_Opd> regAsm =
         std::dynamic_pointer_cast<ASM_Register_Opd>(reg->getAsmPlace());
     std::shared_ptr<Move_ASM_Stmt> moveStmt = std::make_shared<Move_ASM_Stmt>(
-        regAsm, var->getAsmPlace(), type, var_type, false, false, true,
-        symtab->getRegisterPool()->getAsmSp());
+        regAsm, var->getAsmPlace(), type, var_type, false, false, true);
     asmCode->append(moveStmt);
     return asmCode;
 }
@@ -266,7 +268,7 @@ Stack_RTL_Stmt::build_asm(std::shared_ptr<ProcSymbolTable> symtab) {
             stackTop = std::make_shared<ASM_Mem_Opd>(0, Type::INT);
         moveStmt = std::make_shared<Move_ASM_Stmt>(
             regAsm, stackTop, reg->getType(), reg->getVarType(), false, false,
-            true, sp);
+            true);
         if (var_type == Type::FLOAT)
             spStmt = std::make_shared<Compute_ASM_Stmt>(
                 sp, sp, 8, Binary_Opd_Type::MINUS, Type::INT);
@@ -305,7 +307,11 @@ void ASM_Code::append(std::shared_ptr<ASM_Code> code) {
 
 bool ASM_Code::is_empty() { return asmStmts.size() == 0; }
 
-void Func_Ast::build_asm() { asm_code = rtl_code->build_asm(proc_table); }
+void Func_Ast::build_asm() {
+    asm_code = proc_table->get_asm_prologue();
+    asm_code->append(rtl_code->build_asm(proc_table),
+                     proc_table->get_asm_epilogue());
+}
 
 void Root_Ast::build_asm(std::shared_ptr<GlobalSymbolTable> symtab) {
     for (std::shared_ptr<Func_Ast> func : funcs)

@@ -1,7 +1,9 @@
 #include "symtab.hh"
+#include "asm.hh"
 #include "utils.hh"
 #include <iostream>
 
+#include <map>
 #include <algorithm>
 
 std::string get_type_str(Type type) {
@@ -50,8 +52,9 @@ int get_type_size(Type type) {
 
 // ------------------------------ SymTabEntry ------------------------------
 
-SymTabEntry::SymTabEntry(Type type, const std::string &name)
-    : type(type), name(name), offset(std::nullopt), size(get_type_size(type)) {}
+SymTabEntry::SymTabEntry(Type type, const std::string &name, bool global)
+    : type(type), name(name), offset(std::nullopt), size(get_type_size(type)),
+      global(global) {}
 
 std::string SymTabEntry::get_name() { return name; }
 
@@ -203,10 +206,10 @@ void ProcSymbolTable::set_offsets() {
         offset += get_type_size(entry->get_type());
     }
 
-    offset = 0;
+    total_offset = 0;
     for (std::shared_ptr<SymTabEntry> entry : locals) {
-        offset -= get_type_size(entry->get_type());
-        entry->set_offset(offset);
+        total_offset -= get_type_size(entry->get_type());
+        entry->set_offset(total_offset);
     }
 }
 
@@ -235,6 +238,68 @@ int ProcSymbolTable::addString(std::string str) {
 
 std::shared_ptr<GlobalSymbolTable> ProcSymbolTable::getGlobalSymtab() {
     return global_symtab.lock();
+}
+
+std::shared_ptr<ASM_Code> ProcSymbolTable::get_asm_prologue() {
+    std::shared_ptr<ASM_Code> asmCode = std::make_shared<ASM_Code>();
+
+    std::shared_ptr<ASM_Mem_Opd> stackTop =
+        std::make_shared<ASM_Mem_Opd>(0, Type::INT);
+
+    std::shared_ptr<ASM_Stmt> storeRa = std::make_shared<Move_ASM_Stmt>(
+        RegisterPool::getRa(), stackTop, Opd_Type::INT, Type::INT, false, false,
+        true);
+
+    stackTop = std::make_shared<ASM_Mem_Opd>(-4, Type::INT);
+
+    std::shared_ptr<ASM_Stmt> storeFp = std::make_shared<Move_ASM_Stmt>(
+        RegisterPool::getFp(), stackTop, Opd_Type::INT, Type::INT, false, false,
+        true);
+
+    std::shared_ptr<ASM_Stmt> subFp = std::make_shared<Compute_ASM_Stmt>(
+        RegisterPool::getFp(), register_pool->getAsmSp(), 4,
+        Binary_Opd_Type::MINUS, Type::INT);
+
+    std::shared_ptr<ASM_Stmt> subSp = std::make_shared<Compute_ASM_Stmt>(
+        register_pool->getAsmSp(), register_pool->getAsmSp(), -total_offset + 8,
+        Binary_Opd_Type::MINUS, Type::INT);
+
+    asmCode->append(storeRa, storeFp, subFp, subSp);
+    return asmCode;
+}
+
+std::shared_ptr<ASM_Code> ProcSymbolTable::get_asm_epilogue() {
+    std::shared_ptr<ASM_Code> asmCode = std::make_shared<ASM_Code>();
+
+    std::shared_ptr<Label_ASM_Stmt> epilogue_label =
+        std::make_shared<Label_ASM_Stmt>(get_epilogue_label());
+
+    std::shared_ptr<ASM_Stmt> addSp = std::make_shared<Compute_ASM_Stmt>(
+        register_pool->getAsmSp(), register_pool->getAsmSp(), -total_offset + 8,
+        Binary_Opd_Type::PLUS, Type::INT);
+
+    std::shared_ptr<ASM_Mem_Opd> stackTop =
+        std::make_shared<ASM_Mem_Opd>(-4, Type::INT);
+
+    std::shared_ptr<ASM_Stmt> loadFp = std::make_shared<Move_ASM_Stmt>(
+        RegisterPool::getFp(), stackTop, Opd_Type::VAR, Type::INT, false, false,
+        false);
+
+    stackTop = std::make_shared<ASM_Mem_Opd>(0, Type::INT);
+
+    std::shared_ptr<ASM_Stmt> loadRa = std::make_shared<Move_ASM_Stmt>(
+        RegisterPool::getRa(), stackTop, Opd_Type::VAR, Type::INT, false, false,
+        false);
+
+    std::shared_ptr<ASM_Stmt> jumpRa =
+        std::make_shared<Jump_Reg_ASM_Stmt>(RegisterPool::getRa());
+
+    asmCode->append(epilogue_label, addSp, loadFp, loadRa, jumpRa);
+    return asmCode;
+}
+
+std::shared_ptr<ASM_Label_Opd> ProcSymbolTable::get_epilogue_label() {
+    return std::make_shared<ASM_Label_Opd>("epilogue_" + get_name());
 }
 
 // ------------------------------ GlobalSymbolTable
@@ -285,7 +350,7 @@ void GlobalSymbolTable::add_var(Type type, const std::string &name) {
     if (this->curr_symtab) {
         this->curr_symtab->add_local(type, name);
     } else {
-        globals.push_back(std::make_shared<SymTabEntry>(type, name));
+        globals.push_back(std::make_shared<SymTabEntry>(type, name, true));
     }
 }
 
@@ -480,4 +545,37 @@ int GlobalSymbolTable::addString(std::string str) {
     int id = string_map.size();
     string_map.emplace(str, id);
     return id;
+}
+
+void GlobalSymbolTable::print_asm_globals(std::ostream &os) {
+    if (globals.size() == 0 && string_map.size() == 0)
+        return;
+
+    os << SPACE << ".data\n";
+
+    for (std::shared_ptr<SymTabEntry> global : globals) {
+        os << global->get_name() << ":" << SPACE;
+        switch (global->get_type()) {
+        case Type::FLOAT:
+            os << ".double 0.0";
+            break;
+        default:
+            os << ".word 0";
+            break;
+        }
+        os << "\n";
+    }
+
+    std::map<int, std::string> my_map;
+
+    for (auto [a, b] : string_map) {
+        my_map.insert({b, a});
+    }
+    
+    for (auto [b, a] : my_map) {
+        os << "_str_" << b << ":" << SPACE;
+        os << ".asciiz ";
+        os << a;
+        os << "\n";
+    }
 }

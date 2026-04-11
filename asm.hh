@@ -31,10 +31,11 @@ class ASM_Int_Const_Opd : public ASM_Opd {
 };
 
 class ASM_Label_Opd : public ASM_Opd {
-    int label_index;
+    std::variant<int, std::string> label_index;
 
   public:
     ASM_Label_Opd(int);
+    ASM_Label_Opd(std::string);
     void print(std::ostream &) override;
 };
 
@@ -145,8 +146,7 @@ class Move_ASM_Stmt : public ASM_Stmt {
 
   public:
     Move_ASM_Stmt(std::shared_ptr<ASM_Register_Opd>, std::shared_ptr<ASM_Opd>,
-                  Opd_Type, Type, bool, bool, bool,
-                  std::shared_ptr<ASM_Register_Opd>);
+                  Opd_Type, Type, bool, bool, bool);
     void print(std::ostream &) override;
 };
 

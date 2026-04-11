@@ -21,6 +21,22 @@ void Register::setTemp(std::shared_ptr<Temporary_TAC_Opd> temp) {
     is_free = false;
 }
 
+std::shared_ptr<ASM_Register_Opd> RegisterPool::ra =
+    std::make_shared<ASM_Register_Opd>(std::make_shared<Register>("ra"),
+                                       Type::INT);
+
+std::shared_ptr<ASM_Register_Opd> RegisterPool::fp =
+    std::make_shared<ASM_Register_Opd>(std::make_shared<Register>("fp"),
+                                       Type::INT);
+
+std::shared_ptr<ASM_Register_Opd> RegisterPool::getRa() {
+    return ra;
+}
+
+std::shared_ptr<ASM_Register_Opd> RegisterPool::getFp() {
+    return fp;
+}
+
 RegisterPool::RegisterPool() {
     f0 = std::make_shared<RTL_Register_Opd>(std::make_shared<Register>("f0"),
                                             Type::FLOAT);

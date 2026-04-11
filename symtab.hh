@@ -13,6 +13,8 @@
 class Label_TAC_Opd;
 class Variable_TAC_Opd;
 class GlobalSymbolTable;
+class ASM_Code;
+class ASM_Label_Opd;
 
 /* Type of variable */
 enum class Type { INT, BOOL, FLOAT, STRING, VOID };
@@ -40,15 +42,21 @@ class SymTabEntry {
     int size;
     EntityType entity_type;
 
+    bool global;
+
   public:
-    SymTabEntry(Type, const std::string &);
+    SymTabEntry(Type, const std::string &, bool = false);
 
     std::string get_name();
     Type get_type();
 
     void set_offset(int);
 
+    std::optional<int> get_offset() const { return offset; }
+
     void print(std::ostream &, const std::string &);
+
+    bool is_global() { return global; }
 };
 
 /* Class for Function entries in the Global Symbol Table */
@@ -119,6 +127,8 @@ class ProcSymbolTable {
 
     bool return_stmt = false;
 
+    int total_offset = 0;
+
   public:
     /* Creates a Process Symbol Table from the pointer to the Symbol Table Entry
      * for the function */
@@ -170,6 +180,12 @@ class ProcSymbolTable {
     void print(std::ostream &, std::string &);
 
     std::shared_ptr<GlobalSymbolTable> getGlobalSymtab();
+
+    std::shared_ptr<ASM_Code> get_asm_prologue();
+
+    std::shared_ptr<ASM_Code> get_asm_epilogue();
+
+    std::shared_ptr<ASM_Label_Opd> get_epilogue_label();
 };
 
 /* Class for Global Symbol Table */
@@ -246,4 +262,6 @@ class GlobalSymbolTable
     void print(std::ostream &, std::string &);
 
     int addString(std::string);
+
+    void print_asm_globals(std::ostream &);
 };

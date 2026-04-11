@@ -26,6 +26,8 @@ class RegisterPool {
     std::shared_ptr<RTL_Register_Opd> f0;
     std::shared_ptr<RTL_Register_Opd> v1;
     std::shared_ptr<ASM_Register_Opd> asmSp;
+    static std::shared_ptr<ASM_Register_Opd> ra;
+    static std::shared_ptr<ASM_Register_Opd> fp;
     std::vector<std::shared_ptr<RTL_Register_Opd>> regs;
     std::vector<std::shared_ptr<RTL_Register_Opd>> arg_regs;
     std::vector<std::shared_ptr<RTL_Register_Opd>> float_regs;
@@ -44,4 +46,6 @@ class RegisterPool {
     std::shared_ptr<RTL_Register_Opd> getV1();
     std::shared_ptr<RTL_Register_Opd> getF0();
     std::shared_ptr<ASM_Register_Opd> getAsmSp();
+    static std::shared_ptr<ASM_Register_Opd> getRa();
+    static std::shared_ptr<ASM_Register_Opd> getFp();
 };

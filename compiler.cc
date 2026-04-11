@@ -164,17 +164,20 @@ int Compiler::run() {
     sym_tab->set_offsets();
     if (flags.show_symtab) {
         if (flags.demo)
-        sym_tab->print(std::cout, level);
+            sym_tab->print(std::cout, level);
         else
-        sym_tab->print(output_symtab_file, level);
+            sym_tab->print(output_symtab_file, level);
     }
-    
+
     if (flags.sa_rtl)
         return status;
-    
+
     root_ast->build_asm(sym_tab);
-    
-    root_ast->print_asm(output_spim_file);
+
+    if (flags.demo)
+        root_ast->print_asm(std::cout, sym_tab);
+    else
+        root_ast->print_asm(output_spim_file, sym_tab);
 
     return status;
 }

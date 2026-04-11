@@ -8,14 +8,26 @@ void ASM_Double_Const_Opd::print(std::ostream &os) {
 
 void ASM_Int_Const_Opd::print(std::ostream &os) { os << value; }
 
-void ASM_Label_Opd::print(std::ostream &os) { os << "Label" << label_index; }
+void ASM_Label_Opd::print(std::ostream &os) {
+    if (std::holds_alternative<int>(label_index)) {
+        os << "Label" << std::get<int>(label_index);
+    } else {
+        os << std::get<std::string>(label_index);
+    }
+}
 
 void ASM_Mem_Opd::print(std::ostream &os) {
     if (std::holds_alternative<int>(entry)) {
         int offset = std::get<int>(entry);
         os << offset << "($sp)";
     } else {
-        // TODO
+        std::shared_ptr<SymTabEntry> var =
+            std::get<std::shared_ptr<SymTabEntry>>(entry);
+
+        if (var->is_global())
+            os << var->get_name();
+        else
+            os << *(var->get_offset()) << "($fp)";
     }
 }
 
@@ -99,6 +111,8 @@ void Compute_ASM_Stmt::print(std::ostream &os) {
             rReg->print(os);
         }
     }
+    if (opd == Binary_Opd_Type::NOT)
+        os << ", 1";
 }
 
 void Call_ASM_Stmt::print(std::ostream &os) {
@@ -126,7 +140,10 @@ void Jump_Reg_ASM_Stmt::print(std::ostream &os) {
     reg->print(os);
 }
 
-void Label_ASM_Stmt::print(std::ostream &os) { label->print(os); }
+void Label_ASM_Stmt::print(std::ostream &os) {
+    label->print(os);
+    os << ":";
+}
 
 void Move_ASM_Stmt::print(std::ostream &os) {
     os << SPACE;
@@ -206,8 +223,14 @@ void Func_Ast::print_asm(std::ostream &os) {
     }
 }
 
-void Root_Ast::print_asm(std::ostream &os) {
-    for (auto func : funcs) {
+void Root_Ast::print_asm(std::ostream &os,
+                         std::shared_ptr<GlobalSymbolTable> symtab) {
+    symtab->print_asm_globals(os);
+    std::vector<std::shared_ptr<Func_Ast>> funcs_copy = this->get_funcs();
+    sort(funcs_copy.begin(), funcs_copy.end(), [](auto func1, auto func2) {
+        return func1->get_name() < func2->get_name();
+    });
+    for (auto func : funcs_copy) {
         func->print_asm(os);
     }
 }
