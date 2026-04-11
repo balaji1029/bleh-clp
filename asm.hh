@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <memory>
+#include <variant>
 
 class ASM {
   public:
@@ -38,20 +39,21 @@ class ASM_Label_Opd : public ASM_Opd {
 };
 
 class ASM_Mem_Opd : public ASM_Opd {
-    std::shared_ptr<SymTabEntry> entry;
+    std::variant<std::shared_ptr<SymTabEntry>, int> entry;
     Type var_type;
 
   public:
     ASM_Mem_Opd(std::shared_ptr<SymTabEntry>, Type);
+    ASM_Mem_Opd(int, Type);
     void print(std::ostream &) override;
 };
 
 class ASM_Register_Opd : public ASM_Opd {
     std::shared_ptr<Register> reg;
-    Opd_Type var_type;
+    Type var_type;
 
   public:
-    ASM_Register_Opd(std::shared_ptr<Register>, Opd_Type);
+    ASM_Register_Opd(std::shared_ptr<Register>, Type);
     void print(std::ostream &) override;
 };
 
@@ -75,7 +77,7 @@ class ASM_Stmt : public ASM {};
 class Compute_ASM_Stmt : public ASM_Stmt {
     std::shared_ptr<ASM_Register_Opd> reg;
     std::shared_ptr<ASM_Register_Opd> lOpd;
-    std::shared_ptr<ASM_Register_Opd> rOpd;
+    std::variant<std::shared_ptr<ASM_Register_Opd>, int> rOpd;
     Binary_Opd_Type opd;
     Type type;
 
@@ -83,6 +85,9 @@ class Compute_ASM_Stmt : public ASM_Stmt {
     Compute_ASM_Stmt(std::shared_ptr<ASM_Register_Opd>,
                      std::shared_ptr<ASM_Register_Opd>,
                      std::shared_ptr<ASM_Register_Opd>, Binary_Opd_Type, Type);
+    Compute_ASM_Stmt(std::shared_ptr<ASM_Register_Opd>,
+                     std::shared_ptr<ASM_Register_Opd>, int, Binary_Opd_Type,
+                     Type);
     void print(std::ostream &) override;
 };
 
@@ -136,11 +141,12 @@ class Move_ASM_Stmt : public ASM_Stmt {
     bool movf;
     bool movt;
     bool store;
-    bool stack;
+    std::shared_ptr<ASM_Register_Opd> sp;
 
   public:
     Move_ASM_Stmt(std::shared_ptr<ASM_Register_Opd>, std::shared_ptr<ASM_Opd>,
-                  Opd_Type, Type, bool, bool, bool, bool);
+                  Opd_Type, Type, bool, bool, bool,
+                  std::shared_ptr<ASM_Register_Opd>);
     void print(std::ostream &) override;
 };
 

@@ -10,9 +10,16 @@ void ASM_Int_Const_Opd::print(std::ostream &os) { os << value; }
 
 void ASM_Label_Opd::print(std::ostream &os) { os << "Label" << label_index; }
 
-void ASM_Mem_Opd::print(std::ostream &os) {}
+void ASM_Mem_Opd::print(std::ostream &os) {
+    if (std::holds_alternative<int>(entry)) {
+        int offset = std::get<int>(entry);
+        os << offset << "($sp)";
+    } else {
+        // TODO
+    }
+}
 
-void ASM_Register_Opd::print(std::ostream &os) { os << reg->get_name(); }
+void ASM_Register_Opd::print(std::ostream &os) { os << '$' << reg->get_name(); }
 
 void ASM_Str_Const_Opd::print(std::ostream &os) { os << "_str_" << id; }
 
@@ -81,16 +88,22 @@ void Compute_ASM_Stmt::print(std::ostream &os) {
         os << ", ";
     }
     lOpd->print(os);
-    if (rOpd) {
-        os << ", ";
-        rOpd->print(os);
+    if (std::holds_alternative<int>(rOpd)) {
+        int num = std::get<int>(rOpd);
+        os << ", " << num;
+    } else {
+        std::shared_ptr<ASM_Register_Opd> rReg =
+            std::get<std::shared_ptr<ASM_Register_Opd>>(rOpd);
+        if (rReg) {
+            os << ", ";
+            rReg->print(os);
+        }
     }
 }
 
 void Call_ASM_Stmt::print(std::ostream &os) {
     os << SPACE;
     os << "jal " << entry->get_name();
-    os << "\n";
 }
 
 void Goto_ASM_Stmt::print(std::ostream &os) {
@@ -116,13 +129,26 @@ void Jump_Reg_ASM_Stmt::print(std::ostream &os) {
 void Label_ASM_Stmt::print(std::ostream &os) { label->print(os); }
 
 void Move_ASM_Stmt::print(std::ostream &os) {
-    if (store || stack)
-        return;
+    os << SPACE;
     if (movf)
         os << "movf";
     else if (movt)
         os << "movt";
-    else
+    else if (store) {
+        switch (type) {
+        case Opd_Type::FLOAT:
+            os << "s.d";
+            break;
+        case Opd_Type::TEMP:
+        case Opd_Type::VAR:
+            if (var_type == Type::FLOAT) {
+                os << "s.d";
+                break;
+            }
+        default:
+            os << "sw";
+        }
+    } else
         switch (type) {
         case Opd_Type::FLOAT:
             os << "li.d";
@@ -173,11 +199,10 @@ void ASM_Code::print(std::ostream &os) {
 
 void Func_Ast::print_asm(std::ostream &os) {
     if (!asm_code->is_empty()) {
-        // os << "**PROCEDURE: " << proc_table->get_name() << std::endl;
-        // os << "**BEGIN: RTL Statements" << std::endl;
-        // tacCode->print_rtl(os);
+        os << SPACE << ".text" << std::endl;
+        os << SPACE << ".globl " << get_name() << std::endl;
+        os << get_name() << ":" << std::endl;
         asm_code->print(os);
-        // os << "**END: RTL Statements" << std::endl;
     }
 }
 

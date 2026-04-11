@@ -285,10 +285,11 @@ class Function_Call_RTL_Stmt : public RTL_Stmt {
 
 class Stack_RTL_Stmt : public RTL_Stmt {
     std::shared_ptr<RTL_Register_Opd> reg;
+    Type var_type;
 
   public:
-    Stack_RTL_Stmt();
-    Stack_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>);
+    Stack_RTL_Stmt(Type);
+    Stack_RTL_Stmt(std::shared_ptr<RTL_Register_Opd>, Type);
     void print(std::ostream &) override;
     std::shared_ptr<ASM_Code>
         build_asm(std::shared_ptr<ProcSymbolTable>) override;

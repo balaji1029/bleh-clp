@@ -1,4 +1,5 @@
 #include "register.hh"
+#include "asm.hh"
 #include "rtl.hh"
 
 Register::Register(std::string name)
@@ -50,6 +51,8 @@ RegisterPool::RegisterPool() {
         float_arg_regs.push_back(std::make_shared<RTL_Register_Opd>(
             std::make_shared<Register>(reg_name), Type::FLOAT));
     }
+    asmSp = std::make_shared<ASM_Register_Opd>(std::make_shared<Register>("sp"),
+                                               Type::INT);
 }
 
 std::shared_ptr<RTL_Register_Opd>
@@ -134,3 +137,5 @@ std::shared_ptr<RTL_Register_Opd> RegisterPool::getV1() {
     v1->getReg()->setTemp(nullptr);
     return v1;
 }
+
+std::shared_ptr<ASM_Register_Opd> RegisterPool::getAsmSp() { return asmSp; }
