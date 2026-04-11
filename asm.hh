@@ -7,6 +7,10 @@
 #include <memory>
 #include <variant>
 
+enum class Binary_Opd_Type;
+enum class Opd_Type;
+
+
 class ASM {
   public:
     virtual void print(std::ostream &) = 0;

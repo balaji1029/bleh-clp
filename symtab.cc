@@ -145,8 +145,7 @@ std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::get_return_tac_opd() {
     return return_tac_opd;
 }
 
-void ProcSymbolTable::set_return_tac_opd(
-    std::shared_ptr<Variable_TAC_Opd> opd) {
+void ProcSymbolTable::set_return_tac_opd(std::shared_ptr<Variable_TAC_Opd> opd) {
     return_tac_opd = opd;
 }
 
