@@ -1,4 +1,5 @@
 #include "compiler.hh"
+#include "backward_flow.hh"
 
 Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     int opt;
@@ -56,6 +57,8 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                 flags.sa_rtl = true;
             } else if (std::string(long_opts[opt_idx].name) == "sa-rtl") {
                 flags.sa_rtl = true;
+            } else if (std::string(long_opts[opt_idx].name) == "optimize") {
+                flags.optimize = true;
             }
             break;
         default:
@@ -154,6 +157,9 @@ int Compiler::run() {
         else
             root_ast->print_tac(output_tac_file);
     }
+
+    if (flags.optimize)
+        root_ast->optimize();
 
     if (flags.sa_tac)
         return status;

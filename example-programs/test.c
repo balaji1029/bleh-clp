@@ -34,15 +34,15 @@ void main(bool d) {
     h = g + h;
     h = g - h;
 
-    do {
-        b =(a < b)?(b + 1):b;
-        print b;
-    }
-    while ((a <= b)?(a > b):(a < b));
+    // do {
+    //     b =(a < b)?(b + 1):b;
+    //     print b;
+    // }
+    // while ((a <= b)?(a > b):(a < b));
 
-    while (d) {
-        print a;
-    }
+    // while (d) {
+    //     print a;
+    // }
 
     if (d) {
         print a;

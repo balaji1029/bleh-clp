@@ -40,6 +40,11 @@ enum class Binary_Opd_Type {
     NE
 };
 
+class TAC_Code;
+class Printable_Opd;
+class Str_Const_TAC_Opd;
+class RTL_Code;
+
 inline std::string to_string(Binary_Opd_Type opd_type) {
     switch (opd_type) {
     case Binary_Opd_Type::AND:
@@ -522,11 +527,15 @@ class Func_Ast : public Ast {
 
     void build_tac(std::shared_ptr<ProcSymbolTable>);
 
+    void optimize();
+
     void build_rtl();
 
     void print_rtl(std::ostream &os);
 
     void build_asm();
+
+    void build_cfg();
 
     std::shared_ptr<ProcSymbolTable> get_symtab() { return proc_table; }
 
@@ -547,6 +556,10 @@ class Root_Ast : public Ast {
 
     /* Print to the given output stream */
     void print(std::ostream &os, std::string &level) const;
+
+    void build_cfg();
+
+    void optimize();
 
     void build_tac(std::shared_ptr<GlobalSymbolTable>);
 

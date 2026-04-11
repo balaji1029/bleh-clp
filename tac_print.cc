@@ -41,43 +41,55 @@ void Function_Call_TAC_Opd::print(std::ostream &os) {
 }
 
 void Function_Call_TAC_Stmt::print(std::ostream &os) {
+    if (is_leader())
+        os << "Leader" << std::endl;
     os << SPACE;
     opd->print(os);
-    os << "\n";
+    os << "" << std::endl;
 }
 
 void Return_TAC_Stmt::print(std::ostream &os) {
+    if (is_leader())
+        os << "Leader" << std::endl;
     os << SPACE;
     os << "return ";
     opd->print(os);
-    os << "\n";
+    os << "" << std::endl;
 }
 
 void Assign_TAC_Stmt::print(std::ostream &os) {
+    if (is_leader())
+        os << "Leader" << std::endl;
     os << SPACE;
     lOpd->print(os);
     os << " = ";
     expr->print(os);
-    os << "\n";
+    os << "" << std::endl;
 }
 
 void Goto_TAC_Stmt::print(std::ostream &os) {
+    if (is_leader())
+        os << "Leader" << std::endl;
     os << SPACE;
     os << "goto ";
     label->print(os);
-    os << "\n";
+    os << "" << std::endl;
 }
 
 void If_Goto_TAC_Stmt::print(std::ostream &os) {
+    if (is_leader())
+        os << "Leader" << std::endl;
     os << SPACE;
     os << "if(";
     cond->print(os);
     os << ") goto ";
     label->print(os);
-    os << "\n";
+    os << "" << std::endl;
 }
 
 void IO_TAC_Stmt::print(std::ostream &os) {
+    if (is_leader())
+        os << "Leader" << std::endl;
     os << SPACE;
     switch (opd) {
     case IO_Opd::WRITE:
@@ -89,12 +101,14 @@ void IO_TAC_Stmt::print(std::ostream &os) {
         break;
     }
     var->print(os);
-    os << "\n";
+    os << "" << std::endl;
 }
 
 void Label_TAC_Stmt::print(std::ostream &os) {
+    if (is_leader())
+        os << "Leader" << std::endl;
     label->print(os);
-    os << ":\n";
+    os << ":" << std::endl;
 }
 
 void TAC_Code::print(std::ostream &os) {
@@ -116,8 +130,9 @@ void Root_Ast::print_tac(std::ostream &os) {
 void Func_Ast::print_tac(std::ostream &os) {
     if (code->is_empty())
         return;
-    os << "**PROCEDURE: " << proc_table->get_name() << "\n";
-    os << "**BEGIN: Three Address Code Statements\n";
+    // code->mark_leaders();
+    os << "**PROCEDURE: " << proc_table->get_name() << "" << std::endl;
+    os << "**BEGIN: Three Address Code Statements" << std::endl;
     code->print(os);
-    os << "**END: Three Address Code Statements\n";
+    os << "**END: Three Address Code Statements" << std::endl;
 }

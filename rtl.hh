@@ -1,5 +1,6 @@
 #pragma once
 
+#include "asm.hh"
 #include "register.hh"
 #include "symtab.hh"
 #include <iostream>

@@ -178,88 +178,66 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\n\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
         fi
 
-        if [[ ! -f "$toks_file" && -f "$ref_toks_file" ]]; then
-            echo -e "\n\e[31mERROR:\e[0m .toks file not generated for $file by our sclp with flag $flag"
-            continue
-        elif [[ -f "$toks_file" && -f "$ref_toks_file" ]]; then
-            diff -Bw "$toks_file" "$ref_toks_file"
-            if [[ $? -ne 0 ]]; then
-                echo "in the $file with flag $flag"
-            fi
-            # echo $?
-        fi
-        if [[ ! -f "$ast_file" && -f "$ref_ast_file" ]]; then
-            echo -e "\n\e[31mERROR:\e[0m .ast file not generated for $file by our sclp with flag $flag"
-            continue
-        elif [[ -f "$ast_file" && -f "$ref_ast_file" ]]; then
-            diff -Bw "$ast_file" "$ref_ast_file"
-            if [[ $? -ne 0 ]]; then
-                echo "in the $file with flag $flag"
-            fi
-        fi
-        if [[ ! -f "$tac_file" && -f "$ref_tac_file" ]]; then
-            echo -e "\n\e[31mERROR:\e[0m .tac file not generated for $file by our sclp with flag $flag"
-            continue
-        elif [[ -f "$tac_file" && -f "$ref_tac_file" ]]; then
-            diff -Bw "$tac_file" "$ref_tac_file"
-            if [[ $? -ne 0 ]]; then
-                echo "in the $file with flag $flag"
-            fi
-        fi
-        if [[ ! -f "$rtl_file" && -f "$ref_rtl_file" ]]; then
-            echo -e "\n\e[31mERROR:\e[0m .rtl file not generated for $file by our sclp with flag $flag"
-            continue
-        elif [[ -f "$rtl_file" && -f "$ref_rtl_file" ]]; then
-            sed -i 's/;;.*//' "$ref_rtl_file"
-            diff -Bw "$rtl_file" "$ref_rtl_file"
-            if [[ $? -ne 0 ]]; then
-                echo "in the $file with flag $flag"
-            fi
-        fi
-        if [[ ! -f "$sym_file" && -f "$ref_sym_file" ]]; then
-            echo -e "\n\e[31mERROR:\e[0m .sym file not generated for $file by our sclp with flag $flag"
-            continue
-        elif [[ -f "$sym_file" && -f "$ref_sym_file" ]]; then
-            diff -Bw "$sym_file" "$ref_sym_file"
-            if [[ $? -ne 0 ]]; then
-                echo "in the $file with flag $flag"
-            fi
-        fi
-        if [[ ! -f "$spim_file" && -f "$ref_spim_file" ]]; then
-            echo -e "\n\e[31mERROR:\e[0m .spim file not generated for $file by our sclp with flag $flag"
-            continue
-        elif [[ -f "$spim_file" && -f "$ref_spim_file" ]]; then
-            # diff -Bw <(grep -vE '^\s*(#|$)' "$spim_file") <(grep -vE '^\s*(#|$)' "$ref_spim_file")
-            sed -i 's/#.*//' "$ref_spim_file"
-            diff -Bw "$spim_file" "$ref_spim_file"
-            if [[ $? -ne 0 ]]; then
-                echo "in the $file with flag $flag"
-            fi
-        fi
-
-        if [[ $ref_rc -ne 0 ]]; then
-            continue
-        fi
-
-        # if [[ -f "$input_file" ]]; then
-        #     spim -f $ref_spim_file < $input_file > $ref_output_file
-        #     spim -f $spim_file < $input_file > $output_file
-        # else
-        #     spim -f $ref_spim_file > $ref_output_file
-        #     spim -f $spim_file > $output_file
+        # if [[ $ref_rc -ne 0 ]]; then
+        #     continue
         # fi
 
-        # diff -Bw "$ref_output_file" "$output_file"
-        # if [[ $? -ne 0 ]]; then
-        #     echo "in the $file"
+        # if [[ ! -f "$toks_file" && -f "$ref_toks_file" ]]; then
+        #     echo -e "\n\e[31mERROR:\e[0m .toks file not generated for $file by our sclp with flag $flag"
+        #     continue
+        # elif [[ -f "$toks_file" && -f "$ref_toks_file" ]]; then
+        #     diff -Bw "$toks_file" "$ref_toks_file"
+        #     if [[ $? -ne 0 ]]; then
+        #         echo "in the $file"
+        #     fi
+        #     # echo $?
         # fi
-        
-        rm -f "$toks_file" "$ref_toks_file"
-        rm -f "$ast_file" "$ref_ast_file"
-        rm -f "$tac_file" "$ref_tac_file"
-        rm -f "$sym_file" "$ref_sym_file"
-        rm -f "$rtl_file" "$ref_rtl_file"
-        rm -f "$spim_file" "$ref_spim_file"
+        # if [[ ! -f "$ast_file" && -f "$ref_ast_file" ]]; then
+        #     echo -e "\n\e[31mERROR:\e[0m .ast file not generated for $file by our sclp with flag $flag"
+        #     continue
+        # elif [[ -f "$ast_file" && -f "$ref_ast_file" ]]; then
+        #     diff -Bw "$ast_file" "$ref_ast_file"
+        #     if [[ $? -ne 0 ]]; then
+        #         echo "in the $file"
+        #     fi
+        # fi
+        # if [[ ! -f "$tac_file" && -f "$ref_tac_file" ]]; then
+        #     echo -e "\n\e[31mERROR:\e[0m .tac file not generated for $file by our sclp with flag $flag"
+        #     continue
+        # elif [[ -f "$tac_file" && -f "$ref_tac_file" ]]; then
+        #     diff -Bw "$tac_file" "$ref_tac_file"
+        #     if [[ $? -ne 0 ]]; then
+        #         echo "in the $file"
+        #     fi
+        # fi
+        # if [[ ! -f "$rtl_file" && -f "$ref_rtl_file" ]]; then
+        #     echo -e "\n\e[31mERROR:\e[0m .rtl file not generated for $file by our sclp with flag $flag"
+        #     continue
+        # elif [[ -f "$rtl_file" && -f "$ref_rtl_file" ]]; then
+        #     sed -i 's/;;.*//' "$ref_rtl_file"
+        #     diff -Bw "$rtl_file" "$ref_rtl_file"
+        #     if [[ $? -ne 0 ]]; then
+        #         echo "in the $file"
+        #     fi
+        # fi
+        # if [[ ! -f "$sym_file" && -f "$ref_sym_file" ]]; then
+        #     echo -e "\n\e[31mERROR:\e[0m .sym file not generated for $file by our sclp with flag $flag"
+        #     continue
+        # elif [[ -f "$sym_file" && -f "$ref_sym_file" ]]; then
+        #     diff -Bw "$sym_file" "$ref_sym_file"
+        #     if [[ $? -ne 0 ]]; then
+        #         echo "in the $file"
+        #     fi
+        # fi
+        # if [[ ! -f "$spim_file" && -f "$ref_spim_file" ]]; then
+        #     echo -e "\n\e[31mERROR:\e[0m .spim file not generated for $file by our sclp with flag $flag"
+        #     continue
+        # elif [[ -f "$spim_file" && -f "$ref_spim_file" ]]; then
+        #     diff -Bw <(grep -vE '^\s*(#|$)' "$spim_file") <(grep -vE '^\s*(#|$)' "$ref_spim_file")
+        #     if [[ $? -ne 0 ]]; then
+        #         echo "in the $file"
+        #     fi
+        # fi
     done
 
 done

@@ -28,6 +28,8 @@ struct flags_t {
     bool sa_tac = false;
     bool sa_rtl = false;
 
+    bool optimize = false;
+
     bool demo = false;
 };
 
