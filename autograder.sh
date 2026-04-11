@@ -122,12 +122,15 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     # echo "Processing $file"
     printf "\r %d files done... Processing $file                 " "$count"
 
+    input_file="${file}.input"
+
     toks_file="${file}.toks"
     ast_file="${file}.ast"
     tac_file="${file}.tac"
     rtl_file="${file}.rtl"
     sym_file="${file}.sym"
     spim_file="${file}.spim"
+    output_file="${file}.out"
 
     ref_toks_file="${file}.A5.toks"
     ref_ast_file="${file}.A5.ast"
@@ -135,6 +138,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     ref_rtl_file="${file}.A5.rtl"
     ref_sym_file="${file}.A5.sym"
     ref_spim_file="${file}.A5.spim"
+    ref_output_file="${file}.A5.out"
 
     rm -f "$toks_file" "$ref_toks_file"
     rm -f "$ast_file" "$ref_ast_file"
@@ -142,6 +146,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$rtl_file" "$ref_rtl_file"
     rm -f "$sym_file" "$ref_sym_file"
     rm -f "$spim_file" "$ref_spim_file"
+    rm -f "$output_file" "$ref_output_file"
 
     for flag in "${flags[@]}"; do
         reference-implementations/A5-sclp "$file" $flag 2>/dev/null
@@ -161,9 +166,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\n\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
         fi
 
-        # if [[ $ref_rc -ne 0 ]]; then
-        #     continue
-        # fi
+        
 
         if [[ ! -f "$toks_file" && -f "$ref_toks_file" ]]; then
             echo -e "\n\e[31mERROR:\e[0m .toks file not generated for $file by our sclp with flag $flag"
@@ -223,6 +226,24 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
                 echo "in the $file"
             fi
         fi
+
+        if [[ $ref_rc -ne 0 ]]; then
+            continue
+        fi
+
+        if [[ -f "$input_file" ]]; then
+            spim -f $ref_spim_file < $input_file > $ref_output_file
+            spim -f $spim_file < $input_file > $output_file
+        else
+            spim -f $ref_spim_file > $ref_output_file
+            spim -f $spim_file > $output_file
+        fi
+
+        diff -Bw "$ref_output_file" "$output_file"
+        if [[ $? -ne 0 ]]; then
+            echo "in the $file"
+        fi
+    
     done
     # rm -f "$toks_file" "$ref_toks_file"
     # rm -f "$ast_file" "$ref_ast_file"
