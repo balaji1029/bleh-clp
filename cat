@@ -1,0 +1,146 @@
+
+=================================================================
+==21732==ERROR: LeakSanitizer: detected memory leaks
+
+Indirect leak of 120 byte(s) in 1 object(s) allocated from:
+    #0 0x7f108dab44c8 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x555cb6a9e88d in std::__new_allocator<std::_Sp_counted_ptr_inplace<RTL_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*) (/home/coffre-user/JAN2026_group_75/sclp+0x16488d)
+    #2 0x555cb6a9d652 in std::allocator_traits<std::allocator<std::_Sp_counted_ptr_inplace<RTL_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >::allocate(std::allocator<std::_Sp_counted_ptr_inplace<RTL_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&, unsigned long) (/home/coffre-user/JAN2026_group_75/sclp+0x163652)
+    #3 0x555cb6a9c401 in std::__allocated_ptr<std::allocator<std::_Sp_counted_ptr_inplace<RTL_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > > std::__allocate_guarded<std::allocator<std::_Sp_counted_ptr_inplace<RTL_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >(std::allocator<std::_Sp_counted_ptr_inplace<RTL_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&) /usr/include/c++/12/bits/allocated_ptr.h:98
+    #4 0x555cb6a9b3f1 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<RTL_Register_Opd, std::allocator<void>, std::shared_ptr<Register>, Type>(RTL_Register_Opd*&, std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<Register>&&, Type&&) /usr/include/c++/12/bits/shared_ptr_base.h:969
+    #5 0x555cb6a99e5b in std::__shared_ptr<RTL_Register_Opd, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>, std::shared_ptr<Register>, Type>(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<Register>&&, Type&&) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #6 0x555cb6a992f3 in std::shared_ptr<RTL_Register_Opd>::shared_ptr<std::allocator<void>, std::shared_ptr<Register>, Type>(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<Register>&&, Type&&) /usr/include/c++/12/bits/shared_ptr.h:464
+    #7 0x555cb6a987c8 in std::shared_ptr<RTL_Register_Opd> std::make_shared<RTL_Register_Opd, std::shared_ptr<Register>, Type>(std::shared_ptr<Register>&&, Type&&) /usr/include/c++/12/bits/shared_ptr.h:1010
+    #8 0x555cb6a93201 in RegisterPool::RegisterPool() /home/coffre-user/JAN2026_group_75/register.cc:55
+    #9 0x555cb69f3ca1 in void std::_Construct<RegisterPool>(RegisterPool*) (/home/coffre-user/JAN2026_group_75/sclp+0xb9ca1)
+    #10 0x555cb69ef6cb in void std::allocator_traits<std::allocator<void> >::construct<RegisterPool>(std::allocator<void>&, RegisterPool*) /usr/include/c++/12/bits/alloc_traits.h:635
+    #11 0x555cb69eaf82 in std::_Sp_counted_ptr_inplace<RegisterPool, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_Sp_counted_ptr_inplace<>(std::allocator<void>) /usr/include/c++/12/bits/shared_ptr_base.h:604
+    #12 0x555cb69e5c8a in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<RegisterPool, std::allocator<void>>(RegisterPool*&, std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:971
+    #13 0x555cb69dff46 in std::__shared_ptr<RegisterPool, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #14 0x555cb69dadb2 in std::shared_ptr<RegisterPool>::shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr.h:464
+    #15 0x555cb69d6735 in std::shared_ptr<RegisterPool> std::make_shared<RegisterPool>() (/home/coffre-user/JAN2026_group_75/sclp+0x9c735)
+    #16 0x555cb69c4c3f in ProcSymbolTable::ProcSymbolTable(std::shared_ptr<FuncEntry>, std::shared_ptr<GlobalSymbolTable>) /home/coffre-user/JAN2026_group_75/symtab.cc:129
+    #17 0x555cb69f57cb in void std::_Construct<ProcSymbolTable, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(ProcSymbolTable*, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) (/home/coffre-user/JAN2026_group_75/sclp+0xbb7cb)
+    #18 0x555cb69f2b26 in void std::allocator_traits<std::allocator<void> >::construct<ProcSymbolTable, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::allocator<void>&, ProcSymbolTable*, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/alloc_traits.h:635
+    #19 0x555cb69edea1 in std::_Sp_counted_ptr_inplace<ProcSymbolTable, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_Sp_counted_ptr_inplace<std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) (/home/coffre-user/JAN2026_group_75/sclp+0xb3ea1)
+    #20 0x555cb69e9389 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<ProcSymbolTable, std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(ProcSymbolTable*&, std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) (/home/coffre-user/JAN2026_group_75/sclp+0xaf389)
+    #21 0x555cb69e2e35 in std::__shared_ptr<ProcSymbolTable, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #22 0x555cb69dd48b in std::shared_ptr<ProcSymbolTable>::shared_ptr<std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/shared_ptr.h:464
+    #23 0x555cb69d8650 in std::shared_ptr<ProcSymbolTable> std::make_shared<ProcSymbolTable, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/shared_ptr.h:1010
+    #24 0x555cb69cbb89 in GlobalSymbolTable::new_proc_symtab(Type, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::pair<Type, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<Type, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) /home/coffre-user/JAN2026_group_75/symtab.cc:423
+    #25 0x555cb6967c28 in yy::parser::parse() /home/coffre-user/JAN2026_group_75/y.y:198
+    #26 0x555cb695c460 in Compiler::parse() /home/coffre-user/JAN2026_group_75/compiler.cc:205
+    #27 0x555cb695b315 in Compiler::run() /home/coffre-user/JAN2026_group_75/compiler.cc:116
+    #28 0x555cb69578c1 in main /home/coffre-user/JAN2026_group_75/main.cc:6
+    #29 0x7f108d526249 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+Indirect leak of 112 byte(s) in 1 object(s) allocated from:
+    #0 0x7f108dab44c8 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x555cb69f637d in std::__new_allocator<std::_Sp_counted_ptr_inplace<Temporary_TAC_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*) /usr/include/c++/12/bits/new_allocator.h:137
+    #2 0x555cb69efd10 in std::allocator_traits<std::allocator<std::_Sp_counted_ptr_inplace<Temporary_TAC_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >::allocate(std::allocator<std::_Sp_counted_ptr_inplace<Temporary_TAC_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&, unsigned long) (/home/coffre-user/JAN2026_group_75/sclp+0xb5d10)
+    #3 0x555cb69eb3dd in std::__allocated_ptr<std::allocator<std::_Sp_counted_ptr_inplace<Temporary_TAC_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > > std::__allocate_guarded<std::allocator<std::_Sp_counted_ptr_inplace<Temporary_TAC_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >(std::allocator<std::_Sp_counted_ptr_inplace<Temporary_TAC_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&) (/home/coffre-user/JAN2026_group_75/sclp+0xb13dd)
+    #4 0x555cb69e63dc in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<Temporary_TAC_Opd, std::allocator<void>, int>(Temporary_TAC_Opd*&, std::_Sp_alloc_shared_tag<std::allocator<void> >, int&&) /usr/include/c++/12/bits/shared_ptr_base.h:969
+    #5 0x555cb69e098f in std::__shared_ptr<Temporary_TAC_Opd, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>, int>(std::_Sp_alloc_shared_tag<std::allocator<void> >, int&&) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #6 0x555cb69db421 in std::shared_ptr<Temporary_TAC_Opd>::shared_ptr<std::allocator<void>, int>(std::_Sp_alloc_shared_tag<std::allocator<void> >, int&&) /usr/include/c++/12/bits/shared_ptr.h:464
+    #7 0x555cb69d6d31 in std::shared_ptr<Temporary_TAC_Opd> std::make_shared<Temporary_TAC_Opd, int>(int&&) /usr/include/c++/12/bits/shared_ptr.h:1010
+    #8 0x555cb69c5a51 in ProcSymbolTable::getNewTemp() /home/coffre-user/JAN2026_group_75/symtab.cc:192
+    #9 0x555cb6a01de7 in Function_Call_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/tac.cc:278
+    #10 0x555cb6a07910 in Assignment_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/tac.cc:482
+    #11 0x555cb6a08db2 in Sequence_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/tac.cc:511
+    #12 0x555cb6a0c655 in Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/tac.cc:635
+    #13 0x555cb6a0cd78 in Root_Ast::build_tac(std::shared_ptr<GlobalSymbolTable>) /home/coffre-user/JAN2026_group_75/tac.cc:651
+    #14 0x555cb695b7a0 in Compiler::run() /home/coffre-user/JAN2026_group_75/compiler.cc:141
+    #15 0x555cb69578c1 in main /home/coffre-user/JAN2026_group_75/main.cc:6
+    #16 0x7f108d526249 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+Indirect leak of 72 byte(s) in 1 object(s) allocated from:
+    #0 0x7f108dab44c8 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x555cb6a9e357 in std::__new_allocator<std::_Sp_counted_ptr_inplace<Register, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*) /usr/include/c++/12/bits/new_allocator.h:137
+    #2 0x555cb6a9ce9c in std::allocator<std::_Sp_counted_ptr_inplace<Register, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long) /usr/include/c++/12/bits/allocator.h:188
+    #3 0x555cb6a9ce9c in std::allocator_traits<std::allocator<std::_Sp_counted_ptr_inplace<Register, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >::allocate(std::allocator<std::_Sp_counted_ptr_inplace<Register, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&, unsigned long) /usr/include/c++/12/bits/alloc_traits.h:464
+    #4 0x555cb6a9bdf5 in std::__allocated_ptr<std::allocator<std::_Sp_counted_ptr_inplace<Register, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > > std::__allocate_guarded<std::allocator<std::_Sp_counted_ptr_inplace<Register, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >(std::allocator<std::_Sp_counted_ptr_inplace<Register, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&) /usr/include/c++/12/bits/allocated_ptr.h:98
+    #5 0x555cb6a9b7e8 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<Register, std::allocator<void>, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(Register*&, std::_Sp_alloc_shared_tag<std::allocator<void> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) /usr/include/c++/12/bits/shared_ptr_base.h:969
+    #6 0x555cb6a9a19b in std::__shared_ptr<Register, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #7 0x555cb6a9967d in std::shared_ptr<Register>::shared_ptr<std::allocator<void>, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) /usr/include/c++/12/bits/shared_ptr.h:464
+    #8 0x555cb6a98a4f in std::shared_ptr<Register> std::make_shared<Register, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) /usr/include/c++/12/bits/shared_ptr.h:1010
+    #9 0x555cb6a931bc in RegisterPool::RegisterPool() /home/coffre-user/JAN2026_group_75/register.cc:56
+    #10 0x555cb69f3ca1 in void std::_Construct<RegisterPool>(RegisterPool*) (/home/coffre-user/JAN2026_group_75/sclp+0xb9ca1)
+    #11 0x555cb69ef6cb in void std::allocator_traits<std::allocator<void> >::construct<RegisterPool>(std::allocator<void>&, RegisterPool*) /usr/include/c++/12/bits/alloc_traits.h:635
+    #12 0x555cb69eaf82 in std::_Sp_counted_ptr_inplace<RegisterPool, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_Sp_counted_ptr_inplace<>(std::allocator<void>) /usr/include/c++/12/bits/shared_ptr_base.h:604
+    #13 0x555cb69e5c8a in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<RegisterPool, std::allocator<void>>(RegisterPool*&, std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:971
+    #14 0x555cb69dff46 in std::__shared_ptr<RegisterPool, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #15 0x555cb69dadb2 in std::shared_ptr<RegisterPool>::shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr.h:464
+    #16 0x555cb69d6735 in std::shared_ptr<RegisterPool> std::make_shared<RegisterPool>() (/home/coffre-user/JAN2026_group_75/sclp+0x9c735)
+    #17 0x555cb69c4c3f in ProcSymbolTable::ProcSymbolTable(std::shared_ptr<FuncEntry>, std::shared_ptr<GlobalSymbolTable>) /home/coffre-user/JAN2026_group_75/symtab.cc:129
+    #18 0x555cb69f57cb in void std::_Construct<ProcSymbolTable, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(ProcSymbolTable*, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) (/home/coffre-user/JAN2026_group_75/sclp+0xbb7cb)
+    #19 0x555cb69f2b26 in void std::allocator_traits<std::allocator<void> >::construct<ProcSymbolTable, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::allocator<void>&, ProcSymbolTable*, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/alloc_traits.h:635
+    #20 0x555cb69edea1 in std::_Sp_counted_ptr_inplace<ProcSymbolTable, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_Sp_counted_ptr_inplace<std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) (/home/coffre-user/JAN2026_group_75/sclp+0xb3ea1)
+    #21 0x555cb69e9389 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<ProcSymbolTable, std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(ProcSymbolTable*&, std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) (/home/coffre-user/JAN2026_group_75/sclp+0xaf389)
+    #22 0x555cb69e2e35 in std::__shared_ptr<ProcSymbolTable, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #23 0x555cb69dd48b in std::shared_ptr<ProcSymbolTable>::shared_ptr<std::allocator<void>, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/shared_ptr.h:464
+    #24 0x555cb69d8650 in std::shared_ptr<ProcSymbolTable> std::make_shared<ProcSymbolTable, std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable> >(std::shared_ptr<FuncEntry>&, std::shared_ptr<GlobalSymbolTable>&&) /usr/include/c++/12/bits/shared_ptr.h:1010
+    #25 0x555cb69cbb89 in GlobalSymbolTable::new_proc_symtab(Type, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::pair<Type, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<Type, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) /home/coffre-user/JAN2026_group_75/symtab.cc:423
+    #26 0x555cb6967c28 in yy::parser::parse() /home/coffre-user/JAN2026_group_75/y.y:198
+    #27 0x555cb695c460 in Compiler::parse() /home/coffre-user/JAN2026_group_75/compiler.cc:205
+    #28 0x555cb695b315 in Compiler::run() /home/coffre-user/JAN2026_group_75/compiler.cc:116
+    #29 0x555cb69578c1 in main /home/coffre-user/JAN2026_group_75/main.cc:6
+    #30 0x7f108d526249 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+Indirect leak of 48 byte(s) in 1 object(s) allocated from:
+    #0 0x7f108dab44c8 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x555cb6a9e5e0 in std::__new_allocator<std::_Sp_counted_ptr_inplace<ASM_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*) /usr/include/c++/12/bits/new_allocator.h:137
+    #2 0x555cb6a9d26a in std::allocator<std::_Sp_counted_ptr_inplace<ASM_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long) /usr/include/c++/12/bits/allocator.h:188
+    #3 0x555cb6a9d26a in std::allocator_traits<std::allocator<std::_Sp_counted_ptr_inplace<ASM_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >::allocate(std::allocator<std::_Sp_counted_ptr_inplace<ASM_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&, unsigned long) /usr/include/c++/12/bits/alloc_traits.h:464
+    #4 0x555cb6a9c0eb in std::__allocated_ptr<std::allocator<std::_Sp_counted_ptr_inplace<ASM_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > > std::__allocate_guarded<std::allocator<std::_Sp_counted_ptr_inplace<ASM_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >(std::allocator<std::_Sp_counted_ptr_inplace<ASM_Register_Opd, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&) /usr/include/c++/12/bits/allocated_ptr.h:98
+    #5 0x555cb6ab267f in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<ASM_Register_Opd, std::allocator<void>, std::shared_ptr<Register>&, Type&>(ASM_Register_Opd*&, std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<Register>&, Type&) /usr/include/c++/12/bits/shared_ptr_base.h:969
+    #6 0x555cb6aaed51 in std::__shared_ptr<ASM_Register_Opd, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>, std::shared_ptr<Register>&, Type&>(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<Register>&, Type&) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #7 0x555cb6aaac27 in std::shared_ptr<ASM_Register_Opd>::shared_ptr<std::allocator<void>, std::shared_ptr<Register>&, Type&>(std::_Sp_alloc_shared_tag<std::allocator<void> >, std::shared_ptr<Register>&, Type&) /usr/include/c++/12/bits/shared_ptr.h:464
+    #8 0x555cb6aa8501 in std::shared_ptr<ASM_Register_Opd> std::make_shared<ASM_Register_Opd, std::shared_ptr<Register>&, Type&>(std::shared_ptr<Register>&, Type&) /usr/include/c++/12/bits/shared_ptr.h:1010
+    #9 0x555cb6aa0c0e in RTL_Register_Opd::build_asm(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:89
+    #10 0x555cb6aa3f61 in Move_RTL_Stmt::build_asm(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:219
+    #11 0x555cb6aa6fdd in RTL_Code::build_asm(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:292
+    #12 0x555cb6aa75db in Func_Ast::build_asm() /home/coffre-user/JAN2026_group_75/asm.cc:312
+    #13 0x555cb6aa7856 in Root_Ast::build_asm(std::shared_ptr<GlobalSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:318
+    #14 0x555cb695bd12 in Compiler::run() /home/coffre-user/JAN2026_group_75/compiler.cc:176
+    #15 0x555cb69578c1 in main /home/coffre-user/JAN2026_group_75/main.cc:6
+    #16 0x7f108d526249 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+Indirect leak of 40 byte(s) in 1 object(s) allocated from:
+    #0 0x7f108dab44c8 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x555cb69f67d7 in std::__new_allocator<std::_Sp_counted_ptr_inplace<ASM_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*) /usr/include/c++/12/bits/new_allocator.h:137
+    #2 0x555cb69f069e in std::allocator<std::_Sp_counted_ptr_inplace<ASM_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long) /usr/include/c++/12/bits/allocator.h:188
+    #3 0x555cb69f069e in std::allocator_traits<std::allocator<std::_Sp_counted_ptr_inplace<ASM_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >::allocate(std::allocator<std::_Sp_counted_ptr_inplace<ASM_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&, unsigned long) /usr/include/c++/12/bits/alloc_traits.h:464
+    #4 0x555cb69ebc4b in std::__allocated_ptr<std::allocator<std::_Sp_counted_ptr_inplace<ASM_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > > std::__allocate_guarded<std::allocator<std::_Sp_counted_ptr_inplace<ASM_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >(std::allocator<std::_Sp_counted_ptr_inplace<ASM_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&) /usr/include/c++/12/bits/allocated_ptr.h:98
+    #5 0x555cb69e7089 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<ASM_Code, std::allocator<void>>(ASM_Code*&, std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:969
+    #6 0x555cb69e0f4a in std::__shared_ptr<ASM_Code, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #7 0x555cb69dbe62 in std::shared_ptr<ASM_Code>::shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr.h:464
+    #8 0x555cb69d7142 in std::shared_ptr<ASM_Code> std::make_shared<ASM_Code>() /usr/include/c++/12/bits/shared_ptr.h:1010
+    #9 0x555cb6aa0b7b in RTL_Register_Opd::build_asm(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:88
+    #10 0x555cb6aa3f61 in Move_RTL_Stmt::build_asm(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:219
+    #11 0x555cb6aa6fdd in RTL_Code::build_asm(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:292
+    #12 0x555cb6aa75db in Func_Ast::build_asm() /home/coffre-user/JAN2026_group_75/asm.cc:312
+    #13 0x555cb6aa7856 in Root_Ast::build_asm(std::shared_ptr<GlobalSymbolTable>) /home/coffre-user/JAN2026_group_75/asm.cc:318
+    #14 0x555cb695bd12 in Compiler::run() /home/coffre-user/JAN2026_group_75/compiler.cc:176
+    #15 0x555cb69578c1 in main /home/coffre-user/JAN2026_group_75/main.cc:6
+    #16 0x7f108d526249 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+Indirect leak of 40 byte(s) in 1 object(s) allocated from:
+    #0 0x7f108dab44c8 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x555cb6a82ee3 in std::__new_allocator<std::_Sp_counted_ptr_inplace<RTL_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*) /usr/include/c++/12/bits/new_allocator.h:137
+    #2 0x555cb6a78aca in std::allocator<std::_Sp_counted_ptr_inplace<RTL_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long) /usr/include/c++/12/bits/allocator.h:188
+    #3 0x555cb6a78aca in std::allocator_traits<std::allocator<std::_Sp_counted_ptr_inplace<RTL_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >::allocate(std::allocator<std::_Sp_counted_ptr_inplace<RTL_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&, unsigned long) /usr/include/c++/12/bits/alloc_traits.h:464
+    #4 0x555cb6a72305 in std::__allocated_ptr<std::allocator<std::_Sp_counted_ptr_inplace<RTL_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > > std::__allocate_guarded<std::allocator<std::_Sp_counted_ptr_inplace<RTL_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > >(std::allocator<std::_Sp_counted_ptr_inplace<RTL_Code, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> >&) /usr/include/c++/12/bits/allocated_ptr.h:98
+    #5 0x555cb6a69a63 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<RTL_Code, std::allocator<void>>(RTL_Code*&, std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:969
+    #6 0x555cb6a62d06 in std::__shared_ptr<RTL_Code, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr_base.h:1712
+    #7 0x555cb6a5d062 in std::shared_ptr<RTL_Code>::shared_ptr<std::allocator<void>>(std::_Sp_alloc_shared_tag<std::allocator<void> >) /usr/include/c++/12/bits/shared_ptr.h:464
+    #8 0x555cb6a57491 in std::shared_ptr<RTL_Code> std::make_shared<RTL_Code>() /usr/include/c++/12/bits/shared_ptr.h:1010
+    #9 0x555cb6a4c3d9 in Temporary_TAC_Opd::build_rtl(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/rtl.cc:383
+    #10 0x555cb6a4f4bc in Assign_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/rtl.cc:467
+    #11 0x555cb6a557b3 in TAC_Code::build_rtl(std::shared_ptr<ProcSymbolTable>) /home/coffre-user/JAN2026_group_75/rtl.cc:647
+    #12 0x555cb6a55a4c in Func_Ast::build_rtl() /home/coffre-user/JAN2026_group_75/rtl.cc:651
+    #13 0x555cb6a55c26 in Root_Ast::build_rtl() /home/coffre-user/JAN2026_group_75/rtl.cc:655
+    #14 0x555cb695ba4b in Compiler::run() /home/coffre-user/JAN2026_group_75/compiler.cc:156
+    #15 0x555cb69578c1 in main /home/coffre-user/JAN2026_group_75/main.cc:6
+    #16 0x7f108d526249 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+SUMMARY: AddressSanitizer: 432 byte(s) leaked in 6 allocation(s).

@@ -159,12 +159,8 @@ int Compiler::run() {
         root_ast->build_tac(sym_tab);
 
     if (flags.optimize)
-        root_ast->optimize();
-<<<<<<< HEAD
-
-=======
+        root_ast->optimize(sym_tab);
     
->>>>>>> 41d5619 (idk)
     if (flags.show_tac && !flags.sa_ast) {
         if (flags.demo)
             root_ast->print_tac(std::cout);

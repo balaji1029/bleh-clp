@@ -113,9 +113,15 @@ void TAC_Stmt::delete_cfg() {
     successors.clear();
 }
 
-const std::set<std::string> &TAC_Stmt::get_gen() { return gen; }
+const std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> &
+TAC_Stmt::get_gen() {
+    return gen;
+}
 
-const std::set<std::string> &TAC_Stmt::get_kill() { return kill; }
+const std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> &
+TAC_Stmt::get_kill() {
+    return kill;
+}
 
 Function_Call_TAC_Stmt::Function_Call_TAC_Stmt(
     std::shared_ptr<Function_Call_TAC_Opd> opd)
@@ -131,7 +137,7 @@ Return_TAC_Stmt::Return_TAC_Stmt(std::shared_ptr<Variable_TAC_Opd> opd)
 Assign_TAC_Stmt::Assign_TAC_Stmt(std::shared_ptr<TAC_LOpd> lOpd,
                                  std::shared_ptr<TAC_Expr> expr)
     : TAC_Stmt(TAC_Stmt_Type::ASSIGN), lOpd(lOpd), expr(expr) {
-    kill.insert(lOpd->get_name());
+    kill.insert(lOpd->get_ptr());
     gen = expr->get_gen();
 }
 
@@ -146,7 +152,8 @@ If_Goto_TAC_Stmt::If_Goto_TAC_Stmt(std::shared_ptr<Printable_Opd> cond,
 
 IO_TAC_Stmt::IO_TAC_Stmt(IO_Opd opd, std::shared_ptr<Printable_Opd> var)
     : TAC_Stmt(TAC_Stmt_Type::IO), opd(opd), var(var) {
-    std::set<std::string> genset = var->get_gen();
+    std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> genset =
+        var->get_gen();
     switch (opd) {
     case IO_Opd::READ:
         kill.insert(genset.begin(), genset.end());
@@ -173,16 +180,17 @@ Binary_TAC_Opd::Binary_TAC_Opd(std::shared_ptr<Printable_Opd> lOpd,
     : TAC_Expr(TAC_Opd_Type::BINARY), lOpd(lOpd), rOpd(rOpd), opd(opd),
       temp(temp) {}
 
-std::set<std::string> Binary_TAC_Opd::get_gen() {
-    std::set<std::string> gen_set;
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Binary_TAC_Opd::get_gen() {
+    std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> gen_set;
     if ((lOpd->get_opd_type() == TAC_Opd_Type::VAR) ||
         lOpd->get_opd_type() == TAC_Opd_Type::TEMP) {
-        gen_set.insert(std::dynamic_pointer_cast<TAC_LOpd>(lOpd)->get_name());
+        gen_set.insert(std::dynamic_pointer_cast<TAC_LOpd>(lOpd)->get_ptr());
     }
 
     if (rOpd && ((rOpd->get_opd_type() == TAC_Opd_Type::VAR) ||
                  (rOpd->get_opd_type() == TAC_Opd_Type::TEMP))) {
-        gen_set.insert(std::dynamic_pointer_cast<TAC_LOpd>(rOpd)->get_name());
+        gen_set.insert(std::dynamic_pointer_cast<TAC_LOpd>(rOpd)->get_ptr());
     }
 
     return gen_set;
@@ -191,42 +199,48 @@ std::set<std::string> Binary_TAC_Opd::get_gen() {
 Float_Const_TAC_Opd::Float_Const_TAC_Opd(double value)
     : TAC_Expr(TAC_Opd_Type::FLOAT), value(value) {}
 
-std::set<std::string> Float_Const_TAC_Opd::get_gen() {
-    return std::set<std::string>();
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Float_Const_TAC_Opd::get_gen() {
+    return std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>();
 }
 
 Int_Const_TAC_Opd::Int_Const_TAC_Opd(int value)
     : TAC_Expr(TAC_Opd_Type::INT), value(value) {}
 
-std::set<std::string> Int_Const_TAC_Opd::get_gen() {
-    return std::set<std::string>();
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Int_Const_TAC_Opd::get_gen() {
+    return std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>();
 }
 
 Str_Const_TAC_Opd::Str_Const_TAC_Opd(std::string value)
     : TAC_Expr(TAC_Opd_Type::STRING), value(value) {}
 
-std::set<std::string> Str_Const_TAC_Opd::get_gen() {
-    return std::set<std::string>();
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Str_Const_TAC_Opd::get_gen() {
+    return std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>();
 }
 
 Label_TAC_Opd::Label_TAC_Opd() : TAC_Opd(TAC_Opd_Type::LABEL) {
     label_index = index++;
 }
 
-std::set<std::string> Label_TAC_Opd::get_gen() {
-    return std::set<std::string>();
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Label_TAC_Opd::get_gen() {
+    return std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>();
 }
 
 Temporary_TAC_Opd::Temporary_TAC_Opd(int temp_num)
     : TAC_Expr(TAC_Opd_Type::TEMP), temp_num(temp_num) {}
 
-std::set<std::string> Temporary_TAC_Opd::get_gen() {
-    std::set<std::string> gen_set;
-    gen_set.insert(get_name());
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Temporary_TAC_Opd::get_gen() {
+    std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> gen_set;
+    gen_set.insert(get_ptr());
     return gen_set;
 }
 
-std::set<std::string> Variable_TAC_Opd::globals = {};
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    Variable_TAC_Opd::globals = {};
 
 Variable_TAC_Opd::Variable_TAC_Opd(std::shared_ptr<SymTabEntry> entry)
     : TAC_Expr(TAC_Opd_Type::VAR), entry(entry) {
@@ -234,9 +248,10 @@ Variable_TAC_Opd::Variable_TAC_Opd(std::shared_ptr<SymTabEntry> entry)
     //     globals.insert(shared_from_this());
 }
 
-std::set<std::string> Variable_TAC_Opd::get_gen() {
-    std::set<std::string> gen_set;
-    gen_set.insert(get_name());
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Variable_TAC_Opd::get_gen() {
+    std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> gen_set;
+    gen_set.insert(get_ptr());
     return gen_set;
 }
 
@@ -245,10 +260,12 @@ Function_Call_TAC_Opd::Function_Call_TAC_Opd(
     std::vector<std::shared_ptr<Printable_Opd>> args)
     : TAC_Expr(TAC_Opd_Type::CALL), entry(entry), args(args) {}
 
-std::set<std::string> Function_Call_TAC_Opd::get_gen() {
-    std::set<std::string> gen_set;
+std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+Function_Call_TAC_Opd::get_gen() {
+    std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> gen_set;
     for (std::shared_ptr<Printable_Opd> arg : args) {
-        std::set<std::string> tempset = arg->get_gen();
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> tempset =
+            arg->get_gen();
         gen_set.insert(tempset.begin(), tempset.end());
     }
     gen_set.insert(Variable_TAC_Opd::globals.begin(),
@@ -291,7 +308,7 @@ void Name_Expr_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     std::shared_ptr<Variable_TAC_Opd> var_tac =
         std::make_shared<Variable_TAC_Opd>(name);
     if (var_tac->is_global())
-        Variable_TAC_Opd::globals.insert(var_tac->get_name());
+        Variable_TAC_Opd::globals.insert(var_tac->get_ptr());
     var_tac->set_type(get_type());
     place = var_tac;
     code = std::make_shared<TAC_Code>();

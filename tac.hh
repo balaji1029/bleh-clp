@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include <memory>
 #include <set>
+#include <variant>
 
 class SymTabEntry;
 enum class Binary_Opd_Type;
@@ -64,7 +65,8 @@ class TAC_Opd {
 
     TAC_Opd_Type get_opd_type() { return opd_type; }
 
-    virtual std::set<std::string> get_gen() = 0;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() = 0;
 };
 
 class TAC_Expr : public TAC_Opd {
@@ -92,6 +94,8 @@ class TAC_LOpd : virtual public TAC_Expr {
     Type get_type();
 
     virtual std::string get_name() = 0;
+
+    virtual std::variant<std::shared_ptr<SymTabEntry>, int> get_ptr() = 0;
 };
 
 class Printable_Opd : virtual public TAC_Expr {
@@ -120,7 +124,8 @@ class Binary_TAC_Opd : public TAC_Expr {
     std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 };
 
 class Float_Const_TAC_Opd : public Printable_Opd {
@@ -136,7 +141,8 @@ class Float_Const_TAC_Opd : public Printable_Opd {
     std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 };
 
 class Int_Const_TAC_Opd : public Printable_Opd {
@@ -152,7 +158,8 @@ class Int_Const_TAC_Opd : public Printable_Opd {
     std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 };
 
 class Str_Const_TAC_Opd : public Printable_Opd {
@@ -168,7 +175,8 @@ class Str_Const_TAC_Opd : public Printable_Opd {
     std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 };
 
 class Label_TAC_Opd : public TAC_Opd {
@@ -185,8 +193,8 @@ class Label_TAC_Opd : public TAC_Opd {
     std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
-
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 };
 
 class Temporary_TAC_Opd
@@ -206,9 +214,14 @@ class Temporary_TAC_Opd
     std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 
     virtual std::string get_name() { return "temp" + std::to_string(temp_num); }
+
+    std::variant<std::shared_ptr<SymTabEntry>, int> get_ptr() {
+        return temp_num;
+    }
 };
 
 class Variable_TAC_Opd : public TAC_LOpd,
@@ -218,7 +231,7 @@ class Variable_TAC_Opd : public TAC_LOpd,
     std::shared_ptr<SymTabEntry> entry;
 
   public:
-    static std::set<std::string> globals;
+    static std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> globals;
 
     Variable_TAC_Opd(std::shared_ptr<SymTabEntry>);
 
@@ -231,9 +244,12 @@ class Variable_TAC_Opd : public TAC_LOpd,
     virtual std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 
     virtual std::string get_name() { return entry->get_name(); }
+
+    std::variant<std::shared_ptr<SymTabEntry>, int> get_ptr() { return entry; }
 };
 
 class Function_Call_TAC_Opd : public TAC_Expr {
@@ -251,7 +267,8 @@ class Function_Call_TAC_Opd : public TAC_Expr {
     virtual std::shared_ptr<RTL_Code>
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 
-    virtual std::set<std::string> get_gen() override;
+    virtual std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+    get_gen() override;
 };
 
 class TAC_Stmt {
@@ -263,8 +280,8 @@ class TAC_Stmt {
     std::set<std::weak_ptr<TAC_Stmt>, WeakPtrComp> successors;
     std::set<std::weak_ptr<TAC_Stmt>, WeakPtrComp> predecessors;
 
-    std::set<std::string> gen;
-    std::set<std::string> kill;
+    std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> gen;
+    std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> kill;
 
   public:
     TAC_Stmt(TAC_Stmt_Type type) : stmt_type(type) {}
@@ -290,9 +307,9 @@ class TAC_Stmt {
 
     void delete_cfg();
 
-    const std::set<std::string> &get_gen();
+    const std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> &get_gen();
 
-    const std::set<std::string> &get_kill();
+    const std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> &get_kill();
 
     bool is_leader() const;
 };

@@ -125,8 +125,6 @@ class ProcSymbolTable {
 
     std::weak_ptr<GlobalSymbolTable> global_symtab;
 
-    std::unordered_map<std::string, int> string_map;
-
     int num_temps = 0;
 
     int num_stemps = 0;
@@ -254,6 +252,10 @@ class GlobalSymbolTable
     std::shared_ptr<ProcSymbolTable> get_curr_proc_symtab();
 
     std::vector<std::shared_ptr<FuncEntry>> get_funcs() const;
+
+    const std::vector<std::shared_ptr<SymTabEntry>>& get_globals() {
+        return globals;
+    }
 
     /* Finds and returns an `std::optional` if there exists a function of the
      * given name in the Function Symbol Table Entries */
