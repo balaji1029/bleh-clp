@@ -20,8 +20,9 @@
 //     }
 // };
 
-BackwardFlowAnalysis::BackwardFlowAnalysis(std::shared_ptr<TAC_Code> code)
-    : tac_code(code) {
+BackwardFlowAnalysis::BackwardFlowAnalysis(
+    std::shared_ptr<TAC_Code> code, std::shared_ptr<GlobalSymbolTable> symtab)
+    : tac_code(code), symtab(symtab) {
     while (lines_removed) {
         lines_removed = false;
         tac_code->build_cfg();
@@ -38,7 +39,15 @@ void BackwardFlowAnalysis::doAnalysis() {
 
     for (std::shared_ptr<TAC_Stmt> stmt : code) {
         inout.insert({stmt, std::make_shared<Params>()});
+        if (stmt->get_stmt_type() == TAC_Stmt_Type::CALL) {
+            inout.at(stmt)->in.insert(symtab->get_globals().begin(),
+                                      symtab->get_globals().end());
+        }
     }
+    if (code.size() > 0)
+        inout.at(code.back())
+            ->out.insert(symtab->get_globals().begin(),
+                         symtab->get_globals().end());
 
     std::deque<std::shared_ptr<TAC_Stmt>> worklist(code.begin(), code.end());
 
@@ -46,20 +55,23 @@ void BackwardFlowAnalysis::doAnalysis() {
         std::shared_ptr<TAC_Stmt> line = worklist.front();
         worklist.pop_front();
 
-        std::set<std::string> out;
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> out;
 
         for (std::weak_ptr<TAC_Stmt> stmt : line->get_successors()) {
-            std::set<std::string> tempin = inout.at(stmt.lock())->in;
+            std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> tempin =
+                inout.at(stmt.lock())->in;
             out.insert(tempin.begin(), tempin.end());
         }
 
         inout.at(line)->out = out;
 
-        std::set<std::string> new_in;
-        std::set<std::string> gen = line->get_gen();
-        std::set<std::string> kill = line->get_kill();
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> new_in;
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> gen =
+            line->get_gen();
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> kill =
+            line->get_kill();
 
-        std::set<std::string> diff;
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> diff;
 
         std::set_difference(out.begin(), out.end(), kill.begin(), kill.end(),
                             std::inserter(diff, diff.begin()));
@@ -82,25 +94,25 @@ void BackwardFlowAnalysis::remove_lines() {
     for (std::shared_ptr<TAC_Stmt> line : tac_code->get_code()) {
         // line->print(std::cout);
         // std::cout << "IN: ";
-        // for (std::string in : inout.at(line)->in) {
+        // for (std::shared_ptr<SymTabEntry> in : inout.at(line)->in) {
         //     // in->print(std::cout);
         //     std::cout << in << " ";
         // }
         // std::cout << std::endl;
         // std::cout << "OUT: ";
-        // for (std::string in : inout.at(line)->out) {
+        // for (std::shared_ptr<SymTabEntry> in : inout.at(line)->out) {
         //     // in->print(std::cout);
         //     std::cout << in << " ";
         // }
         // std::cout << std::endl;
 
-        std::set<std::string> intersection;
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> intersection;
         std::set_intersection(
             inout.at(line)->out.begin(), inout.at(line)->out.end(),
             line->get_kill().begin(), line->get_kill().end(),
             std::inserter(intersection, intersection.begin()));
-        // std::cout << "Intersection size: " << intersection.size() << std::endl;
-        // line->print(std::cout);
+        // std::cout << "Intersection size: " << intersection.size() <<
+        // std::endl; line->print(std::cout);
         if (intersection.size() == 0) {
             lines_to_remove.push_back(line);
             // } else {
@@ -111,7 +123,8 @@ void BackwardFlowAnalysis::remove_lines() {
     }
 
     for (std::shared_ptr<TAC_Stmt> line : lines_to_remove) {
-        if (line->get_stmt_type() == TAC_Stmt_Type::ASSIGN) {
+        if (line->get_stmt_type() == TAC_Stmt_Type::ASSIGN &&
+            !(std::dynamic_pointer_cast<Assign_TAC_Stmt>(line)->has_call())) {
             lines_removed = true;
             tac_code->remove_line(line);
         }

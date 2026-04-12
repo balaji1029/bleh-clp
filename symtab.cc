@@ -3,8 +3,8 @@
 #include "utils.hh"
 #include <iostream>
 
-#include <map>
 #include <algorithm>
+#include <map>
 
 std::string get_type_str(Type type) {
     std::string binary_expr_type;
@@ -145,7 +145,8 @@ std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::get_return_tac_opd() {
     return return_tac_opd;
 }
 
-void ProcSymbolTable::set_return_tac_opd(std::shared_ptr<Variable_TAC_Opd> opd) {
+void ProcSymbolTable::set_return_tac_opd(
+    std::shared_ptr<Variable_TAC_Opd> opd) {
     return_tac_opd = opd;
 }
 
@@ -570,7 +571,7 @@ void GlobalSymbolTable::print_asm_globals(std::ostream &os) {
     for (auto [a, b] : string_map) {
         my_map.insert({b, a});
     }
-    
+
     for (auto [b, a] : my_map) {
         os << "_str_" << b << ":" << SPACE;
         os << ".asciiz ";

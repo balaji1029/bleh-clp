@@ -141,7 +141,7 @@ int Compiler::run() {
         root_ast->build_tac(sym_tab);
 
     if (flags.optimize)
-        root_ast->optimize();
+        root_ast->optimize(sym_tab);
     
     if (flags.show_tac && !flags.sa_ast) {
         if (flags.demo)

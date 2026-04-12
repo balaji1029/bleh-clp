@@ -576,8 +576,8 @@ void Func_Ast::build_cfg() {
     }
 }
 
-void Func_Ast::optimize() {
-    BackwardFlowAnalysis back(code);
+void Func_Ast::optimize(std::shared_ptr<GlobalSymbolTable> symtab) {
+    BackwardFlowAnalysis back(code, symtab);
 }
 
 // ------------------------------ Root_Ast ------------------------------
@@ -596,10 +596,11 @@ void Root_Ast::build_cfg() {
     }
 }
 
-void Root_Ast::optimize() {
+void Root_Ast::optimize(std::shared_ptr<GlobalSymbolTable> symtab) {
     for (const std::shared_ptr<Func_Ast> &child : funcs) {
-        child->optimize();
+        child->optimize(symtab);
     }
+    Variable_TAC_Opd::globals.clear();
 }
 
 void Root_Ast::print(std::ostream &os, std::string &level) const {

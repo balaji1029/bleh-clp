@@ -527,7 +527,7 @@ class Func_Ast : public Ast {
 
     void build_tac(std::shared_ptr<ProcSymbolTable>);
 
-    void optimize();
+    void optimize(std::shared_ptr<GlobalSymbolTable>);
 
     void build_rtl();
 
@@ -559,7 +559,7 @@ class Root_Ast : public Ast {
 
     void build_cfg();
 
-    void optimize();
+    void optimize(std::shared_ptr<GlobalSymbolTable>);
 
     void build_tac(std::shared_ptr<GlobalSymbolTable>);
 
