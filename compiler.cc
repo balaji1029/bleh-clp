@@ -14,6 +14,7 @@ Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
                                         {"sa-ast", no_argument, 0, 0},
                                         {"sa-tac", no_argument, 0, 0},
                                         {"sa-rtl", no_argument, 0, 0},
+                                        {"sa-asm", no_argument, 0, 0},
                                         {"demo", no_argument, 0, 'd'},
                                         {0, 0, 0, 0}};
 

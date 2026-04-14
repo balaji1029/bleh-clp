@@ -331,7 +331,8 @@ var_decl_item_list
 
 call_statement
     : func_call SEMICOLON {
-        $$ = std::make_shared<Function_Call_Stmt_Ast>($1);
+        if (!Error::get_sa_parse())
+            $$ = std::make_shared<Function_Call_Stmt_Ast>($1);
     }
     ;
 

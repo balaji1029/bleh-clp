@@ -1,6 +1,8 @@
 #include "asm.hh"
 
 #include <iostream>
+#include <map>
+
 void ASM_Double_Const_Opd::print(std::ostream &os) {
     os << std::fixed << std::setprecision(2);
     os << value;
