@@ -605,36 +605,3 @@ int GlobalSymbolTable::addString(std::string str) {
     string_map.emplace(str, id);
     return id;
 }
-
-void GlobalSymbolTable::print_asm_globals(std::ostream &os) {
-    if (globals.size() == 0 && string_map.size() == 0)
-        return;
-
-    os << SPACE << ".data\n";
-
-    for (std::shared_ptr<SymTabEntry> global : globals) {
-        os << global->get_name() << ":" << SPACE;
-        switch (global->get_type()) {
-        case Type::FLOAT:
-            os << ".double 0.0";
-            break;
-        default:
-            os << ".word 0";
-            break;
-        }
-        os << "\n";
-    }
-
-    std::map<int, std::string> my_map;
-
-    for (auto [a, b] : string_map) {
-        my_map.insert({b, a});
-    }
-
-    for (auto [b, a] : my_map) {
-        os << "_str_" << b << ":" << SPACE;
-        os << ".asciiz ";
-        os << a;
-        os << "\n";
-    }
-}
