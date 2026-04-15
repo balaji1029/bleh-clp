@@ -15,6 +15,7 @@ class Variable_TAC_Opd;
 class GlobalSymbolTable;
 class ASM_Code;
 class ASM_Label_Opd;
+class Root_Ast;
 
 /* Type of variable */
 enum class Type { INT, BOOL, FLOAT, STRING, VOID };
@@ -70,6 +71,8 @@ class FuncEntry {
     /* The vector of types of the parameters of the function */
     std::vector<Type> param_types;
 
+    std::vector<std::string> param_names;
+
     /* The bool to check if the function is implemented */
     bool implemented;
 
@@ -92,6 +95,9 @@ class FuncEntry {
 
     /* Gets the vector of parameter types of the function */
     const std::vector<Type> &get_param_types() const;
+
+    const std::vector<std::string> &get_param_names() const;
+
     void set_implemented();
     void set_call_made();
     bool is_implemented() const;
@@ -186,6 +192,8 @@ class ProcSymbolTable {
     std::shared_ptr<ASM_Code> get_asm_epilogue();
 
     std::shared_ptr<ASM_Label_Opd> get_epilogue_label();
+
+    bool is_phantom() { return !(func_entry->is_implemented()); }
 };
 
 /* Class for Global Symbol Table */
@@ -228,6 +236,10 @@ class GlobalSymbolTable
     void new_proc_symtab(Type, const std::string &,
                          const std::vector<std::pair<Type, std::string>> &);
 
+    std::shared_ptr<ProcSymbolTable>
+    new_proc_symtab(Type, const std::string &, const std::vector<Type> &,
+                    const std::vector<std::string> &);
+
     /* Sets the curr_symtab to `std::nullopt` to indicate the current scop to be
      * global */
     void go_global();
@@ -254,6 +266,8 @@ class GlobalSymbolTable
     /* Finds and returns an `std::optional` if there exists a variable of the
      * given name only in the current scope */
     std::optional<std::shared_ptr<SymTabEntry>> find_local(const std::string &);
+
+    void add_fake_procs(std::shared_ptr<Root_Ast>);
 
     void set_offsets();
 

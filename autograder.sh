@@ -1,12 +1,14 @@
 #!/bin/bash
 DIR="example-programs"
 
+declare -a flags
+
 flags=(
-    "--show-tokens --sa-scan",
-    "--show-tokens --sa-parse",
-    "--show-tokens --show-ast --sa-ast",
-    "--show-tokens --show-ast --show-symtab --show-tac --sa-tac",
-    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-rtl",
+    "--show-tokens --sa-scan"
+    "--show-tokens --sa-parse"
+    "--show-tokens --show-ast --sa-ast"
+    "--show-tokens --show-ast --show-symtab --show-tac --sa-tac"
+    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-rtl"
     "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --show-asm"
 )
 
@@ -39,7 +41,7 @@ if [[ "$1" == "test" ]]; then
     rm -f "$spim_file" "$ref_spim_file"
 
     for flag in "${flags[@]}"; do
-        reference-implementations/A5-sclp "$file" $flags
+        reference-implementations/A5-sclp "$file" $flag
         ref_rc=$?
 
         mv "$toks_file" "$ref_toks_file" 2>/dev/null
@@ -62,7 +64,7 @@ if [[ "$1" == "test" ]]; then
         elif [[ -f "$toks_file" && -f "$ref_toks_file" ]]; then
             diff -Bw "$toks_file" "$ref_toks_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
             # echo $?
         fi
@@ -72,7 +74,7 @@ if [[ "$1" == "test" ]]; then
         elif [[ -f "$ast_file" && -f "$ref_ast_file" ]]; then
             diff -Bw "$ast_file" "$ref_ast_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$tac_file" && -f "$ref_tac_file" ]]; then
@@ -81,7 +83,7 @@ if [[ "$1" == "test" ]]; then
         elif [[ -f "$tac_file" && -f "$ref_tac_file" ]]; then
             diff -Bw "$tac_file" "$ref_tac_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$rtl_file" && -f "$ref_rtl_file" ]]; then
@@ -91,7 +93,7 @@ if [[ "$1" == "test" ]]; then
             sed -i 's/;;.*//' "$ref_rtl_file"
             diff -Bw "$rtl_file" "$ref_rtl_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$sym_file" && -f "$ref_sym_file" ]]; then
@@ -100,18 +102,26 @@ if [[ "$1" == "test" ]]; then
         elif [[ -f "$sym_file" && -f "$ref_sym_file" ]]; then
             diff -Bw "$sym_file" "$ref_sym_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$spim_file" && -f "$ref_spim_file" ]]; then
             echo -e "\n\e[31mERROR:\e[0m .spim file not generated for $file by our sclp with flag $flag"
             continue
         elif [[ -f "$spim_file" && -f "$ref_spim_file" ]]; then
-            diff -Bw <(grep -vE '^\s*(#|$)' "$spim_file") <(grep -vE '^\s*(#|$)' "$ref_spim_file")
+            sed -i 's/#.*//' "$ref_spim_file"
+            diff -Bw "$spim_file" "$ref_spim_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
+
+        rm -f "$toks_file" "$ref_toks_file"
+        rm -f "$ast_file" "$ref_ast_file"
+        rm -f "$tac_file" "$ref_tac_file"
+        rm -f "$sym_file" "$ref_sym_file"
+        rm -f "$rtl_file" "$ref_rtl_file"
+        rm -f "$spim_file" "$ref_spim_file"
     done
     echo "Test passed"
     exit
@@ -168,15 +178,13 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             echo -e "\n\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
         fi
 
-        
-
         if [[ ! -f "$toks_file" && -f "$ref_toks_file" ]]; then
             echo -e "\n\e[31mERROR:\e[0m .toks file not generated for $file by our sclp with flag $flag"
             continue
         elif [[ -f "$toks_file" && -f "$ref_toks_file" ]]; then
             diff -Bw "$toks_file" "$ref_toks_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
             # echo $?
         fi
@@ -186,7 +194,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         elif [[ -f "$ast_file" && -f "$ref_ast_file" ]]; then
             diff -Bw "$ast_file" "$ref_ast_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$tac_file" && -f "$ref_tac_file" ]]; then
@@ -195,7 +203,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         elif [[ -f "$tac_file" && -f "$ref_tac_file" ]]; then
             diff -Bw "$tac_file" "$ref_tac_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$rtl_file" && -f "$ref_rtl_file" ]]; then
@@ -205,7 +213,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             sed -i 's/;;.*//' "$ref_rtl_file"
             diff -Bw "$rtl_file" "$ref_rtl_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$sym_file" && -f "$ref_sym_file" ]]; then
@@ -214,7 +222,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
         elif [[ -f "$sym_file" && -f "$ref_sym_file" ]]; then
             diff -Bw "$sym_file" "$ref_sym_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
         if [[ ! -f "$spim_file" && -f "$ref_spim_file" ]]; then
@@ -225,7 +233,7 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
             sed -i 's/#.*//' "$ref_spim_file"
             diff -Bw "$spim_file" "$ref_spim_file"
             if [[ $? -ne 0 ]]; then
-                echo "in the $file"
+                echo "in the $file with flag $flag"
             fi
         fi
 

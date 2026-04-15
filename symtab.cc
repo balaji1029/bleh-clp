@@ -3,8 +3,8 @@
 #include "utils.hh"
 #include <iostream>
 
-#include <map>
 #include <algorithm>
+#include <map>
 
 std::string get_type_str(Type type) {
     std::string binary_expr_type;
@@ -80,14 +80,15 @@ FuncEntry::FuncEntry(Type return_type, const std::string &name,
     : return_type(return_type), name(name), implemented(implemented),
       call_made(false) {
     // The set of names of the parameters
-    std::set<std::string> param_names;
+    std::set<std::string> param_names_set;
     for (const std::pair<Type, std::string> &param : params) {
         param_types.push_back(param.first);
-        if (param_names.count(param.second))
+        if (param_names_set.count(param.second))
             Error::semantic_error("Function Declaration " + name +
                                   ": Parameter name " + param.second +
                                   " already used");
-        param_names.insert(param.second);
+        param_names_set.insert(param.second);
+        param_names.push_back(param.second);
     }
 }
 
@@ -97,6 +98,10 @@ const std::string &FuncEntry::get_name() const { return name; }
 
 const std::vector<Type> &FuncEntry::get_param_types() const {
     return param_types;
+}
+
+const std::vector<std::string> &FuncEntry::get_param_names() const {
+    return param_names;
 }
 
 void FuncEntry::set_implemented() {
@@ -214,6 +219,8 @@ void ProcSymbolTable::set_offsets() {
 }
 
 void ProcSymbolTable::print(std::ostream &os, std::string &level) {
+    if (is_phantom())
+        return;
     os << "**PROCEDURE: " << func_entry->get_name() << ", Return Type:<"
        << func_entry->get_return_type() << ">" << "\n";
     level.push_back(SPACE);
@@ -435,6 +442,45 @@ void GlobalSymbolTable::new_proc_symtab(
     }
 }
 
+std::shared_ptr<ProcSymbolTable> GlobalSymbolTable::new_proc_symtab(
+    Type return_type, const std::string &name,
+    const std::vector<Type> &param_types,
+    const std::vector<std::string> &param_names) {
+
+    std::optional<std::shared_ptr<FuncEntry>> func_ptr = find_func(name);
+    // if (func_ptr) {
+    //     // Check if the paramter types match with the declaration found
+    //     const std::vector<Type> &func_param_types =
+    //     (*func_ptr)->get_param_types();
+    // } else {
+    //     // Fuck you if you reach here!!
+    // }
+
+    // Add the Process Symbol Table to the vector of Symbol Tables and set it to
+    // be the Current Symbol Table
+    procs.push_back(
+        std::make_shared<ProcSymbolTable>(*func_ptr, shared_from_this()));
+    curr_symtab = procs.back();
+
+    // Adds parameters to the Current Symbol Table
+    // for (const std::pair<Type, std::string> &param : params)
+    //     add_param(param.first, param.second);
+
+    for (size_t idx = 0; idx < param_names.size() && idx < param_types.size();
+         idx++) {
+        add_param(param_types[idx], param_names[idx]);
+    }
+
+    if (return_type != Type::VOID) {
+        std::shared_ptr<Variable_TAC_Opd> return_tac_opd =
+            curr_symtab->getNewSTemp(return_type);
+        return_tac_opd->set_type(return_type);
+        curr_symtab->set_return_tac_opd(return_tac_opd);
+    }
+
+    return curr_symtab;
+}
+
 void GlobalSymbolTable::go_global() { curr_symtab.reset(); }
 
 std::shared_ptr<ProcSymbolTable> GlobalSymbolTable::get_curr_proc_symtab() {
@@ -520,6 +566,19 @@ void GlobalSymbolTable::func_check() {
             main_found = true;
     }
     Error::semantic_check(main_found, "Procedure main does not exist");
+}
+
+void GlobalSymbolTable::add_fake_procs(std::shared_ptr<Root_Ast> root_ast) {
+    for (std::shared_ptr<FuncEntry> func : funcs) {
+        if (!(func->is_implemented())) {
+            std::shared_ptr<Func_Ast> func_ast = std::make_shared<Func_Ast>(
+                new_proc_symtab(func->get_return_type(), func->get_name(),
+                                func->get_param_types(),
+                                func->get_param_names()),
+                std::make_shared<Sequence_Stmt_Ast>());
+            root_ast->add_func(func_ast);
+        }
+    }
 }
 
 void GlobalSymbolTable::print(std::ostream &os, std::string &level) {

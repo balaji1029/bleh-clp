@@ -3,20 +3,14 @@
 Compiler::Compiler(int argc, char *argv[]) : lexer(&input_file) {
     int opt;
 
-    static struct option long_opts[] = {{"show-tokens", no_argument, 0, 0},
-                                        {"show-ast", no_argument, 0, 0},
-                                        {"show-tac", no_argument, 0, 0},
-                                        {"show-symtab", no_argument, 0, 0},
-                                        {"show-rtl", no_argument, 0, 0},
-                                        {"show-asm", no_argument, 0, 0},
-                                        {"sa-scan", no_argument, 0, 0},
-                                        {"sa-parse", no_argument, 0, 0},
-                                        {"sa-ast", no_argument, 0, 0},
-                                        {"sa-tac", no_argument, 0, 0},
-                                        {"sa-rtl", no_argument, 0, 0},
-                                        {"sa-asm", no_argument, 0, 0},
-                                        {"demo", no_argument, 0, 'd'},
-                                        {0, 0, 0, 0}};
+    static struct option long_opts[] = {
+        {"show-tokens", no_argument, 0, 0}, {"show-ast", no_argument, 0, 0},
+        {"show-tac", no_argument, 0, 0},    {"show-symtab", no_argument, 0, 0},
+        {"show-rtl", no_argument, 0, 0},    {"show-asm", no_argument, 0, 0},
+        {"sa-scan", no_argument, 0, 0},     {"sa-parse", no_argument, 0, 0},
+        {"sa-ast", no_argument, 0, 0},      {"sa-tac", no_argument, 0, 0},
+        {"sa-rtl", no_argument, 0, 0},      {"sa-asm", no_argument, 0, 0},
+        {"demo", no_argument, 0, 'd'},      {0, 0, 0, 0}};
 
     int opt_idx = 0;
 
@@ -125,14 +119,25 @@ int Compiler::run() {
         return status;
 
     sym_tab->func_check();
-
-    if (flags.sa_ast)
-        return status;
+    sym_tab->add_fake_procs(root_ast);
 
     if (flags.show_tokens)
         output(lexer.token_output);
 
     std::string level = "";
+
+    if (flags.show_ast && !flags.sa_parse) {
+        if (flags.demo) {
+            root_ast->print(std::cout, level);
+        } else {
+            root_ast->print(output_ast_file, level);
+        }
+    }
+
+    if (flags.sa_ast)
+        return status;
+
+    level = "";
     if (flags.show_symtab) {
         if (flags.demo)
             sym_tab->print(std::cout, level);
@@ -163,15 +168,16 @@ int Compiler::run() {
     }
 
     sym_tab->set_offsets();
+
+    if (flags.sa_rtl)
+        return status;
+
     if (flags.show_symtab) {
         if (flags.demo)
             sym_tab->print(std::cout, level);
         else
             sym_tab->print(output_symtab_file, level);
     }
-
-    if (flags.sa_rtl)
-        return status;
 
     root_ast->build_asm(sym_tab);
 
@@ -203,15 +209,7 @@ int Compiler::parse() {
     yy::parser parser(lexer, sym_tab, root_ast);
 
     status = parser.parse();
-    std::string level = "";
     // std::cout << root_ast << std::endl;
-    if (flags.show_ast && !flags.sa_parse) {
-        if (flags.demo) {
-            root_ast->print(std::cout, level);
-        } else {
-            root_ast->print(output_ast_file, level);
-        }
-    }
     // root_ast->print(std::cout, level);
 
     return status;

@@ -411,6 +411,9 @@ void Selection_Stmt_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
 }
 
 void Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
+    code = std::make_shared<TAC_Code>();
+    if (proc_table->is_phantom())
+        return;
     if (proc_table->get_return_type() != Type::VOID) {
         std::shared_ptr<Label_TAC_Opd> return_label =
             *(symtab->get_return_label());
@@ -421,7 +424,6 @@ void Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
             std::make_shared<Label_TAC_Stmt>(return_label);
         std::shared_ptr<Return_TAC_Stmt> return_stmt =
             std::make_shared<Return_TAC_Stmt>(return_opd);
-        code = std::make_shared<TAC_Code>();
 
         seq_ast->set_return_label(return_label);
         seq_ast->build_tac(symtab);

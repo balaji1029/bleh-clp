@@ -2,6 +2,8 @@ void main(bool a);
 
 string e;
 
+void alpha(int a, int b);
+
 void main(bool d) {
     int a;
     int b, c;
