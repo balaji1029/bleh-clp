@@ -144,7 +144,15 @@ void ProcSymbolTable::add_local(Type type, const std::string &name) {
 
 void ProcSymbolTable::add_return_stmt() { return_stmt = true; }
 
-bool ProcSymbolTable::has_return_stmt() const { return return_stmt; }
+bool ProcSymbolTable::has_return_stmt() const {
+    if (return_stmt)
+        return true;
+    for (auto child : children) {
+        if (child->has_return_stmt())
+            return true;
+    }
+    return false;
+}
 
 std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::get_return_tac_opd() {
     return return_tac_opd;
@@ -204,35 +212,46 @@ std::shared_ptr<Variable_TAC_Opd> ProcSymbolTable::getNewSTemp(Type type) {
     return std::make_shared<Variable_TAC_Opd>(symtab_entry);
 }
 
-void ProcSymbolTable::set_offsets() {
+void ProcSymbolTable::set_offsets(int start) {
     int offset = 8;
     for (std::shared_ptr<SymTabEntry> entry : params) {
         entry->set_offset(offset);
         offset += get_type_size(entry->get_type());
     }
 
-    total_offset = 0;
+    total_offset = start;
     for (std::shared_ptr<SymTabEntry> entry : locals) {
         total_offset -= get_type_size(entry->get_type());
         entry->set_offset(total_offset);
     }
+    int minimum = 0;
+    for (std::shared_ptr<ProcSymbolTable> child : children) {
+        child->set_offsets(total_offset);
+        minimum = std::min(minimum, child->get_total_offset());
+    }
+    total_offset = start + minimum;
 }
 
-void ProcSymbolTable::print(std::ostream &os, std::string &level) {
+void ProcSymbolTable::print(std::ostream &os, std::string &level, bool base) {
     if (is_phantom())
         return;
-    os << "**PROCEDURE: " << func_entry->get_name() << ", Return Type:<"
-       << func_entry->get_return_type() << ">" << "\n";
-    level.push_back(SPACE);
-    os << level << "Formal Parameters\n";
-    for (std::shared_ptr<SymTabEntry> entry : params)
-        entry->print(os, level);
-    os << level << "Local Declarartions\n";
+    if (base) {
+        os << "**PROCEDURE: " << func_entry->get_name() << ", Return Type:<"
+           << func_entry->get_return_type() << ">" << "\n";
+        level.push_back(SPACE);
+        os << level << "Formal Parameters\n";
+        for (std::shared_ptr<SymTabEntry> entry : params)
+            entry->print(os, level);
+        os << level << "Local Declarartions\n";
+    }
     for (std::shared_ptr<SymTabEntry> entry : locals)
         entry->print(os, level);
-    level.pop_back();
-
-    os << "\n";
+    for (auto child : children)
+        child->print(os, level, false);
+    if (base) {
+        level.pop_back();
+        os << "\n";
+    }
 }
 
 std::shared_ptr<RegisterPool> ProcSymbolTable::getRegisterPool() {
@@ -309,13 +328,17 @@ std::shared_ptr<ASM_Label_Opd> ProcSymbolTable::get_epilogue_label() {
     return std::make_shared<ASM_Label_Opd>("epilogue_" + get_name());
 }
 
+void ProcSymbolTable::add_child(std::shared_ptr<ProcSymbolTable> child) {
+    children.push_back(child);
+}
+
 // ------------------------------ GlobalSymbolTable
 // ------------------------------
 
 void GlobalSymbolTable::add_param(Type type, const std::string &name) {
 
     // Checks if the current symbol table pointer points to something
-    if (!this->curr_symtab) {
+    if (symtab_stack.size() == 0) {
         Error::semantic_error("parameter in global_scope??");
     }
 
@@ -333,8 +356,8 @@ void GlobalSymbolTable::add_param(Type type, const std::string &name) {
                               " already declared");
 
     // Adds the parameter
-    if (this->curr_symtab)
-        this->curr_symtab->add_param(type, name);
+    if (symtab_stack.size() > 0)
+        symtab_stack.back()->add_param(type, name);
 }
 
 void GlobalSymbolTable::add_var(Type type, const std::string &name) {
@@ -354,8 +377,8 @@ void GlobalSymbolTable::add_var(Type type, const std::string &name) {
         Error::semantic_error(std::string("Var ") + name + " already declared");
 
     // Adds it to the Current Symbol Table or the global variables accordingly
-    if (this->curr_symtab) {
-        this->curr_symtab->add_local(type, name);
+    if (symtab_stack.size() > 0) {
+        symtab_stack.back()->add_local(type, name);
     } else {
         globals.push_back(std::make_shared<SymTabEntry>(type, name, true));
     }
@@ -366,7 +389,7 @@ void GlobalSymbolTable::add_func(
     const std::vector<std::pair<Type, std::string>> &params) {
 
     // Checks if the current symbol table pointer points to something
-    if (curr_symtab) {
+    if (symtab_stack.size() > 0) {
         Error::semantic_error(
             "We don't accept function definitions in functions");
     }
@@ -428,7 +451,7 @@ void GlobalSymbolTable::new_proc_symtab(
     // be the Current Symbol Table
     procs.push_back(
         std::make_shared<ProcSymbolTable>(*func_ptr, shared_from_this()));
-    curr_symtab = procs.back();
+    symtab_stack.push_back(procs.back());
 
     // Adds parameters to the Current Symbol Table
     for (const std::pair<Type, std::string> &param : params)
@@ -436,9 +459,9 @@ void GlobalSymbolTable::new_proc_symtab(
 
     if (return_type != Type::VOID) {
         std::shared_ptr<Variable_TAC_Opd> return_tac_opd =
-            curr_symtab->getNewSTemp(return_type);
+            symtab_stack.back()->getNewSTemp(return_type);
         return_tac_opd->set_type(return_type);
-        curr_symtab->set_return_tac_opd(return_tac_opd);
+        symtab_stack.back()->set_return_tac_opd(return_tac_opd);
     }
 }
 
@@ -460,7 +483,7 @@ std::shared_ptr<ProcSymbolTable> GlobalSymbolTable::new_proc_symtab(
     // be the Current Symbol Table
     procs.push_back(
         std::make_shared<ProcSymbolTable>(*func_ptr, shared_from_this()));
-    curr_symtab = procs.back();
+    symtab_stack.push_back(procs.back());
 
     // Adds parameters to the Current Symbol Table
     // for (const std::pair<Type, std::string> &param : params)
@@ -473,18 +496,18 @@ std::shared_ptr<ProcSymbolTable> GlobalSymbolTable::new_proc_symtab(
 
     if (return_type != Type::VOID) {
         std::shared_ptr<Variable_TAC_Opd> return_tac_opd =
-            curr_symtab->getNewSTemp(return_type);
+            symtab_stack.back()->getNewSTemp(return_type);
         return_tac_opd->set_type(return_type);
-        curr_symtab->set_return_tac_opd(return_tac_opd);
+        symtab_stack.back()->set_return_tac_opd(return_tac_opd);
     }
 
-    return curr_symtab;
+    return symtab_stack.back();
 }
 
-void GlobalSymbolTable::go_global() { curr_symtab.reset(); }
+void GlobalSymbolTable::pop_stack() { symtab_stack.pop_back(); }
 
 std::shared_ptr<ProcSymbolTable> GlobalSymbolTable::get_curr_proc_symtab() {
-    return curr_symtab;
+    return symtab_stack.back();
 }
 
 std::optional<std::shared_ptr<FuncEntry>>
@@ -501,9 +524,10 @@ GlobalSymbolTable::find_func(const std::string &name) {
 std::optional<std::shared_ptr<SymTabEntry>>
 GlobalSymbolTable::find_var(const std::string &name) {
     // If the local scope is not global check there
-    if (curr_symtab) {
+    for (auto iter = symtab_stack.rbegin(); iter != symtab_stack.rend();
+         iter++) {
         std::optional<std::shared_ptr<SymTabEntry>> curr_var_ptr =
-            curr_symtab->find_var(name);
+            (*iter)->find_var(name);
         if (curr_var_ptr)
             return curr_var_ptr;
     }
@@ -521,11 +545,14 @@ GlobalSymbolTable::find_var(const std::string &name) {
 
 std::optional<std::shared_ptr<SymTabEntry>>
 GlobalSymbolTable::find_local(const std::string &name) {
-    if (curr_symtab) {
+    if (symtab_stack.size() > 0) {
         // If the local scope is not global, check here
-        auto curr_var_ptr = curr_symtab->find_var(name);
+        // for (auto iter = symtab_stack.rbegin(); iter != symtab_stack.rend();
+        //  iter++) {
+        auto curr_var_ptr = symtab_stack.back()->find_var(name);
         if (curr_var_ptr)
             return curr_var_ptr;
+        // }
     } else {
         // Else check in the global scope
         auto it = std::find_if(globals.begin(), globals.end(),
@@ -546,7 +573,7 @@ void GlobalSymbolTable::set_offsets() {
     }
 
     for (std::shared_ptr<ProcSymbolTable> proc : procs) {
-        proc->set_offsets();
+        proc->set_offsets(0);
     }
 }
 
@@ -604,4 +631,12 @@ int GlobalSymbolTable::addString(std::string str) {
     int id = string_map.size();
     string_map.emplace(str, id);
     return id;
+}
+
+void GlobalSymbolTable::add_scope() {
+    std::shared_ptr<ProcSymbolTable> child = std::make_shared<ProcSymbolTable>(
+        symtab_stack.back()->get_func(), shared_from_this());
+
+    symtab_stack.back()->add_child(child);
+    symtab_stack.push_back(child);
 }

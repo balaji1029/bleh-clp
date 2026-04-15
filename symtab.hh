@@ -125,6 +125,8 @@ class ProcSymbolTable {
 
     std::weak_ptr<GlobalSymbolTable> global_symtab;
 
+    std::vector<std::shared_ptr<ProcSymbolTable>> children;
+
     int num_temps = 0;
 
     int num_stemps = 0;
@@ -177,11 +179,11 @@ class ProcSymbolTable {
 
     std::shared_ptr<RegisterPool> getRegisterPool();
 
-    void set_offsets();
+    void set_offsets(int);
 
     int addString(std::string);
 
-    void print(std::ostream &, std::string &);
+    void print(std::ostream &, std::string &, bool = true);
 
     std::shared_ptr<GlobalSymbolTable> getGlobalSymtab();
 
@@ -192,6 +194,12 @@ class ProcSymbolTable {
     std::shared_ptr<ASM_Label_Opd> get_epilogue_label();
 
     bool is_phantom() { return !(func_entry->is_implemented()); }
+
+    void add_child(std::shared_ptr<ProcSymbolTable>);
+
+    std::shared_ptr<FuncEntry> get_func() { return func_entry; }
+
+    int get_total_offset() { return total_offset; }
 };
 
 /* Class for Global Symbol Table */
@@ -199,7 +207,9 @@ class GlobalSymbolTable
     : public std::enable_shared_from_this<GlobalSymbolTable> {
     /* The pointer to the current Symbol Table, the one being filled right now
      */
-    std::shared_ptr<ProcSymbolTable> curr_symtab;
+    // std::shared_ptr<ProcSymbolTable> curr_symtab;
+
+    std::vector<std::shared_ptr<ProcSymbolTable>> symtab_stack;
 
     /* The vector of pointers to the Function Symbol Table Entries */
     std::vector<std::shared_ptr<FuncEntry>> funcs;
@@ -240,7 +250,7 @@ class GlobalSymbolTable
 
     /* Sets the curr_symtab to `std::nullopt` to indicate the current scop to be
      * global */
-    void go_global();
+    void pop_stack();
 
     // TODO: Strings in Global Symbol Table
 
@@ -253,7 +263,7 @@ class GlobalSymbolTable
 
     std::vector<std::shared_ptr<FuncEntry>> get_funcs() const;
 
-    const std::vector<std::shared_ptr<SymTabEntry>>& get_globals() {
+    const std::vector<std::shared_ptr<SymTabEntry>> &get_globals() {
         return globals;
     }
 
@@ -280,4 +290,6 @@ class GlobalSymbolTable
     int addString(std::string);
 
     void print_asm_globals(std::ostream &);
+
+    void add_scope();
 };

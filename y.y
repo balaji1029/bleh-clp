@@ -186,21 +186,21 @@ func_def
     : func_header LEFT_ROUND_BRACKET formal_param_list RIGHT_ROUND_BRACKET {
         if (!Error::get_sa_parse()) 
             symtab->new_proc_symtab($1.first, $1.second, $3);
-    } LEFT_CURLY_BRACKET optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
+    } LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET {
         if (!Error::get_sa_parse()) {
             auto proc_symtab = symtab->get_curr_proc_symtab();
-            $$ = std::make_shared<Func_Ast>(proc_symtab, $8);
-            symtab->go_global();
+            $$ = std::make_shared<Func_Ast>(proc_symtab, $7);
+            symtab->pop_stack();
         }
     }
     | func_header LEFT_ROUND_BRACKET RIGHT_ROUND_BRACKET {
         if (!Error::get_sa_parse())
             symtab->new_proc_symtab($1.first, $1.second, std::vector<std::pair<Type, std::string>>());
-    }  LEFT_CURLY_BRACKET  optional_local_var_decl_stmt_list statement_list RIGHT_CURLY_BRACKET {
+    }  LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET {
         if (!Error::get_sa_parse()) {
             auto proc_symtab = symtab->get_curr_proc_symtab();
-            $$ = std::make_shared<Func_Ast>(proc_symtab, $7);
-            symtab->go_global();
+            $$ = std::make_shared<Func_Ast>(proc_symtab, $6);
+            symtab->pop_stack();
         }
     }
     ;
@@ -251,6 +251,11 @@ statement_list
             $$ = std::move($1);
         }
     }
+    | statement_list var_decl_stmt {
+        if (!Error::get_sa_parse()) {
+            $$ = std::move($1);
+        }
+    }
     | %empty {
         if (!Error::get_sa_parse())
             $$ = std::make_shared<Sequence_Stmt_Ast>();
@@ -296,15 +301,15 @@ statement
     }
     ;
 
-optional_local_var_decl_stmt_list
-    : %empty
-    | var_decl_stmt_list
-    ;
+// optional_local_var_decl_stmt_list
+//     : %empty
+//     | var_decl_stmt_list
+//     ;
 
-var_decl_stmt_list
-    : var_decl_stmt 
-    | var_decl_stmt_list var_decl_stmt
-    ;
+// var_decl_stmt_list
+//     : var_decl_stmt 
+//     | var_decl_stmt_list var_decl_stmt
+//     ;
 
 var_decl_stmt
     : named_type var_decl_item_list SEMICOLON {
@@ -465,9 +470,14 @@ while_statement
     ;
 
 compound_statement
-    : LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET {
+    : LEFT_CURLY_BRACKET {
         if (!Error::get_sa_parse())
-            $$ = std::move($2);
+            symtab->add_scope();
+    } statement_list RIGHT_CURLY_BRACKET {
+        if (!Error::get_sa_parse()) {
+            $$ = std::move($3);
+            symtab->pop_stack();
+        }
     }
     ;
 
