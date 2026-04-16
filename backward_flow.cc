@@ -2,25 +2,6 @@
 #include "utils.hh"
 #include <queue>
 
-// struct Var_TAC_Opd_Cmp {
-//     bool operator() (
-//         const std::shared_ptr<TAC_LOpd>& a,
-//         const std::shared_ptr<TAC_LOpd>& b
-//     ) const {
-//         if (a->get_opd_type() == TAC_Opd_Type::VAR && b->get_opd_type() ==
-//         TAC_Opd_Type::VAR) {
-//             return std::dynamic_pointer_cast<Variable_TAC_Opd>(a)->entry <
-//             std::dynamic_pointer_cast<Variable_TAC_Opd>(b)->entry;
-//         } else if (a->get_opd_type() == TAC_Opd_Type::TEMP &&
-//         b->get_opd_type() == TAC_Opd_Type::TEMP) {
-//             return std::dynamic_pointer_cast<Temporary_TAC_Opd>(a)->temp_num
-//             < std::dynamic_pointer_cast<Temporary_TAC_Opd>(b)->temp_num;
-//         } else {
-//             return a < b;
-//         }
-//     }
-// };
-
 BackwardFlowAnalysis::BackwardFlowAnalysis(
     std::shared_ptr<TAC_Code> code, std::shared_ptr<GlobalSymbolTable> symtab)
     : tac_code(code), symtab(symtab) {
@@ -38,9 +19,6 @@ BackwardFlowAnalysis::BackwardFlowAnalysis(
                     Error::warn(std::get<std::shared_ptr<SymTabEntry>>(entry)->get_name() + " is being used before a definition!!!");
         }
     }
-    // std::cout << "yo" << std::endl;
-    // tac_code->print(std::cout);
-    // std::cout << std::endl;
 }
 
 void BackwardFlowAnalysis::doAnalysis() {

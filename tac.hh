@@ -440,4 +440,6 @@ class TAC_Code {
     void print_rtl(std::ostream &);
 
     void mark_leaders();
+
+    void remove_unreachable();
 };

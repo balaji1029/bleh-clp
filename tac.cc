@@ -70,11 +70,38 @@ void TAC_Code::build_cfg() {
             break;
         }
 
-        if (i + 1 < tacStmts.size()) {
+        if (i + 1 < tacStmts.size() && line->get_stmt_type() != TAC_Stmt_Type::GOTO) {
             line->add_successor(tacStmts[i + 1]);
             tacStmts[i + 1]->add_predecessor(line);
         } else {
             break;
+        }
+    }
+}
+
+void TAC_Code::remove_unreachable() {
+    if (is_empty())
+        return;
+    
+    build_cfg();
+    std::set<std::shared_ptr<TAC_Stmt>> lines_reachable;
+
+    auto check = [&] (auto self, std::shared_ptr<TAC_Stmt> line) -> void {
+        if (lines_reachable.find(line) == lines_reachable.end()) {
+            lines_reachable.insert(line);
+            for (auto next_line : line->get_successors()) {
+                self(self, next_line.lock());
+            }
+        }
+    };
+
+    check(check, tacStmts[0]);
+
+    auto code_copy = tacStmts;
+
+    for (auto line : code_copy) {
+        if (lines_reachable.find(line) == lines_reachable.end()) {
+            remove_line(line);
         }
     }
 }
@@ -637,7 +664,7 @@ void Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
         seq_ast->build_tac(symtab);
         code = seq_ast->get_code();
     }
-
+    code->remove_unreachable();
     // BackwardFlowAnalysis back(code);
 }
 

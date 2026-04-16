@@ -20,8 +20,8 @@ void main() {
         i = i + 1;
 
         while (j < 50) {
-            int k;
-            k = j * j;
+            int o;
+            o = j * j;
             print j;
             print space;
             j = j + 1;
