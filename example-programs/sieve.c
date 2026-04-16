@@ -1,13 +1,16 @@
 bool divides(int a, int b) {
-    if (a < b)
+    if (a < b) {
         return 0 == 1;
+    }
 
-    while (a > b)
+    while (a > b) {
         a = a - b;
+    }
 
-    if (a == b)
+    if (a == b) {
         return 0 == 0;
-    
+    }
+
     return 0 == 1;
 }
 
@@ -19,6 +22,7 @@ int main() {
     read i;
 
     int j;
+    j = 0;
     j = 2;
     while (j <= i) {
         int k;
@@ -33,7 +37,7 @@ int main() {
                 k = j;
             }
             k = k + 1;
-        } 
+        }
         if (isPrime) {
             print j;
             print space;

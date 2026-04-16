@@ -445,12 +445,12 @@ if_condition
     ;
 
 if_statement
-    : IF if_condition statement ELSE statement {
+    : IF if_condition compound_statement ELSE compound_statement {
         if (!Error::get_sa_parse()){
             $$ = std::make_shared<Selection_Stmt_Ast>($2, $3, $5);
         }
     }
-    | IF if_condition statement {
+    | IF if_condition compound_statement {
         if (!Error::get_sa_parse()) {
             $$ = std::make_shared<Selection_Stmt_Ast>($2, $3);
         }
@@ -458,14 +458,14 @@ if_statement
     ;
 
 do_while_statement
-    : DO statement WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET SEMICOLON {
+    : DO compound_statement WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET SEMICOLON {
         if (!Error::get_sa_parse())
             $$ = std::make_shared<Do_While_Loop_Ast>($5, $2);
     }
     ;
 
 while_statement
-    : WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET statement {
+    : WHILE LEFT_ROUND_BRACKET expression RIGHT_ROUND_BRACKET compound_statement {
         if (!Error::get_sa_parse())
             $$ = std::make_shared<While_Loop_Ast>($3, $5);
     }

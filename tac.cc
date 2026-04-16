@@ -686,7 +686,7 @@ void Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     }
     code->remove_unreachable();
     // BackwardFlowAnalysis back(code);
-    if (!(code->check_returns()))
+    if (proc_table->get_return_type() != Type::VOID && !(code->check_returns()))
         Error::warn("Function " + get_name() +
                     " doesn't have a return in all possible paths");
 }
