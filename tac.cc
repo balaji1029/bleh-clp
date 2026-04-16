@@ -1,6 +1,7 @@
 #include "tac.hh"
 #include "ast.hh"
 #include "backward_flow.hh"
+#include "utils.hh"
 
 #include <algorithm>
 #include <cassert>
@@ -70,9 +71,11 @@ void TAC_Code::build_cfg() {
             break;
         }
 
-        if (i + 1 < tacStmts.size() && line->get_stmt_type() != TAC_Stmt_Type::GOTO) {
-            line->add_successor(tacStmts[i + 1]);
-            tacStmts[i + 1]->add_predecessor(line);
+        if (i + 1 < tacStmts.size()) {
+            if (line->get_stmt_type() != TAC_Stmt_Type::GOTO) {
+                line->add_successor(tacStmts[i + 1]);
+                tacStmts[i + 1]->add_predecessor(line);
+            }
         } else {
             break;
         }
@@ -82,11 +85,11 @@ void TAC_Code::build_cfg() {
 void TAC_Code::remove_unreachable() {
     if (is_empty())
         return;
-    
+
     build_cfg();
     std::set<std::shared_ptr<TAC_Stmt>> lines_reachable;
 
-    auto check = [&] (auto self, std::shared_ptr<TAC_Stmt> line) -> void {
+    auto check = [&](auto self, std::shared_ptr<TAC_Stmt> line) -> void {
         if (lines_reachable.find(line) == lines_reachable.end()) {
             lines_reachable.insert(line);
             for (auto next_line : line->get_successors()) {
@@ -104,6 +107,23 @@ void TAC_Code::remove_unreachable() {
             remove_line(line);
         }
     }
+}
+
+bool TAC_Code::check_returns() {
+    for (auto iter = tacStmts.rbegin(); iter != tacStmts.rend(); iter++) {
+        if ((*iter)->get_stmt_type() == TAC_Stmt_Type::LABEL) {
+            auto next_iter = iter + 1;
+            if (((*next_iter)->get_stmt_type() != TAC_Stmt_Type::GOTO) ||
+                (std::dynamic_pointer_cast<Goto_TAC_Stmt>(*next_iter)
+                     ->get_label() !=
+                 std::dynamic_pointer_cast<Label_TAC_Stmt>(*iter)
+                     ->get_label())) {
+                return false;
+            }
+            break;
+        }
+    }
+    return true;
 }
 
 void TAC_Stmt::mark_leader() {
@@ -666,6 +686,9 @@ void Func_Ast::build_tac(std::shared_ptr<ProcSymbolTable> symtab) {
     }
     code->remove_unreachable();
     // BackwardFlowAnalysis back(code);
+    if (!(code->check_returns()))
+        Error::warn("Function " + get_name() +
+                    " doesn't have a return in all possible paths");
 }
 
 void Root_Ast::build_tac(std::shared_ptr<GlobalSymbolTable> symtab) {

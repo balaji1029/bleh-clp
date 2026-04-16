@@ -61,6 +61,8 @@ class SymTabEntry {
     bool is_global() { return global; }
 
     bool is_param() { return param; }
+
+    bool is_concrete() { return name.back() == '_'; }
 };
 
 /* Class for Function entries in the Global Symbol Table */

@@ -442,4 +442,6 @@ class TAC_Code {
     void mark_leaders();
 
     void remove_unreachable();
+
+    bool check_returns();
 };

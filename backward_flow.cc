@@ -15,8 +15,12 @@ BackwardFlowAnalysis::BackwardFlowAnalysis(
         std::shared_ptr<TAC_Stmt> line = tac_code->get_code()[0];
         for (auto entry : inout.at(line)->in) {
             if (std::holds_alternative<std::shared_ptr<SymTabEntry>>(entry) &&
-                !(std::get<std::shared_ptr<SymTabEntry>>(entry)->is_global()) && !(std::get<std::shared_ptr<SymTabEntry>>(entry)->is_param()))
-                    Error::warn(std::get<std::shared_ptr<SymTabEntry>>(entry)->get_name() + " is being used before a definition!!!");
+                !(std::get<std::shared_ptr<SymTabEntry>>(entry)->is_global()) &&
+                !(std::get<std::shared_ptr<SymTabEntry>>(entry)->is_param()) &&
+                (std::get<std::shared_ptr<SymTabEntry>>(entry)->is_concrete()))
+                Error::warn(
+                    std::get<std::shared_ptr<SymTabEntry>>(entry)->get_name() +
+                    " is being used before a definition!!!");
         }
     }
 }
