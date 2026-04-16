@@ -52,9 +52,9 @@ int get_type_size(Type type) {
 
 // ------------------------------ SymTabEntry ------------------------------
 
-SymTabEntry::SymTabEntry(Type type, const std::string &name, bool global)
+SymTabEntry::SymTabEntry(Type type, const std::string &name, bool global, bool param)
     : type(type), name(name), offset(std::nullopt), size(get_type_size(type)),
-      global(global) {}
+      global(global), param(param) {}
 
 std::string SymTabEntry::get_name() { return name; }
 
@@ -135,7 +135,7 @@ ProcSymbolTable::ProcSymbolTable(
       global_symtab(global_symtab) {}
 
 void ProcSymbolTable::add_param(Type type, const std::string &name) {
-    params.push_back(std::make_shared<SymTabEntry>(type, name));
+    params.push_back(std::make_shared<SymTabEntry>(type, name, false, true));
 }
 
 void ProcSymbolTable::add_local(Type type, const std::string &name) {

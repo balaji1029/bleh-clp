@@ -29,4 +29,6 @@ class Error {
 
     /* Throw a semantic error */
     static void semantic_error(const std::string &msg);
+
+    static void warn(const std::string &msg);
 };

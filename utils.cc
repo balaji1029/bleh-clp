@@ -31,3 +31,9 @@ void Error::semantic_error(const std::string &err_msg) {
         exit(EXIT_FAILURE);
     }
 }
+
+void Error::warn(const std::string &warn_msg) {
+    if (!get_sa_parse()) {
+        std::cerr << "warning:\t" << warn_msg << std::endl;
+    }
+}

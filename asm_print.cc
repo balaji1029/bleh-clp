@@ -240,7 +240,7 @@ void GlobalSymbolTable::print_asm_globals(std::ostream &os) {
     for (auto [a, b] : string_map) {
         my_map.insert({b, a});
     }
-    
+
     for (auto [b, a] : my_map) {
         os << "_str_" << b << ":" << SPACE;
         os << ".asciiz ";

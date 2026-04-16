@@ -446,12 +446,14 @@ if_condition
 
 if_statement
     : IF if_condition statement ELSE statement {
-        if (!Error::get_sa_parse())
+        if (!Error::get_sa_parse()){
             $$ = std::make_shared<Selection_Stmt_Ast>($2, $3, $5);
+        }
     }
     | IF if_condition statement {
-        if (!Error::get_sa_parse())
+        if (!Error::get_sa_parse()) {
             $$ = std::make_shared<Selection_Stmt_Ast>($2, $3);
+        }
     } %prec LOWER_THAN_ELSE
     ;
 

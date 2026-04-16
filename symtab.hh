@@ -44,9 +44,10 @@ class SymTabEntry {
     EntityType entity_type;
 
     bool global;
+    bool param;
 
   public:
-    SymTabEntry(Type, const std::string &, bool = false);
+    SymTabEntry(Type, const std::string &, bool = false, bool = false);
 
     std::string get_name();
     Type get_type();
@@ -58,6 +59,8 @@ class SymTabEntry {
     void print(std::ostream &, const std::string &);
 
     bool is_global() { return global; }
+
+    bool is_param() { return param; }
 };
 
 /* Class for Function entries in the Global Symbol Table */

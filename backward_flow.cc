@@ -1,4 +1,5 @@
 #include "backward_flow.hh"
+#include "utils.hh"
 #include <queue>
 
 // struct Var_TAC_Opd_Cmp {
@@ -28,6 +29,14 @@ BackwardFlowAnalysis::BackwardFlowAnalysis(
         tac_code->build_cfg();
         doAnalysis();
         remove_lines();
+    }
+    if (tac_code->get_code().size() > 0) {
+        std::shared_ptr<TAC_Stmt> line = tac_code->get_code()[0];
+        for (auto entry : inout.at(line)->in) {
+            if (std::holds_alternative<std::shared_ptr<SymTabEntry>>(entry) &&
+                !(std::get<std::shared_ptr<SymTabEntry>>(entry)->is_global()) && !(std::get<std::shared_ptr<SymTabEntry>>(entry)->is_param()))
+                    Error::warn(std::get<std::shared_ptr<SymTabEntry>>(entry)->get_name() + " is being used before a definition!!!");
+        }
     }
     // std::cout << "yo" << std::endl;
     // tac_code->print(std::cout);
