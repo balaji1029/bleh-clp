@@ -4,7 +4,7 @@ Group Name: `JAN2026_group_75`
 
 Team Members:
 - Balaji Karedla (23B1029)
-- Aayush Brokar (23B0944)
+- Aayush Borkar (23B0944)
 
 This is the report for the optimizations and checks we implemented in sclp
 

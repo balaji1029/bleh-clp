@@ -1,6 +1,7 @@
 int factorial(int a) {
-    if (a <= 1)
+    if (a <= 1) {
         return 1;
+    }
     
     int fact;
     fact = factorial(a - 1);
