@@ -10,16 +10,19 @@ class Params {
 };
 
 class BackwardFlowAnalysis {
+    friend Assign_TAC_Stmt;
+
     std::shared_ptr<TAC_Code> tac_code;
     std::shared_ptr<GlobalSymbolTable> symtab;
     // std::vector<std::shared_ptr<TAC_Stmt>> code;
 
-    std::map<std::shared_ptr<TAC_Stmt>, std::shared_ptr<Params>> inout;
+    static std::map<std::shared_ptr<TAC_Stmt>, std::shared_ptr<Params>> inout;
 
     bool lines_removed = true;
 
   public:
-    BackwardFlowAnalysis(std::shared_ptr<TAC_Code>, std::shared_ptr<GlobalSymbolTable>);
+    BackwardFlowAnalysis(std::shared_ptr<TAC_Code>,
+                         std::shared_ptr<GlobalSymbolTable>);
 
     void doAnalysis();
 

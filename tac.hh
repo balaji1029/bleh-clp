@@ -338,7 +338,8 @@ class Return_TAC_Stmt : public TAC_Stmt {
         build_rtl(std::shared_ptr<ProcSymbolTable>) override;
 };
 
-class Assign_TAC_Stmt : public TAC_Stmt {
+class Assign_TAC_Stmt : public TAC_Stmt,
+                        public std::enable_shared_from_this<Assign_TAC_Stmt> {
     std::shared_ptr<TAC_LOpd> lOpd;
     std::shared_ptr<TAC_Expr> expr;
 

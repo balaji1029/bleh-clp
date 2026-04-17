@@ -1,5 +1,6 @@
 #include "rtl.hh"
 #include "ast.hh"
+#include "backward_flow.hh"
 #include "tac.hh"
 
 std::shared_ptr<RTL_Opd> TAC_Opd::getRTLPlace() { return rtl_place; }
@@ -493,6 +494,14 @@ Assign_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
         rReg->getReg()->markFree();
         rtl_code->append(lLoad);
     }
+    std::shared_ptr<Temporary_TAC_Opd> lTemp =
+        std::dynamic_pointer_cast<Temporary_TAC_Opd>(lOpd);
+    if (lTemp && BackwardFlowAnalysis::inout.at(shared_from_this())
+                         ->out.count(lTemp->get_ptr()) == 0) {
+        std::shared_ptr<RTL_Register_Opd> lReg =
+            std::dynamic_pointer_cast<RTL_Register_Opd>(lTemp->getRTLPlace());
+        lReg->getReg()->markFree();
+    }
     return rtl_code;
 }
 
@@ -606,9 +615,10 @@ IO_TAC_Stmt::build_rtl(std::shared_ptr<ProcSymbolTable> symtab) {
             if (backupReg)
                 argLoad = std::make_shared<Move_RTL_Stmt>(argReg, backupReg,
                                                           varType, type);
-            else
+            else {
                 argLoad = std::make_shared<Move_RTL_Stmt>(argReg, varPlace,
                                                           varType, type);
+            }
         }
 
         std::shared_ptr<Write_RTL_Stmt> write =

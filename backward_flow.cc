@@ -10,6 +10,10 @@ BackwardFlowAnalysis::BackwardFlowAnalysis(
         tac_code->build_cfg();
         doAnalysis();
         remove_lines();
+        for (auto &[ptr, p] : inout) {
+            p->in.clear();
+            p->out.clear();
+        }
     }
     if (tac_code->get_code().size() > 0) {
         std::shared_ptr<TAC_Stmt> line = tac_code->get_code()[0];
@@ -25,6 +29,9 @@ BackwardFlowAnalysis::BackwardFlowAnalysis(
     }
 }
 
+std::map<std::shared_ptr<TAC_Stmt>, std::shared_ptr<Params>>
+    BackwardFlowAnalysis::inout{};
+
 void BackwardFlowAnalysis::doAnalysis() {
     std::vector<std::shared_ptr<TAC_Stmt>> code = tac_code->get_code();
 
@@ -35,10 +42,14 @@ void BackwardFlowAnalysis::doAnalysis() {
                                       symtab->get_globals().end());
         }
     }
-    if (code.size() > 0)
+    if (code.size() > 0) {
         inout.at(code.back())
             ->out.insert(symtab->get_globals().begin(),
                          symtab->get_globals().end());
+        // std::cout
+        //     << std::get<0>(*(inout.at(code.back())->out.begin()))->get_name()
+        //     << std::endl;
+    }
 
     std::deque<std::shared_ptr<TAC_Stmt>> worklist(code.begin(), code.end());
 
@@ -46,15 +57,17 @@ void BackwardFlowAnalysis::doAnalysis() {
         std::shared_ptr<TAC_Stmt> line = worklist.front();
         worklist.pop_front();
 
-        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> out;
+        std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> out =
+            inout.at(line)->out;
+        if (line->get_successors().size() > 0) {
+            for (std::weak_ptr<TAC_Stmt> stmt : line->get_successors()) {
+                std::set<std::variant<std::shared_ptr<SymTabEntry>, int>>
+                    tempin = inout.at(stmt.lock())->in;
+                out.insert(tempin.begin(), tempin.end());
+            }
 
-        for (std::weak_ptr<TAC_Stmt> stmt : line->get_successors()) {
-            std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> tempin =
-                inout.at(stmt.lock())->in;
-            out.insert(tempin.begin(), tempin.end());
+            inout.at(line)->out = out;
         }
-
-        inout.at(line)->out = out;
 
         std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> new_in;
         std::set<std::variant<std::shared_ptr<SymTabEntry>, int>> gen =
@@ -85,15 +98,23 @@ void BackwardFlowAnalysis::remove_lines() {
     for (std::shared_ptr<TAC_Stmt> line : tac_code->get_code()) {
         // line->print(std::cout);
         // std::cout << "IN: ";
-        // for (std::shared_ptr<SymTabEntry> in : inout.at(line)->in) {
+        // for (std::variant<std::shared_ptr<SymTabEntry>, int> in :
+        //      inout.at(line)->in) {
         //     // in->print(std::cout);
-        //     std::cout << in << " ";
+        //     if (std::holds_alternative<std::shared_ptr<SymTabEntry>>(in))
+        //         std::cout << std::get<0>(in)->get_name() << " ";
+        //     else
+        //         std::cout << std::get<1>(in) << " ";
         // }
         // std::cout << std::endl;
         // std::cout << "OUT: ";
-        // for (std::shared_ptr<SymTabEntry> in : inout.at(line)->out) {
+        // for (std::variant<std::shared_ptr<SymTabEntry>, int> in :
+        //      inout.at(line)->out) {
         //     // in->print(std::cout);
-        //     std::cout << in << " ";
+        //     if (std::holds_alternative<std::shared_ptr<SymTabEntry>>(in))
+        //         std::cout << std::get<0>(in)->get_name() << " ";
+        //     else
+        //         std::cout << std::get<1>(in) << " ";
         // }
         // std::cout << std::endl;
 
