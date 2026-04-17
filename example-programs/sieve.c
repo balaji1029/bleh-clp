@@ -17,8 +17,8 @@ bool divides(int a, int b) {
 int main() {
     int i;
     print "Enter the maximum of your prime number: ";
-    string space;
-    space = " ";
+    string newline;
+    newline = "\n";
     read i;
 
     int j;
@@ -40,7 +40,7 @@ int main() {
         }
         if (isPrime) {
             print j;
-            print space;
+            print newline;
         }
         j = j + 1;
     }

@@ -1,7 +1,7 @@
 void main() {
     int i;
-    string space;
-    space = " ";
+    string newline;
+    newline = "\n";
     i = 0;
     // int j;
     while (i < 10) {
@@ -12,18 +12,18 @@ void main() {
             int k;
             k = j * j;
             print j;
-            print space;
+            print newline;
             j = j + 1;
         }
         print j;
-        print space;
+        print newline;
         i = i + 1;
 
         while (j < 50) {
             int o;
             o = j * j;
             print j;
-            print space;
+            print newline;
             j = j + 1;
         }
     }
