@@ -71,6 +71,18 @@ Then we go through the statements and flag the statements whose `OUT` and `KILL`
 
 We repeat this until any lines can't be removed.
 
+While generating RTL, the assumption of temporaries going unalive only after their usage does not hold in deadcode elimination because of statements like
+```c
+    b = foo(a, c);
+```
+The corresponding TAC:
+```c
+	temp0 = foo_(a_, c_)
+	b_ = temp0
+```
+But `b` goes dead after this. Since we are considering the side effects in `foo`, the first line in the TAC cannot be elided. The second line can be removed, but we have to ensure that the register holding `temp0` is marked dead after the first line, otherwise this might hog up the registers and they might not be available in the future lines of the code.
+So, while translating Assign TAC Statements, we checked if the `temp` is part of `OUT` of the statement and marked the register free if it is not.
+
 ## Use before Definition warning
 
 Something to note about the usage before definition is that all such variables are defined before using exist in the `IN` of the first statement of the function. 

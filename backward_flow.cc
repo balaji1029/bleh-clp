@@ -6,14 +6,14 @@ BackwardFlowAnalysis::BackwardFlowAnalysis(
     std::shared_ptr<TAC_Code> code, std::shared_ptr<GlobalSymbolTable> symtab)
     : tac_code(code), symtab(symtab) {
     while (lines_removed) {
-        lines_removed = false;
-        tac_code->build_cfg();
-        doAnalysis();
-        remove_lines();
         for (auto &[ptr, p] : inout) {
             p->in.clear();
             p->out.clear();
         }
+        lines_removed = false;
+        tac_code->build_cfg();
+        doAnalysis();
+        remove_lines();
     }
     if (tac_code->get_code().size() > 0) {
         std::shared_ptr<TAC_Stmt> line = tac_code->get_code()[0];
@@ -95,7 +95,9 @@ void BackwardFlowAnalysis::doAnalysis() {
 
 void BackwardFlowAnalysis::remove_lines() {
     std::vector<std::shared_ptr<TAC_Stmt>> lines_to_remove;
+    // std::cout << "===================================" << std::endl;
     for (std::shared_ptr<TAC_Stmt> line : tac_code->get_code()) {
+        // std::cout << "------------------------" << std::endl;
         // line->print(std::cout);
         // std::cout << "IN: ";
         // for (std::variant<std::shared_ptr<SymTabEntry>, int> in :

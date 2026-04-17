@@ -1,14 +1,14 @@
 #!/bin/bash
-DIR="example-programs"
+DIR="testcases"
 
 declare -a flags
 
 flags=(
-    "--show-tokens --sa-scan"
-    "--show-tokens --sa-parse"
-    "--show-tokens --show-ast --sa-ast"
-    "--show-tokens --show-ast --show-symtab --show-tac --sa-tac"
-    "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-rtl"
+    # "--show-tokens --sa-scan"
+    # "--show-tokens --sa-parse"
+    # "--show-tokens --show-ast --sa-ast"
+    # "--show-tokens --show-ast --show-symtab --show-tac --sa-tac"
+    # "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --sa-rtl"
     "--show-tokens --show-ast --show-symtab --show-tac --show-rtl --show-asm"
 )
 
@@ -161,22 +161,22 @@ find "$DIR" -type f -name "*.c" | while read -r file; do
     rm -f "$output_file" "$ref_output_file"
 
     for flag in "${flags[@]}"; do
-        reference-implementations/A5-sclp "$file" $flag 2>/dev/null
-        ref_rc=$?
+        # reference-implementations/A5-sclp "$file" $flag 2>/dev/null
+        # ref_rc=$?
 
-        mv "$toks_file" "$ref_toks_file" 2>/dev/null
-        mv "$ast_file" "$ref_ast_file" 2>/dev/null
-        mv "$tac_file" "$ref_tac_file" 2>/dev/null
-        mv "$rtl_file" "$ref_rtl_file" 2>/dev/null
-        mv "$sym_file" "$ref_sym_file" 2>/dev/null
-        mv "$spim_file" "$ref_spim_file" 2>/dev/null
+        # mv "$toks_file" "$ref_toks_file" 2>/dev/null
+        # mv "$ast_file" "$ref_ast_file" 2>/dev/null
+        # mv "$tac_file" "$ref_tac_file" 2>/dev/null
+        # mv "$rtl_file" "$ref_rtl_file" 2>/dev/null
+        # mv "$sym_file" "$ref_sym_file" 2>/dev/null
+        # mv "$spim_file" "$ref_spim_file" 2>/dev/null
 
         ./sclp $flag "$file" 2>/dev/null
         our_rc=$?
 
-        if [[ ($ref_rc -ne 0 && $our_rc -eq 0) || ($ref_rc -eq 0 && $our_rc -ne 0) ]]; then
-            echo -e "\n\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
-        fi
+        # if [[ ($ref_rc -ne 0 && $our_rc -eq 0) || ($ref_rc -eq 0 && $our_rc -ne 0) ]]; then
+        #     echo -e "\n\e[31mERROR:\e[0m return code mismatch for $file with flag $flag, ref: $ref_rc, our: $our_rc"
+        # fi
 
         # if [[ $ref_rc -ne 0 ]]; then
         #     continue

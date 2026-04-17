@@ -16,5 +16,9 @@ int main() {
     int fact;
     fact = factorial(a);
     print fact;
+
+    string newline;
+    newline = "\n";
+    print newline;
     return 0;
 }
