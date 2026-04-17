@@ -224,12 +224,13 @@ void ProcSymbolTable::set_offsets(int start) {
         total_offset -= get_type_size(entry->get_type());
         entry->set_offset(total_offset);
     }
-    int minimum = 0;
+    int minimum = total_offset;
     for (std::shared_ptr<ProcSymbolTable> child : children) {
         child->set_offsets(total_offset);
         minimum = std::min(minimum, child->get_total_offset());
     }
-    total_offset = start + minimum;
+    // std::cout << minimum << std::endl;
+    total_offset = minimum;
 }
 
 void ProcSymbolTable::print(std::ostream &os, std::string &level, bool base) {
